@@ -1,0 +1,52 @@
+﻿<Window x:Class="Customer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Customer" Height="900" Width="1220" ShowInTaskbar="False">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="73*"/>
+            <ColumnDefinition Width="533*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="(*)" HorizontalAlignment="Left" Margin="107,64,0,0" VerticalAlignment="Top" Foreground="Red" RenderTransformOrigin="0.5,2"/>
+        <Label x:Name="lblCusCd" Content="Mã khách hàng:" HorizontalAlignment="Left" Margin="55,38,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.957,1.077" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtCusCd" HorizontalAlignment="Left" Height="23" Margin="3,38,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label Content="(*)" HorizontalAlignment="Left" Margin="42,38,0,0" VerticalAlignment="Top" Foreground="Red" RenderTransformOrigin="1.364,0.577"/>
+        <Label x:Name="lblFirstName" Content="Họ:" HorizontalAlignment="Left" Margin="121,64,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.107,0.962" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtFirstName" HorizontalAlignment="Left" Height="23" Margin="170,64,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label Content="(*)" HorizontalAlignment="Left" Margin="126,64,0,0" VerticalAlignment="Top" Foreground="Red" RenderTransformOrigin="11.887,1.635" Grid.Column="1"/>
+        <Label x:Name="lblLastName" Content="Tên:" HorizontalAlignment="Left" Margin="138,64,0,0" VerticalAlignment="Top" RenderTransformOrigin="8.289,0.559" Grid.Column="1"/>
+        <TextBox x:Name="txtLastName" HorizontalAlignment="Left" Height="23" Margin="3,65,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblMobilePhone" Content="Số điện thoại:" HorizontalAlignment="Left" Margin="67,92,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtMobilePhone" HorizontalAlignment="Left" Height="23" Margin="3,93,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblAddress" Content="Địa chỉ:" HorizontalAlignment="Left" Margin="101,120,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtAddress" HorizontalAlignment="Left" Height="23" Margin="3,121,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="359" Grid.Column="1"/>
+        <Label x:Name="lblEmailAddress" Content="E-mail:" HorizontalAlignment="Left" Margin="103,207,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtEmailAddress" HorizontalAlignment="Left" Height="23" Margin="3,207,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="359" Grid.Column="1"/>
+        <Label x:Name="lblCompany" Content="Công ty:" HorizontalAlignment="Left" Margin="95,235,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtCompany" HorizontalAlignment="Left" Height="23" Margin="3,235,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="359" Grid.Column="1"/>
+        <Label x:Name="lblBusinessPhone" Content="Điện thoại công ty:" HorizontalAlignment="Left" Margin="39,263,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtBusinessPhone" HorizontalAlignment="Left" Height="23" Margin="3,263,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblHomePhone" Content="Điện thoại nhà riêng:" HorizontalAlignment="Left" Margin="28,291,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtHomePhone" HorizontalAlignment="Left" Height="23" Margin="3,291,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblFaxNumber" Content="Số Fax:" HorizontalAlignment="Left" Margin="102,319,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtFaxNumber" HorizontalAlignment="Left" Height="23" Margin="3,319,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblCity" Content="Thành phố:" HorizontalAlignment="Left" Margin="78,151,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtCity" HorizontalAlignment="Left" Height="23" Margin="3,149,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblProvince" Content="Tỉnh:" HorizontalAlignment="Left" Margin="113,177,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtProvince" HorizontalAlignment="Left" Height="23" Margin="3,177,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblZip" Content="Mã bưu chính:" HorizontalAlignment="Left" Margin="63,347,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtZip" HorizontalAlignment="Left" Height="23" Margin="3,347,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblCountry" Content="Quốc gia:" HorizontalAlignment="Left" Margin="89,375,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.117,0.577" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtCountry" HorizontalAlignment="Left" Height="23" Margin="3,375,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblWebPage" Content="Trang web:" HorizontalAlignment="Left" Margin="81,403,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtWebPage" HorizontalAlignment="Left" Height="23" Margin="3,403,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <Label x:Name="lblNotes" Content="Chú thích:" HorizontalAlignment="Left" Margin="86,431,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.403,0.528" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtNotes" HorizontalAlignment="Left" Height="51" Margin="3,431,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="442" Grid.Column="1"/>
+        <Label x:Name="lblAttachments" Content="Tệp tin đính kèm:" HorizontalAlignment="Left" Margin="47,486,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.403,0.528" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtAttachments" HorizontalAlignment="Left" Height="23" Margin="3,486,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+
+        <Button x:Name="btnUpdate" Content="Cập nhật" HorizontalAlignment="Left" Margin="36,557,0,0" VerticalAlignment="Top" Width="75" Background="Blue" Foreground="White" BorderBrush="Blue" Height="31" Grid.Column="1"/>
+        <Button x:Name="btnDelete" Content="Xóa" HorizontalAlignment="Left" Margin="116,557,0,0" VerticalAlignment="Top" Width="37"  Background="Red" Foreground="White" BorderBrush="Red" Height="31" Grid.Column="1"/>
+        <Button x:Name="btnInsert" Content="Thêm" HorizontalAlignment="Left" Margin="159,557,0,0" VerticalAlignment="Top" Width="42"  Background="Green" Foreground="White" BorderBrush="Green" RenderTransformOrigin="1.906,0.5" Height="31" Grid.Column="1"/>
+    </Grid>
+</Window>
