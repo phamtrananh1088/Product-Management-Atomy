@@ -66,7 +66,7 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>IconAtomy.ico</ApplicationIcon>
+    <ApplicationIcon>AtomyIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SpreadsheetGear">
@@ -87,12 +87,21 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFTextBoxAutoComplete, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\WPFTextBoxAutoComplete\WPFTextBoxAutoComplete.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="Application.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AtomyDataSet.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Customer.xaml.vb">
       <DependentUpon>Customer.xaml</DependentUpon>
     </Compile>
@@ -102,8 +111,24 @@
     <Compile Include="Property.xaml.vb">
       <DependentUpon>Property.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Search\Search.xaml.vb">
+      <DependentUpon>Search.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchEmployee.xaml.vb">
+      <DependentUpon>SearchEmployee.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchCustomer.xaml.vb">
+      <DependentUpon>SearchCustomer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchProperty.xaml.vb">
+      <DependentUpon>SearchProperty.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\Check.vb" />
+    <Compile Include="Utility\CompanyInfo.vb" />
     <Compile Include="Utility\DbConnect.vb" />
     <Compile Include="Utility\ErrorLog.vb" />
+    <Compile Include="Utility\UserInfo.vb" />
+    <Compile Include="Utility\Utility.vb" />
     <Compile Include="Warehouse.xaml.vb">
       <DependentUpon>Warehouse.xaml</DependentUpon>
     </Compile>
@@ -128,6 +153,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Property.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Search\Search.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Search\SearchEmployee.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Search\SearchCustomer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Search\SearchProperty.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -178,6 +219,17 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="AtomyDataSet.xsc">
+      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="AtomyDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AtomyDataSet.Designer.vb</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="AtomyDataSet.xss">
+      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
+    </None>
     <None Include="Excel\Template\OrderA5_1.xlsx" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -185,11 +237,7 @@
     </None>
     <AppDesigner Include="My Project\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Lib\" />
-    <Folder Include="Src\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
       <Visible>False</Visible>
@@ -214,6 +262,27 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IconAtomy.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Src\AtomyIcon.ico" />
+    <Resource Include="AtomyIcon.ico" />
+    <Content Include="Data\Atomy.accdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\SpreadsheetGear.dll" />
+    <Content Include="Lib\System.Data.OleDb.dll" />
+    <Content Include="Lib\WPFTextBoxAutoComplete\Caliburn.Micro.dll" />
+    <Content Include="Lib\WPFTextBoxAutoComplete\Caliburn.Micro.Platform.Core.dll" />
+    <Content Include="Lib\WPFTextBoxAutoComplete\Caliburn.Micro.Platform.dll" />
+    <Content Include="Lib\WPFTextBoxAutoComplete\System.Windows.Interactivity.dll" />
+    <Content Include="Lib\WPFTextBoxAutoComplete\WPFTextBoxAutoComplete.dll" />
+    <Resource Include="Lib\System.Data.OleDb.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BindValidation\BindValidation.vbproj">
+      <Project>{bbec5bbf-469f-47fd-8b8b-76b2f68e25a5}</Project>
+      <Name>BindValidation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

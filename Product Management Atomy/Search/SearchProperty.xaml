@@ -1,0 +1,69 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data" x:Class="SearchProperty" 
+      mc:Ignorable="d" 
+      d:DesignHeight="768" d:DesignWidth="1024"
+      Title="SearchProperty">
+    <Page.Resources>
+        <Style x:Key="Link" TargetType="Button">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="Blue"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock TextDecorations="Underline" 
+                    Text="{TemplateBinding Content}"
+                    Background="{TemplateBinding Background}"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Foreground" Value="Red"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate x:Key="LinkPropCdTemplate">
+                <Button Content="{Binding PropCode}" Tag="{Binding PropName}" Style="{StaticResource Link}" Click="rowPropCd_Click"/>
+            </DataTemplate>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="151*"/>
+            <ColumnDefinition Width="873*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="Mã sản phẩm:" HorizontalAlignment="Left" Margin="67,22,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="87" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtPropCd" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="0,22,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Tên sản phẩm:" HorizontalAlignment="Left" Margin="66,50,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="87" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtPropName" HorizontalAlignment="Left" Height="23" Margin="0,50,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="697" Grid.Column="1"/>
+        <Label Content="Ngày tiếp nhận:" HorizontalAlignment="Left" Margin="59,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="95" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtAcquiredDateF" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="0,78,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label Content="đến:" HorizontalAlignment="Left" Margin="121,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="33" Grid.Column="1"/>
+        <TextBox x:Name="txtAcquiredDateT" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="154,78,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Nhóm sản phẩm:" HorizontalAlignment="Left" Margin="53,106,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="101" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtCategory" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="0,106,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnSearch" Content="Tìm kiếm" Grid.Column="1" HorizontalAlignment="Left" Margin="622,127,0,0" VerticalAlignment="Top" Width="75" Click="btnSearch_Click"/>
+        <DataGrid x:Name="grdData" HorizontalAlignment="Left" Margin="67,163,0,0" VerticalAlignment="Top" Height="268" Width="842" Grid.ColumnSpan="2" AutoGenerateColumns="False"
+                  CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn CellTemplate="{StaticResource LinkPropCdTemplate}"  Header="Mã sản phẩm" Width="90"/>
+                <DataGridTextColumn Binding="{Binding PropName}" Header="Tên sản phẩm" Width="300"/>
+                <DataGridTextColumn Binding="{Binding Unit}" Header="Đơn vị tính" Width="100"/>
+                <DataGridTextColumn Binding="{Binding Sales_Price}" Header="Giá bán" Width="100"/>
+                <DataGridCheckBoxColumn Binding="{Binding Retired}" Header="Ngừng sử dụng" Width="100" />
+                <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Nhà sản xuất" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="btnClose" Content="Kết thúc" Grid.Column="1" HorizontalAlignment="Left" Margin="655,438,0,0" VerticalAlignment="Top" Width="75" Click="btnClose_Click"/>
+
+
+    </Grid>
+</Page>

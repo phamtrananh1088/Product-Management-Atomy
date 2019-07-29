@@ -14,8 +14,12 @@ Public Class ErrorLog
     End Property
 
     Public Shared Sub SetError(window As Window, errorText As String, ex As Exception)
-        Dim screenName As String = window.ToString
+        Dim screenName As String = IIf(window.Name = "", window.ToString, window.Name)
         Dim i = LogError(screenName, errorText, ex)
+        Task.WhenAny(i)
+    End Sub
+    Public Shared Sub SetError(windowName As String, errorText As String, ex As Exception)
+        Dim i = LogError(windowName, errorText, ex)
         Task.WhenAny(i)
     End Sub
     Friend Shared Function LogError(windowName As String, errorText As String, ex As Exception) As Task
@@ -43,9 +47,11 @@ Friend Class DbLogging
         sb.AppendLine("          , [Window]                 ")
         sb.AppendLine("          , [Create Date]            ")
         sb.AppendLine("          , [Create Time]            ")
+        sb.AppendLine("          , [Create User]            ")
         sb.AppendLine("          )                          ")
         sb.AppendLine("     VALUES                          ")
         sb.AppendLine("          ( ?                        ")
+        sb.AppendLine("          , ?                        ")
         sb.AppendLine("          , ?                        ")
         sb.AppendLine("          , ?                        ")
         sb.AppendLine("          , ?                        ")
@@ -59,9 +65,9 @@ Friend Class DbLogging
         Dim dbConn As New DbConnect()
         Try
             dbConn.Open()
-            'dbConn.BeginTran()
+            dbConn.BeginTran()
             Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
-            'cmd.Transaction = dbConn.Tran
+            cmd.Transaction = dbConn.Tran
             cmd.Parameters.Add("@Title", OleDbType.VarChar).Value = errorText
             cmd.Parameters.Add("@Message", OleDbType.VarChar).Value = ex.Message
             cmd.Parameters.Add("@Source", OleDbType.VarChar).Value = ex.Source
@@ -74,19 +80,20 @@ Friend Class DbLogging
             cmd.Parameters.Add("@Window", OleDbType.VarChar).Value = windowName
             Dim d As Date = Date.Now
             cmd.Parameters.Add("@CreateDate", OleDbType.VarChar).Value = d.ToString("yyyy/MM/dd")
-            cmd.Parameters.Add("@CreateDate", OleDbType.VarChar).Value = d.ToString("HH:mm:ss")
+            cmd.Parameters.Add("@CreateTime", OleDbType.VarChar).Value = d.ToString("HH:mm:ss")
+            cmd.Parameters.Add("@CreateUser", OleDbType.VarChar).Value = Utility.LoginUserCode
             LogError = cmd.ExecuteNonQuery()
             dbConn.CommitTran()
         Catch oleDbEx As OleDbException
-            'dbConn.RollbackTran()
+            dbConn.RollbackTran()
             Console.WriteLine(oleDbEx.ToString())
             LogError = -1
         Catch pEx As Exception
-            'dbConn.RollbackTran()
+            dbConn.RollbackTran()
             Console.WriteLine(pEx.ToString())
             LogError = -2
         Finally
-            'dbConn.DisposeTran()
+            dbConn.DisposeTran()
             dbConn.Close()
         End Try
     End Function
