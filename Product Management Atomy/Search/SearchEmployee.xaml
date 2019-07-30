@@ -3,11 +3,13 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data" x:Class="SearchEmployee" 
+      xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data" x:Class="SearchEmployee"
+      xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
       mc:Ignorable="d" 
       d:DesignHeight="768" d:DesignWidth="1024"
       Title="Tìm kiếm nhân viên">
     <Page.Resources>
+        <bindValidation:NameConverter x:Key="nameConverter" />
         <Style x:Key="Link" TargetType="Button">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -38,16 +40,17 @@
                         <Binding Path="EmpCode"/>
                     </Button.Content>
                     <Button.Tag>
-                        <MultiBinding StringFormat="{}{0} {1}">
-                            <Binding Path="First_Name"/>
-                            <Binding Path="Last_Name"/>
+                        <MultiBinding Converter="{StaticResource nameConverter}">
+                            <Binding Path="EmpCode"/>
+                            <Binding Path="EmpCode"/>
                         </MultiBinding>
                     </Button.Tag>
                 </Button>
             </DataTemplate>
             <DataTemplate x:Key="NameTemplate" >
                 <Label>
-                    <MultiBinding StringFormat="{}{0}  {1}">
+                    <MultiBinding ConverterParameter="{}{0} {1}"
+                                      Converter="{StaticResource nameConverter}">
                         <Binding Path="First_Name"/>
                         <Binding Path="Last_Name"/>
                     </MultiBinding>

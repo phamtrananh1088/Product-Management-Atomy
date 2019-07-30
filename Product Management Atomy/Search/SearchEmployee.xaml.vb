@@ -48,7 +48,7 @@ Class SearchEmployee
                 sSQL = sSQL + " and [Mobile Phone] like ?"
                 adapt.SelectCommand.Parameters.Add("@MobilePhone", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
             End If
-            sSQL = sSQL + " order by [Last Name],[FirstName]"
+            sSQL = sSQL + " order by [Last Name],[First Name]"
             adapt.SelectCommand.CommandText = sSQL
             _AtomyDataSet.Employee.Clear()
             adapt.Fill(_AtomyDataSet, "Employee")

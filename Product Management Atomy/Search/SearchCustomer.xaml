@@ -4,10 +4,12 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data" x:Class="SearchCustomer" 
+      xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
       mc:Ignorable="d" 
       d:DesignHeight="768" d:DesignWidth="1024"
       Title="Tìm kiếm khách hàng">
     <Page.Resources>
+        <bindValidation:NameConverter x:Key="nameConverter" />
         <Style x:Key="Link" TargetType="Button">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -70,7 +72,7 @@
             <DataGrid.Columns>
                 <DataGridTemplateColumn CellTemplate="{StaticResource LinkCusCodeTemplate}"  Header="Mã khách hàng" Width="100"/>
                 <DataGridTemplateColumn CellTemplate="{StaticResource NameTemplate}"  Header="Tên khách hàng" Width="300"/>
-                <DataGridTextColumn Binding="{Binding E_mail_Address}" Header="Địa chỉ e-mail" Width="300"/>
+                <DataGridHyperlinkColumn Binding="{Binding E_mail_Address}" Header="Địa chỉ e-mail" Width="300"/>
                 <DataGridTextColumn Binding="{Binding Mobile_Phone}" Header="Điện thoại di động" Width="300"/>
             </DataGrid.Columns>
         </DataGrid>
