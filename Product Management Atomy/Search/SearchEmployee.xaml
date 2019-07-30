@@ -32,34 +32,48 @@
     </Page.Resources>
     <Grid>
         <Grid.Resources>
-            <DataTemplate x:Key="LinkPropCdTemplate">
-                <Button Content="{Binding PropCode}" Tag="{Binding Item}" Style="{StaticResource Link}" Click="rowPropCd_Click"/>
+            <DataTemplate x:Key="LinkEmpCodeTemplate">
+                <Button Style="{StaticResource Link}" Click="rowEmpCode_Click">
+                    <Button.Content>
+                        <Binding Path="EmpCode"/>
+                    </Button.Content>
+                    <Button.Tag>
+                        <MultiBinding StringFormat="{}{0} {1}">
+                            <Binding Path="First_Name"/>
+                            <Binding Path="Last_Name"/>
+                        </MultiBinding>
+                    </Button.Tag>
+                </Button>
+            </DataTemplate>
+            <DataTemplate x:Key="NameTemplate" >
+                <Label>
+                    <MultiBinding StringFormat="{}{0}  {1}">
+                        <Binding Path="First_Name"/>
+                        <Binding Path="Last_Name"/>
+                    </MultiBinding>
+                </Label>
             </DataTemplate>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="151*"/>
             <ColumnDefinition Width="873*"/>
         </Grid.ColumnDefinitions>
-        <Label Content="Mã sản phẩm:" HorizontalAlignment="Left" Margin="67,22,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="87" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtPropCd" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="0,22,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <Label Content="Tên sản phẩm:" HorizontalAlignment="Left" Margin="66,50,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="87" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtPropName" HorizontalAlignment="Left" Height="23" Margin="0,50,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="697" Grid.Column="1"/>
-        <Label Content="Ngày tiếp nhận:" HorizontalAlignment="Left" Margin="59,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="95" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtAcquiredDateF" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="0,78,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <Label Content="đến:" HorizontalAlignment="Left" Margin="121,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="33" Grid.Column="1"/>
-        <TextBox x:Name="txtAcquiredDateT" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="154,78,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <Label Content="Nhóm sản phẩm:" HorizontalAlignment="Left" Margin="53,106,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="101" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtCategory" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="0,106,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Mã nhân viên:" HorizontalAlignment="Left" Margin="68,22,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="87" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtEmpCode" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="3,22,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Họ:" HorizontalAlignment="Left" Margin="124,50,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="30" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtFirstName" HorizontalAlignment="Left" Height="23" Margin="3,50,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="170" Grid.Column="1"/>
+        <Label Content="Tên:" HorizontalAlignment="Left" Margin="173,50,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="33" Grid.Column="1"/>
+        <TextBox x:Name="txtLastName" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="206,50,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="170"/>
+        <Label Content="Điện thoại di động:" HorizontalAlignment="Left" Margin="41,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="114" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtMobilePhone" HorizontalAlignment="Left" Height="23" Margin="3,78,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+
         <Button x:Name="btnSearch" Content="Tìm kiếm" Grid.Column="1" HorizontalAlignment="Left" Margin="622,127,0,0" VerticalAlignment="Top" Width="75" Click="btnSearch_Click"/>
         <DataGrid x:Name="grdData" HorizontalAlignment="Left" Margin="67,163,0,0" VerticalAlignment="Top" Height="268" Width="842" Grid.ColumnSpan="2" AutoGenerateColumns="False"
                   CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTemplateColumn CellTemplate="{StaticResource LinkPropCdTemplate}"  Header="Mã sản phẩm" Width="90"/>
-                <DataGridTextColumn Binding="{Binding PropName}" Header="Tên sản phẩm" Width="300"/>
-                <DataGridTextColumn Binding="{Binding Unit}" Header="Đơn vị tính" Width="100"/>
-                <DataGridTextColumn Binding="{Binding Sales_Price}" Header="Giá bán" Width="100"/>
-                <DataGridCheckBoxColumn Binding="{Binding Retired}" Header="Ngừng sử dụng" Width="100" />
-                <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Nhà sản xuất" Width="Auto"/>
+                <DataGridTemplateColumn CellTemplate="{StaticResource LinkEmpCodeTemplate}"  Header="Mã nhân viên" Width="90"/>
+                <DataGridTemplateColumn CellTemplate="{StaticResource NameTemplate}"  Header="Tên nhân viên" Width="300"/>
+                <DataGridTextColumn Binding="{Binding Mobile_Phone}" Header="Điện thoại di động" Width="120"/>
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="btnClose" Content="Kết thúc" Grid.Column="1" HorizontalAlignment="Left" Margin="655,438,0,0" VerticalAlignment="Top" Width="75" Click="btnClose_Click"/>

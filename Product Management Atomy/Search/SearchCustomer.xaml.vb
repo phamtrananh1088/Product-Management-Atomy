@@ -26,7 +26,7 @@ Class SearchCustomer
         InitializeComponent()
     End Sub
 
-    Private Sub SearchData(PropCd As String)
+    Private Sub SearchData()
         Dim dbConn As New DbConnect
 
         Try
@@ -35,7 +35,7 @@ Class SearchCustomer
             Dim adapt As New OleDbDataAdapter()
             adapt.SelectCommand = New OleDbCommand()
             adapt.SelectCommand.Connection = dbConn.Conn
-            adapt.SelectCommand.Parameters.Add("@CusCode", OleDbType.VarChar).Value = PropCd + "%"
+            adapt.SelectCommand.Parameters.Add("@CusCode", OleDbType.VarChar).Value = txtCusCode.Text.Trim + "%"
             If txtFirstName.Text.Trim.Length > 0 Then
                 sSQL = sSQL + " and [First Name] like ?"
                 adapt.SelectCommand.Parameters.Add("@FirstName", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
@@ -64,12 +64,12 @@ Class SearchCustomer
     End Sub
 
     Private Sub btnSearch_Click(sender As Object, e As RoutedEventArgs)
-        SearchData(txtCusCode.Text)
+        SearchData()
     End Sub
 
     Private Sub rowCusCode_Click(sender As Object, e As RoutedEventArgs)
         Dim btn As Button = DirectCast(sender, Button)
-        Dim data As New SearchDataProperty() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
+        Dim data As New SearchDataCustomer() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
         _search.ResultF(data)
     End Sub
 

@@ -26,48 +26,36 @@ Class SearchEmployee
         InitializeComponent()
     End Sub
 
-    Private Sub SearchData(PropCd As String)
+    Private Sub SearchData()
         Dim dbConn As New DbConnect
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select * from [Property] where [PropCode] like ?"
+            Dim sSQL As String = "select * from [Employee] where [EmpCode] like ?"
             Dim adapt As New OleDbDataAdapter()
             adapt.SelectCommand = New OleDbCommand()
             adapt.SelectCommand.Connection = dbConn.Conn
-            adapt.SelectCommand.Parameters.Add("@PropCode", OleDbType.VarChar).Value = PropCd + "%"
-            If txtPropName.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [PropName] like ?"
-                adapt.SelectCommand.Parameters.Add("@PropName", OleDbType.VarChar).Value = "%" + txtPropName.Text.Trim + "%"
+            adapt.SelectCommand.Parameters.Add("@EmpCode", OleDbType.VarChar).Value = txtEmpCode.Text.Trim + "%"
+            If txtFirstName.Text.Trim.Length > 0 Then
+                sSQL = sSQL + " and [First Name] like ?"
+                adapt.SelectCommand.Parameters.Add("@FirstName", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
             End If
-            If txtAcquiredDateF.Text.Trim.Length > 0 Then
-                If txtAcquiredDateT.Text.Trim.Length > 0 Then
-                    sSQL = sSQL + " and [Acquired Date] >= ? and [Acquired Date] <= ?"
-                    adapt.SelectCommand.Parameters.Add("@AcquiredDateF", OleDbType.VarChar).Value = txtAcquiredDateF.Text.Trim
-                    adapt.SelectCommand.Parameters.Add("@AcquiredDateT", OleDbType.VarChar).Value = txtAcquiredDateT.Text.Trim
-                Else
-                    sSQL = sSQL + " and [Acquired Date] >= ?"
-                    adapt.SelectCommand.Parameters.Add("@AcquiredDateF", OleDbType.VarChar).Value = txtAcquiredDateF.Text.Trim
-                End If
-            Else
-                If txtAcquiredDateT.Text.Trim.Length > 0 Then
-                    sSQL = sSQL + " and [Acquired Date] <= ?"
-                    adapt.SelectCommand.Parameters.Add("@AcquiredDateT", OleDbType.VarChar).Value = txtAcquiredDateT.Text.Trim
-                End If
+            If txtLastName.Text.Trim.Length > 0 Then
+                sSQL = sSQL + " and [Last Name] like ?"
+                adapt.SelectCommand.Parameters.Add("@LastName", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
             End If
-            If txtCategory.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [Category] like ?"
-                adapt.SelectCommand.Parameters.Add("@Category", OleDbType.VarChar).Value = "%" + txtCategory.Text.Trim + "%"
+            If txtMobilePhone.Text.Trim.Length > 0 Then
+                sSQL = sSQL + " and [Mobile Phone] like ?"
+                adapt.SelectCommand.Parameters.Add("@MobilePhone", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
             End If
-
-            sSQL = sSQL + " order by retired desc"
+            sSQL = sSQL + " order by [Last Name],[FirstName]"
             adapt.SelectCommand.CommandText = sSQL
-            _AtomyDataSet._Property.Clear()
-            adapt.Fill(_AtomyDataSet, "Property")
+            _AtomyDataSet.Employee.Clear()
+            adapt.Fill(_AtomyDataSet, "Employee")
 
-            grdData.ItemsSource = _AtomyDataSet._Property.DefaultView
+            grdData.ItemsSource = _AtomyDataSet.Employee.DefaultView
         Catch ex As Exception
-            ErrorLog.SetError(_search, "Property: Load data error", ex)
+            ErrorLog.SetError(_search, "Đã có lỗi sảy ra khi tìm kiếm nhân viên", ex)
         Finally
             dbConn.Close()
         End Try
@@ -79,12 +67,12 @@ Class SearchEmployee
     End Sub
 
     Private Sub btnSearch_Click(sender As Object, e As RoutedEventArgs)
-        SearchData(txtPropCd.Text)
+        SearchData()
     End Sub
 
-    Private Sub rowPropCd_Click(sender As Object, e As RoutedEventArgs)
+    Private Sub rowEmpCode_Click(sender As Object, e As RoutedEventArgs)
         Dim btn As Button = DirectCast(sender, Button)
-        Dim data As New SearchDataProperty() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
+        Dim data As New SearchDataEmployee() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
         _search.ResultF(data)
     End Sub
 End Class

@@ -30,7 +30,7 @@
         RaiseEvent SearchClose(Me, New EventArgs)
     End Sub
 
-    Sub ResultF(data As SearchDataProperty)
+    Sub ResultF(data As SearchDataArgs)
         Me.Close()
         RaiseEvent SearchResult(Me, data)
     End Sub
