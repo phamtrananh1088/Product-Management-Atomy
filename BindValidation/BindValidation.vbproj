@@ -63,6 +63,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EmailValidationRule.vb" />
+    <Compile Include="FaxValidationRule.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -80,6 +82,7 @@
     </Compile>
     <Compile Include="NameConverter.vb" />
     <Compile Include="NumericValidationRule.vb" />
+    <Compile Include="PhoneValidationRule.vb" />
     <Compile Include="RequireRule.vb" />
     <Compile Include="ValueConverter.vb" />
   </ItemGroup>

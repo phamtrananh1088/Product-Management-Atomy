@@ -120,7 +120,7 @@
         <TextBox x:Name="txtComments" HorizontalAlignment="Left" Height="51" Margin="2,389,0,0" TextWrapping="Wrap" Text="{Binding Comments, TargetNullValue=''}" VerticalAlignment="Top" Width="493" Grid.Column="1"/>
         <Label x:Name="lblAcquiredDate" Content="Ngày có được:" HorizontalAlignment="Left" Margin="47,445,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
         <TextBox x:Name="txtAccquiredDate" HorizontalAlignment="Left" Height="23" Margin="2,445,0,0" TextWrapping="Wrap" Text="{Binding Acquired_Date, TargetNullValue=''}" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
-        <Label Content="Ngừng sử dụng:" HorizontalAlignment="Left" Margin="39,473,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Label Content="Ngừng sử dụng:" HorizontalAlignment="Left" Margin="39,473,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" ToolTip="Tích chọn tương đương với xóa"/>
         <CheckBox x:Name="cbRetired" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="4,480,0,0" VerticalAlignment="Top" IsChecked="{Binding Retired}" RenderTransformOrigin="0.412,0.188"/>
 
         <Button x:Name="btnUpdate" Content="Cập nhật" HorizontalAlignment="Left" Margin="35,543,0,0" VerticalAlignment="Top" Width="75" Background="Blue" Foreground="White" BorderBrush="Blue" Height="31" Grid.Column="1"

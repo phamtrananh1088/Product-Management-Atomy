@@ -127,6 +127,7 @@
     <Compile Include="Utility\CompanyInfo.vb" />
     <Compile Include="Utility\DbConnect.vb" />
     <Compile Include="Utility\ErrorLog.vb" />
+    <Compile Include="Utility\ModuleCommon.vb" />
     <Compile Include="Utility\UserInfo.vb" />
     <Compile Include="Utility\Utility.vb" />
     <Compile Include="Warehouse.xaml.vb">

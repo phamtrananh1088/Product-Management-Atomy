@@ -36,25 +36,26 @@
         <Grid.Resources>
             <DataTemplate x:Key="LinkEmpCodeTemplate">
                 <Button Style="{StaticResource Link}" Click="rowEmpCode_Click">
-                    <Button.Content>
+                    <!--<Button.Content>
                         <Binding Path="EmpCode"/>
-                    </Button.Content>
-                    <Button.Tag>
-                        <MultiBinding Converter="{StaticResource nameConverter}">
+                    </Button.Content>-->
+                    <Button.Content>
+                        <MultiBinding Mode="OneWay" Converter="{StaticResource nameConverter}">
                             <Binding Path="EmpCode"/>
-                            <Binding Path="EmpCode"/>
+                            <Binding Path="EmpName"/>
                         </MultiBinding>
-                    </Button.Tag>
+                    </Button.Content>
                 </Button>
             </DataTemplate>
-            <DataTemplate x:Key="NameTemplate" >
-                <Label>
-                    <MultiBinding ConverterParameter="{}{0} {1}"
-                                      Converter="{StaticResource nameConverter}">
-                        <Binding Path="First_Name"/>
-                        <Binding Path="Last_Name"/>
-                    </MultiBinding>
-                </Label>
+            <DataTemplate x:Key="NameTemplate">
+                <Button Style="{StaticResource Link}" Click="rowEmpCode_Click">
+                    <Button.Content>
+                        <MultiBinding Converter="{StaticResource nameConverter}">
+                            <Binding Path="First_Name"/>
+                            <Binding Path="Last_Name"/>
+                        </MultiBinding>
+                    </Button.Content>
+                </Button>
             </DataTemplate>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
