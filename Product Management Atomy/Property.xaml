@@ -5,7 +5,7 @@
     xmlns:behaviors="clr-namespace:WPFTextBoxAutoComplete;assembly=WPFTextBoxAutoComplete"
     Title="Sản phẩm" Height="768" Width="1020"  WindowStartupLocation="CenterScreen" ShowInTaskbar="False">
     <Window.Resources>
-        <bindValidation:ValueConverter x:Key="valueConverter" />
+        <bindValidation:NumericConverter x:Key="numericConverter" />
         <ControlTemplate x:Key="ValidationTemplate">
             <DockPanel>
                 <TextBlock Foreground="Red" FontSize="20">!</TextBlock>
@@ -68,7 +68,7 @@
         <TextBox x:Name="txtPurchasePrice" HorizontalAlignment="Left" Height="23" Margin="2,193,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"
                   Style="{StaticResource TextBoxInError}">
             <TextBox.Text>
-                <Binding Path="Purchase_Price" Converter="{StaticResource valueConverter}">
+                <Binding Path="Purchase_Price" Converter="{StaticResource numericConverter}">
                     <Binding.ValidationRules>
                         <bindValidation:NumericValidationRule TypeName="Decimal" ValidatesOnTargetUpdated="True"/>
                     </Binding.ValidationRules>
@@ -92,7 +92,7 @@
         <TextBox x:Name="txtSalesPrice" HorizontalAlignment="Left" Height="23" Margin="2,249,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"
                  Style="{StaticResource TextBoxInError}">
             <TextBox.Text>
-                <Binding Path="Sales_Price" Converter="{StaticResource valueConverter}">
+                <Binding Path="Sales_Price" Converter="{StaticResource numericConverter}">
                     <Binding.ValidationRules>
                         <bindValidation:NumericValidationRule TypeName="Decimal" ValidatesOnTargetUpdated="True"/>
                     </Binding.ValidationRules>
@@ -103,7 +103,7 @@
         <TextBox x:Name="txtCurrentValue" HorizontalAlignment="Left" Height="23" Margin="2,277,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"
                   Style="{StaticResource TextBoxInError}">
             <TextBox.Text>
-                <Binding Path="Current_Value" Converter="{StaticResource valueConverter}">
+                <Binding Path="Current_Value" Converter="{StaticResource numericConverter}">
                     <Binding.ValidationRules>
                         <bindValidation:NumericValidationRule TypeName="Decimal" ValidatesOnTargetUpdated="True"/>
                     </Binding.ValidationRules>

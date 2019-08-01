@@ -4,7 +4,7 @@
     xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"    
     Title="Khách hàng" Height="768" Width="1024" ShowInTaskbar="False">
     <Window.Resources>
-        <bindValidation:ValueConverter x:Key="valueConverter" />
+        <bindValidation:CapitalizedNameConverter x:Key="capitalizedNameConverter" />
         <ControlTemplate x:Key="ValidationTemplate">
             <DockPanel>
                 <TextBlock Foreground="Red" FontSize="20">!</TextBlock>
@@ -31,6 +31,7 @@
             <Hyperlink x:Name="lnkCusCode" Click="lnkCusCode_Click">Mã khách hàng:</Hyperlink>
         </Label>
         <TextBox x:Name="txtCusCode" HorizontalAlignment="Left" Height="23" Margin="3,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"
+                 LostFocus="txtCusCode_LostFocus"
                  Style="{StaticResource TextBoxInError}">
             <TextBox.Text>
                 <Binding Path ="CusCode">
@@ -46,7 +47,7 @@
         <TextBox x:Name="txtFirstName" HorizontalAlignment="Left" Height="23" Margin="3,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" Grid.Column="1"
                  Style="{StaticResource TextBoxInError}">
             <TextBox.Text>
-                <Binding Path ="First_Name">
+                <Binding Path ="First_Name" Converter="{StaticResource capitalizedNameConverter}">
                     <Binding.ValidationRules>
                         <bindValidation:RequireRule  ValidatesOnTargetUpdated="True"/>
                     </Binding.ValidationRules>
@@ -58,7 +59,7 @@
         <TextBox x:Name="txtLastName" HorizontalAlignment="Left" Height="23" Margin="223,64,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" Grid.Column="1"
                  Style="{StaticResource TextBoxInError}" RenderTransformOrigin="2.717,0.304">
             <TextBox.Text>
-                <Binding Path ="Last_Name">
+                <Binding Path ="Last_Name" Converter="{StaticResource capitalizedNameConverter}">
                     <Binding.ValidationRules>
                         <bindValidation:RequireRule  ValidatesOnTargetUpdated="True"/>
                     </Binding.ValidationRules>

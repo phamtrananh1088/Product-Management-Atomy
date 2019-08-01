@@ -32,4 +32,8 @@
         UserInfo = New UserInfo() With {.UserCd = "999999", .UserNm = "Trần Vũ Lan Anh"}
         CompanyInfo = New CompanyInfo() With {.CompanyCd = "001000", .CompanyNm = "Công ty TNHH Atomy Việt Nam"}
     End Sub
+
+    Private Sub Application_Exit(sender As Object, e As ExitEventArgs)
+        MySettings.Default.Save()
+    End Sub
 End Class

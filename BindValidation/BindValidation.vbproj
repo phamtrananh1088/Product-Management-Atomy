@@ -63,6 +63,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CapitalizedNameConverter.vb" />
     <Compile Include="EmailValidationRule.vb" />
     <Compile Include="FaxValidationRule.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -84,7 +85,7 @@
     <Compile Include="NumericValidationRule.vb" />
     <Compile Include="PhoneValidationRule.vb" />
     <Compile Include="RequireRule.vb" />
-    <Compile Include="ValueConverter.vb" />
+    <Compile Include="NumericConverter.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

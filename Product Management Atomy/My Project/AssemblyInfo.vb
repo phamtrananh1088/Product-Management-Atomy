@@ -11,9 +11,9 @@ Imports System.Windows
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("Product_Management_Atomy")> 
+<Assembly: AssemblyTitle("Product Management Atomy.Co.,Ld")> 
 <Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("Microsoft")> 
+<Assembly: AssemblyCompany("LATA")> 
 <Assembly: AssemblyProduct("Product_Management_Atomy")> 
 <Assembly: AssemblyCopyright("Copyright @ Microsoft 2019")> 
 <Assembly: AssemblyTrademark("")> 
@@ -55,5 +55,5 @@ Imports System.Windows
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.0.0.0")> 
-<Assembly: AssemblyFileVersion("1.0.0.0")> 
+<Assembly: AssemblyVersion("0.0.0.3")> 
+<Assembly: AssemblyFileVersion("0.0.0.3")> 

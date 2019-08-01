@@ -68,10 +68,14 @@
   <PropertyGroup>
     <ApplicationIcon>AtomyIcon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="SpreadsheetGear">
       <HintPath>Lib\SpreadsheetGear.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.OleDb">
       <HintPath>Lib\System.Data.OleDb.dll</HintPath>
@@ -232,6 +236,7 @@
       <DependentUpon>AtomyDataSet.xsd</DependentUpon>
     </None>
     <None Include="Excel\Template\OrderA5_1.xlsx" />
+    <None Include="My Project\app.manifest" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>

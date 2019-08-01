@@ -4,7 +4,7 @@
     xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
     Title="Phiếu xuất" Height="768" Width="1020" ShowInTaskbar="False">
     <Window.Resources>
-        <bindValidation:ValueConverter x:Key="valueConverter" />
+        <bindValidation:NumericConverter x:Key="numericConverter" />
         <ControlTemplate x:Key="ValidationTemplate">
             <DockPanel>
                 <TextBlock Foreground="Red" FontSize="20">!</TextBlock>

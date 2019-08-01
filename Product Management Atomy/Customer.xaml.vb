@@ -269,15 +269,15 @@ Public Class Customer
                 row.Update_Date = now.ToString("yyyy/MM/dd")
                 row.Update_Time = now.ToString("HH:mm:ss")
                 row.Update_User = Utility.LoginUserCode
-
+              
                 cmd.Parameters.Add("@CusCode", OleDbType.VarChar).Value = row.CusCode
-                cmd.Parameters.Add("@First_Name", OleDbType.VarChar).Value = row.First_Name
-                cmd.Parameters.Add("@Last_Name", OleDbType.VarChar).Value = row.Last_Name
-                cmd.Parameters.Add("@Company", OleDbType.VarChar).Value = row.Company
-                cmd.Parameters.Add("@_E_mail_Address", OleDbType.VarChar).Value = row._E_mail_Address
-                cmd.Parameters.Add("@Job_Title", OleDbType.VarChar).Value = row.Job_Title
-                cmd.Parameters.Add("@Business_Phone", OleDbType.VarChar).Value = row.Business_Phone
-                cmd.Parameters.Add("@Home_Phone", OleDbType.VarChar).Value = row.Home_Phone
+                cmd.Parameters.Add("@Company", OleDbType.VarChar).Value = row.First_Name
+                cmd.Parameters.Add("@Last Name", OleDbType.VarChar).Value = row.Last_Name
+                cmd.Parameters.Add("@First Name", OleDbType.VarChar).Value = row.Company
+                cmd.Parameters.Add("@E-mail Address", OleDbType.VarChar).Value = row._E_mail_Address
+                cmd.Parameters.Add("@Job Title", OleDbType.VarChar).Value = row.Job_Title
+                cmd.Parameters.Add("@Business Phone", OleDbType.VarChar).Value = row.Business_Phone
+                cmd.Parameters.Add("@Home Phone", OleDbType.VarChar).Value = row.Home_Phone
                 cmd.Parameters.Add("@Mobile_Phone", OleDbType.Currency).Value = row.Mobile_Phone
                 cmd.Parameters.Add("@Fax_Number", OleDbType.Currency).Value = row.Fax_Number
                 cmd.Parameters.Add("@Address", OleDbType.VarChar).Value = row.Address
@@ -288,6 +288,8 @@ Public Class Customer
                 cmd.Parameters.Add("@Web_Page", OleDbType.VarChar).Value = row.Web_Page
                 cmd.Parameters.Add("@Facebook_ID", OleDbType.VarChar).Value = row.Facebook_ID
                 cmd.Parameters.Add("@Notes", OleDbType.VarChar).Value = row.Notes
+                cmd.Parameters.Add("@Retired", OleDbType.Boolean).Value = row.Retired
+                cmd.Parameters.Add("@Retired_Date", OleDbType.VarChar).Value = row.Retired_Date
                 cmd.Parameters.Add("@Create_Date", OleDbType.VarChar).Value = row.Create_Date
                 cmd.Parameters.Add("@Create_Time", OleDbType.VarChar).Value = row.Create_Time
                 cmd.Parameters.Add("@Create_User", OleDbType.VarChar).Value = row.Create_User
@@ -379,8 +381,8 @@ Public Class Customer
     Private Function InsertCustomerSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("INSERT INTO [Customer]                               ")
-        sb.AppendLine("            ( [CusCode], [FirstName], [Description], [Category], [Condition], [Acquired Date], [Unit], [Purchase Price], [Sales Price], [Current Value], [Location], [Manufacturer], [Model], [Comments], [Retired Date], [Create Date], [Create Time], [Create User], [Update Date], [Update Time], [Update User]) ")
-        sb.AppendLine("     VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                                          ")
+        sb.AppendLine("            ( [CusCode],[Company],[Last Name],[First Name], [E-mail Address], [Job Title], [Business Phone], [Home Phone], [Mobile Phone], [Fax Number], [Address], [City], [State/Province], [Zip/Postal Code], [Country/Region], [Web Page], [Facebook ID],[Notes],[Retired],[Retired Date], [Create Date], [Create Time], [Create User], [Update Date], [Update Time], [Update User]) ")
+        sb.AppendLine("     VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)                                          ")
         Return sb.ToString()
     End Function
 #End Region
