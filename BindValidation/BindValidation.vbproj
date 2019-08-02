@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CapitalizedNameConverter.vb" />
+    <Compile Include="EmailConverter.vb" />
     <Compile Include="EmailValidationRule.vb" />
     <Compile Include="FaxValidationRule.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

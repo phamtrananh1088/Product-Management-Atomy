@@ -4295,6 +4295,8 @@ Partial Public Class AtomyDataSet
 
         Private columnFirst_Name As Global.System.Data.DataColumn
 
+        Private columnFullName As Global.System.Data.DataColumn
+
         Private _columnE_mail_Address As Global.System.Data.DataColumn
 
         Private columnJob_Title As Global.System.Data.DataColumn
@@ -4413,6 +4415,14 @@ Partial Public Class AtomyDataSet
         Public ReadOnly Property First_NameColumn() As Global.System.Data.DataColumn
             Get
                 Return Me.columnFirst_Name
+            End Get
+        End Property
+
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")> _
+        Public ReadOnly Property FullNameColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnFullName
             End Get
         End Property
 
@@ -4642,6 +4652,7 @@ Partial Public Class AtomyDataSet
                     ByVal Company As String, _
                     ByVal Last_Name As String, _
                     ByVal First_Name As String, _
+                    ByVal FullName As String, _
                     ByVal _E_mail_Address As String, _
                     ByVal Job_Title As String, _
                     ByVal Business_Phone As String, _
@@ -4666,7 +4677,7 @@ Partial Public Class AtomyDataSet
                     ByVal Update_Time As String, _
                     ByVal Update_User As String) As CustomerRow
             Dim rowCustomerRow As CustomerRow = CType(Me.NewRow, CustomerRow)
-            Dim columnValuesArray() As Object = New Object() {Nothing, CusCode, Company, Last_Name, First_Name, _E_mail_Address, Job_Title, Business_Phone, Home_Phone, Mobile_Phone, Fax_Number, Address, City, _State_Province, _ZIP_Postal_Code, _Country_Region, Web_Page, Facebook_ID, Notes, Attachments, Retired, Retired_Date, Create_Date, Create_Time, Create_User, Update_Date, Update_Time, Update_User}
+            Dim columnValuesArray() As Object = New Object() {Nothing, CusCode, Company, Last_Name, First_Name, FullName, _E_mail_Address, Job_Title, Business_Phone, Home_Phone, Mobile_Phone, Fax_Number, Address, City, _State_Province, _ZIP_Postal_Code, _Country_Region, Web_Page, Facebook_ID, Notes, Attachments, Retired, Retired_Date, Create_Date, Create_Time, Create_User, Update_Date, Update_Time, Update_User}
             rowCustomerRow.ItemArray = columnValuesArray
             Me.Rows.Add(rowCustomerRow)
             Return rowCustomerRow
@@ -4700,6 +4711,7 @@ Partial Public Class AtomyDataSet
             Me.columnCompany = MyBase.Columns("Company")
             Me.columnLast_Name = MyBase.Columns("Last Name")
             Me.columnFirst_Name = MyBase.Columns("First Name")
+            Me.columnFullName = MyBase.Columns("FullName")
             Me._columnE_mail_Address = MyBase.Columns("E-mail Address")
             Me.columnJob_Title = MyBase.Columns("Job Title")
             Me.columnBusiness_Phone = MyBase.Columns("Business Phone")
@@ -4738,6 +4750,8 @@ Partial Public Class AtomyDataSet
             MyBase.Columns.Add(Me.columnLast_Name)
             Me.columnFirst_Name = New Global.System.Data.DataColumn("First Name", GetType(String), Nothing, Global.System.Data.MappingType.Element)
             MyBase.Columns.Add(Me.columnFirst_Name)
+            Me.columnFullName = New Global.System.Data.DataColumn("FullName", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnFullName)
             Me._columnE_mail_Address = New Global.System.Data.DataColumn("E-mail Address", GetType(String), Nothing, Global.System.Data.MappingType.Element)
             Me._columnE_mail_Address.ExtendedProperties.Add("Generator_ColumnVarNameInTable", "_columnE_mail_Address")
             Me._columnE_mail_Address.ExtendedProperties.Add("Generator_UserColumnName", "E-mail Address")
@@ -9693,6 +9707,21 @@ Partial Public Class AtomyDataSet
 
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")> _
+        Public Property FullName() As String
+            Get
+                If Me.IsFullNameNull Then
+                    Return String.Empty
+                Else
+                    Return CType(Me(Me.tableCustomer.FullNameColumn), String)
+                End If
+            End Get
+            Set(value As String)
+                Me(Me.tableCustomer.FullNameColumn) = value
+            End Set
+        End Property
+
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")> _
         Public Property _E_mail_Address() As String
             Get
                 If Me.Is_E_mail_AddressNull Then
@@ -10078,6 +10107,18 @@ Partial Public Class AtomyDataSet
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")> _
         Public Sub SetFirst_NameNull()
             Me(Me.tableCustomer.First_NameColumn) = Global.System.Convert.DBNull
+        End Sub
+
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")> _
+        Public Function IsFullNameNull() As Boolean
+            Return Me.IsNull(Me.tableCustomer.FullNameColumn)
+        End Function
+
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")> _
+        Public Sub SetFullNameNull()
+            Me(Me.tableCustomer.FullNameColumn) = Global.System.Convert.DBNull
         End Sub
 
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _

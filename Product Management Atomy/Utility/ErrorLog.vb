@@ -18,6 +18,11 @@ Public Class ErrorLog
         Dim i = LogError(screenName, errorText, ex)
         Task.WhenAny(i)
     End Sub
+    Public Shared Sub SetError(page As Page, errorText As String, ex As Exception)
+        Dim screenName As String = IIf(page.Name = "", page.ToString, page.Name)
+        Dim i = LogError(screenName, errorText, ex)
+        Task.WhenAny(i)
+    End Sub
     Public Shared Sub SetError(windowName As String, errorText As String, ex As Exception)
         Dim i = LogError(windowName, errorText, ex)
         Task.WhenAny(i)

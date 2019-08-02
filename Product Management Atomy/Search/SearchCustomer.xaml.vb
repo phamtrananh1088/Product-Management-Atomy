@@ -31,7 +31,7 @@ Class SearchCustomer
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select * from [Customer] where [CusCode] like ?"
+            Dim sSQL As String = "select *,[First Name] + [Last Name] as FullName, [E-mail Address] as Email, [Mobile Phone] as MobilePhone from [Customer] where [CusCode] like ?"
             Dim adapt As New OleDbDataAdapter()
             adapt.SelectCommand = New OleDbCommand()
             adapt.SelectCommand.Connection = dbConn.Conn
@@ -73,6 +73,18 @@ Class SearchCustomer
         _search.ResultF(data)
     End Sub
 
+    Private Sub cell_HyperlinkClick(sender As Object, e As RoutedEventArgs)
+        Dim destination = DirectCast(e.OriginalSource, Hyperlink).NavigateUri
+        Using browser As New Process
+            browser.StartInfo = New ProcessStartInfo()
+            browser.StartInfo.FileName = destination.ToString
+            browser.StartInfo.UseShellExecute = True
+            browser.StartInfo.ErrorDialog = True
+            browser.Start()
+        End Using
+
+    End Sub
+    
 End Class
 Public Class SearchDataCustomer
     Inherits SearchDataArgs

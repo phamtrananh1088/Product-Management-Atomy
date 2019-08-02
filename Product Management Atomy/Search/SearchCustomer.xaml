@@ -10,6 +10,7 @@
       Title="Tìm kiếm khách hàng">
     <Page.Resources>
         <bindValidation:NameConverter x:Key="nameConverter" />
+        <bindValidation:EmailConverter x:Key="emailConverter" />
         <Style x:Key="Link" TargetType="Button">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -35,25 +36,7 @@
     <Grid>
         <Grid.Resources>
             <DataTemplate x:Key="LinkCusCodeTemplate">
-                <Button Style="{StaticResource Link}" Click="rowCusCode_Click">
-                    <Button.Content>
-                        <Binding Path="CusCode"/>
-                    </Button.Content>
-                    <Button.Tag>
-                        <MultiBinding StringFormat="{}{0}  {1}">
-                            <Binding Path="First_Name"/>
-                            <Binding Path="Last_Name"/>
-                        </MultiBinding>
-                    </Button.Tag>
-                </Button>
-            </DataTemplate>
-            <DataTemplate x:Key="NameTemplate" >
-                <Label>
-                    <MultiBinding StringFormat="{}{0} {1}">
-                        <Binding Path="First_Name"/>
-                        <Binding Path="Last_Name"/>
-                    </MultiBinding>
-                </Label>
+                <Button  Content="{Binding CusCode}" Tag="{Binding FullName}"  Style="{StaticResource Link}" Click="rowCusCode_Click"/>
             </DataTemplate>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
@@ -71,9 +54,16 @@
                   CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTemplateColumn CellTemplate="{StaticResource LinkCusCodeTemplate}"  Header="Mã khách hàng" Width="100"/>
-                <DataGridTemplateColumn CellTemplate="{StaticResource NameTemplate}"  Header="Tên khách hàng" Width="300"/>
-                <DataGridHyperlinkColumn Binding="{Binding E_mail_Address}" Header="Địa chỉ e-mail" Width="300"/>
-                <DataGridTextColumn Binding="{Binding Mobile_Phone}" Header="Điện thoại di động" Width="300"/>
+                <DataGridTextColumn Binding="{Binding FullName}" Header="Điện thoại di động" Width="300"/>
+                <DataGridHyperlinkColumn Binding="{Binding Email, Converter={StaticResource emailConverter}}"  Header="Địa chỉ e-mail" Width="300"
+                                         ContentBinding="{Binding Email}">
+                    <!--<DataGridHyperlinkColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <EventSetter Event="Hyperlink.Click" Handler="cell_HyperlinkClick"/>
+                        </Style>
+                    </DataGridHyperlinkColumn.ElementStyle>-->
+                </DataGridHyperlinkColumn>
+                <DataGridTextColumn Binding="{Binding MobilePhone}" Header="Điện thoại di động" Width="300"/>
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="btnClose" Content="Kết thúc" Grid.Column="1" HorizontalAlignment="Left" Margin="655,438,0,0" VerticalAlignment="Top" Width="75" Click="btnClose_Click" Height="22"/>

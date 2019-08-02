@@ -1,8 +1,14 @@
-﻿<Window x:Class="Order"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Page x:Class="Order"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Order" Height="900" Width="1220" ShowInTaskbar="False">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data"
+         xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
+    mc:Ignorable="d" 
+    d:DesignHeight="768" d:DesignWidth="1024"
+    Title="Hóa đơn bán hàng">
     <Grid>
         
     </Grid>
-</Window>
+</Page>

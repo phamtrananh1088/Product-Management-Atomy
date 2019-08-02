@@ -1,9 +1,14 @@
-﻿<Window x:Class="Customer"
+﻿<Page x:Class="Customer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"    
-    Title="Khách hàng" Height="768" Width="1024" ShowInTaskbar="False">
-    <Window.Resources>
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data"
+    xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
+    mc:Ignorable="d" 
+    d:DesignHeight="768" d:DesignWidth="1024"
+    Title="Khách hàng">
+    <Page.Resources>
         <bindValidation:CapitalizedNameConverter x:Key="capitalizedNameConverter" />
         <ControlTemplate x:Key="ValidationTemplate">
             <DockPanel>
@@ -20,7 +25,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-    </Window.Resources>
+    </Page.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="73*"/>
@@ -151,4 +156,4 @@
                 Click="btnInsert_Click"/>
 
     </Grid>
-</Window>
+</Page>
