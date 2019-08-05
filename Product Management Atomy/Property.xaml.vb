@@ -3,20 +3,12 @@ Imports System.Data
 Imports System.Text
 
 Public Class Property1
-    Private _AtomyDataSet As AtomyDataSet
-    Private _Mode As DataRowState
-    Public Property AtomyDataSet As AtomyDataSet
-        Get
-            Return _AtomyDataSet
-        End Get
-        Set(value As AtomyDataSet)
-
-        End Set
-    End Property
+    Private AtomyDataSet As AtomyDataSet
+    Private Mode As DataRowState
 
     Public Sub New()
-        _AtomyDataSet = New AtomyDataSet()
-        _Mode = DataRowState.Added
+        AtomyDataSet = New AtomyDataSet()
+        Mode = DataRowState.Added
         ' This call is required by the designer.
         InitializeComponent()
         btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
@@ -31,11 +23,11 @@ Public Class Property1
             Dim sSQL As String = "select * from [Property] where [PropCode] = ?"
             Dim adapt As New OleDbDataAdapter(sSQL, dbConn.Conn)
             adapt.SelectCommand.Parameters.Add("@PropCode", OleDbType.VarChar).Value = PropCd
-            _AtomyDataSet._Property.Clear()
-            adapt.Fill(_AtomyDataSet, "Property")
-            If _AtomyDataSet._Property.Rows.Count > 0 Then
-                Me.DataContext = _AtomyDataSet._Property.Rows(0)
-                _Mode = DataRowState.Modified
+            AtomyDataSet._Property.Clear()
+            adapt.Fill(AtomyDataSet, "Property")
+            If AtomyDataSet._Property.Rows.Count > 0 Then
+                Me.DataContext = AtomyDataSet._Property.Rows(0)
+                Mode = DataRowState.Modified
                 CtrEnable()
             Else
                 btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
@@ -50,16 +42,16 @@ Public Class Property1
     End Sub
 #End Region
 
-#Region "EnableButton"
+#Region "CtrEnable"
     Private Sub CtrEnable()
-        If _Mode = DataRowState.Modified Then
+        If Mode = DataRowState.Modified Then
             'btnDelete.Background = Brushes.Red
             'btnDelete.Foreground = Brushes.White
             'btnDelete.BorderBrush = Brushes.Red
             txtPropCd.IsEnabled = False
             btnDelete.IsEnabled = True
-            If _AtomyDataSet._Property.Rows.Count > 0 Then
-                Dim row As AtomyDataSet.PropertyRow = _AtomyDataSet._Property.Rows(0)
+            If AtomyDataSet._Property.Rows.Count > 0 Then
+                Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
                 cbRetired.IsEnabled = row.Retired
             End If
         Else
@@ -74,8 +66,8 @@ Public Class Property1
     End Sub
 #End Region
 
-#Region "form_load"
-    Private Sub form_load(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+#Region "formload"
+    Private Sub formload(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
 
     End Sub
 #End Region
@@ -83,21 +75,21 @@ Public Class Property1
 #Region "btnUpdate_Click"
     Private Sub btnUpdate_Click(sender As Object, e As RoutedEventArgs)
         Try
-            Select Case _Mode
+            Select Case Mode
                 Case DataRowState.Added
                     If Not ValidateData(EnumAction.Insert) Then
                         Return
                     End If
-                    If Check.IsExisted("Property", txtPropCd.Text) Then
+                    If Check.IsExisted("Property", txtPropCd.Text.Trim) Then
                         MessageBox.Show("Mã sản phẩm đã tồn tại.")
-                        HelpCreatePropCode()
+                        HelpCreateCode()
                         Return
                     End If
 
-                    If InsertProperty() Then
+                    If Insert() Then
                         MessageBox.Show("Đã hoàn thành.")
                         lblPropCodeHint.Content = ""
-                        LoadData(txtPropCd.Text)
+                        LoadData(txtPropCd.Text.Trim)
                     Else
                         MessageBox.Show("Không thành công.")
                     End If
@@ -105,10 +97,10 @@ Public Class Property1
                     If Not ValidateData(EnumAction.Update) Then
                         Return
                     End If
-                    If UpdateProperty() Then
+                    If Update() Then
                         MessageBox.Show("Đã hoàn thành.")
                         lblPropCodeHint.Content = ""
-                        LoadData(txtPropCd.Text)
+                        LoadData(txtPropCd.Text.Trim)
                     Else
                         MessageBox.Show("Không thành công.")
                     End If
@@ -127,10 +119,10 @@ Public Class Property1
             If Not ValidateData(EnumAction.Delete) Then
                 Return
             End If
-            If _Mode = DataRowState.Modified Then
+            If Mode = DataRowState.Modified Then
                 Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
                 If confirm Then
-                    If DeleteProperty() Then
+                    If Delete() Then
                         MessageBox.Show("Đã hoàn thành.")
                         lblPropCodeHint.Content = ""
                         btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
@@ -147,25 +139,22 @@ Public Class Property1
 #Region "btnInsert_Click"
     Private Sub btnInsert_Click(sender As Object, e As RoutedEventArgs)
         Try
-            If Not ValidateData(EnumAction.Insert) Then
-                Return
-            End If
-            _AtomyDataSet._Property.Clear()
-            Dim newRow As AtomyDataSet.PropertyRow = _AtomyDataSet._Property.NewPropertyRow()
-            _AtomyDataSet._Property.Rows.Add(newRow)
-            Me.DataContext = _AtomyDataSet._Property.Rows(0)
-            _Mode = DataRowState.Added
+            AtomyDataSet._Property.Clear()
+            Dim newRow As AtomyDataSet.PropertyRow = AtomyDataSet._Property.NewPropertyRow()
+            AtomyDataSet._Property.Rows.Add(newRow)
+            Me.DataContext = AtomyDataSet._Property.Rows(0)
+            Mode = DataRowState.Added
             CtrEnable()
+            HelpCreateCode()
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Thêm.", ex)
         End Try
     End Sub
 #End Region
 
-#Region "search_SearchResult"
-    Private Sub search_SearchResult(sender As Object, e As SearchDataArgs)
+#Region "searchSearchResult"
+    Private Sub searchSearchResult(sender As Object, e As SearchDataArgs)
         LoadData(e.Code)
-
     End Sub
 #End Region
 
@@ -173,7 +162,7 @@ Public Class Property1
     Private Sub lnkPropCd_Click(sender As Object, e As RoutedEventArgs)
         Try
             Dim search As New Search()
-            AddHandler search.SearchResult, AddressOf search_SearchResult
+            AddHandler search.SearchResult, AddressOf searchSearchResult
             search.Kind = EnumSearch.SearchProperty
             search.ShowDialog()
         Catch ex As Exception
@@ -182,23 +171,25 @@ Public Class Property1
     End Sub
 #End Region
 
-#Region "txtPropCd_LostFocus"
-    Private Sub txtPropCd_LostFocus(sender As Object, e As RoutedEventArgs)
+#Region "txtCode_LostFocus"
+    Private Sub txtCode_LostFocus(sender As Object, e As RoutedEventArgs)
         Try
-            If _Mode = DataRowState.Added Then
-                Dim s = txtPropCd.Text.Trim()
+            Dim txtCode = DirectCast(sender, TextBox)
+            If Mode = DataRowState.Added Then
+                Dim s = txtCode.Text.Trim()
+                If s.Length = 0 Then
+                    Return
+                End If
                 If s.Length < 8 Then
                     Dim lead As String = New String("0", 8 - s.Length)
                     s = lead + s
-                    txtPropCd.Text = s
+                    txtCode.Text = s
                 End If
 
             End If
         Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã sản phẩm.", ex)
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
         End Try
-
-
     End Sub
 #End Region
 
@@ -228,73 +219,47 @@ Public Class Property1
     End Function
 #End Region
 
-    Private Function DeleteProperty() As Boolean
+#Region "INSERT"
+    Private Function Insert() As Boolean
         Dim dbConn As New DbConnect()
         Dim res As Integer
 
         Try
             dbConn.Open()
             dbConn.BeginTran()
-            Dim sSQL As String = DeletePropertySQL()
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
-            cmd.Transaction = dbConn.Tran
-            Dim row As AtomyDataSet.PropertyRow = _AtomyDataSet._Property.Rows(0)
-            cmd.Parameters.Add("@1", OleDbType.Boolean).Value = True
-            cmd.Parameters.Add("@2", OleDbType.VarChar).Value = New Date().ToString("yyyy/MM/dd")
-            cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.PropCode
-
-            res = cmd.ExecuteNonQuery()
-            dbConn.CommitTran()
-        Catch ex As Exception
-            dbConn.RollbackTran()
-            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi xóa sản phẩm.", ex)
-        Finally
-            dbConn.DisposeTran()
-            dbConn.Close()
-        End Try
-        Return res
-    End Function
-
-    Private Function InsertProperty() As Boolean
-        Dim dbConn As New DbConnect()
-        Dim res As Integer
-      
-        Try
-            dbConn.Open()
-            dbConn.BeginTran()
-            Dim sSQL As String = InsertPropertySQL()
+            Dim sSQL As String = InsertSQL()
             Using cmd As New OleDbCommand(sSQL, dbConn.Conn)
                 cmd.Transaction = dbConn.Tran
-                Dim row As AtomyDataSet.PropertyRow = _AtomyDataSet._Property.Rows(0)
+                Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
                 Dim now As Date = Date.Now
-                row.Create_Date = now.ToString("yyyy/MM/dd")
-                row.Create_Time = now.ToString("HH:mm:ss")
-                row.Create_User = Utility.LoginUserCode
-                row.Update_Date = now.ToString("yyyy/MM/dd")
-                row.Update_Time = now.ToString("HH:mm:ss")
-                row.Update_User = Utility.LoginUserCode
+                row.CreateDate = now.ToString("yyyy/MM/dd")
+                row.CreateTime = now.ToString("HH:mm:ss")
+                row.CreateUser = Utility.LoginUserCode
+                row.UpdateDate = now.ToString("yyyy/MM/dd")
+                row.UpdateTime = now.ToString("HH:mm:ss")
+                row.UpdateUser = Utility.LoginUserCode
 
                 cmd.Parameters.Add("@1", OleDbType.VarChar).Value = row.PropCode
                 cmd.Parameters.Add("@2", OleDbType.VarChar).Value = row.PropName
                 cmd.Parameters.Add("@3", OleDbType.VarChar).Value = IIf(row.Description Is Nothing, "", row.Description)
                 cmd.Parameters.Add("@4", OleDbType.VarChar).Value = IIf(row.Category Is Nothing, "", row.Category)
                 cmd.Parameters.Add("@5", OleDbType.VarChar).Value = IIf(row.Condition Is Nothing, "", row.Condition)
-                cmd.Parameters.Add("@6", OleDbType.VarChar).Value = IIf(row.Acquired_Date Is Nothing, now.ToString("yyyy/MM/dd"), row.Acquired_Date)
+                cmd.Parameters.Add("@6", OleDbType.VarChar).Value = IIf(row.AcquiredDate Is Nothing, now.ToString("yyyy/MM/dd"), row.AcquiredDate)
                 cmd.Parameters.Add("@7", OleDbType.VarChar).Value = IIf(row.Unit Is Nothing, "", row.Unit)
-                cmd.Parameters.Add("@8", OleDbType.Currency).Value = row.Purchase_Price
-                cmd.Parameters.Add("@9", OleDbType.Currency).Value = row.Sales_Price
-                cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.Current_Value
+                cmd.Parameters.Add("@8", OleDbType.Currency).Value = row.PurchasePrice
+                cmd.Parameters.Add("@9", OleDbType.Currency).Value = row.SalesPrice
+                cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.CurrentValue
                 cmd.Parameters.Add("@11", OleDbType.VarChar).Value = IIf(row.Location Is Nothing, Utility.DefaultData.DefaultLocation, row.Location)
                 cmd.Parameters.Add("@12", OleDbType.VarChar).Value = IIf(row.Manufacturer Is Nothing, Utility.DefaultData.DefaultManufacturer, row.Manufacturer)
                 cmd.Parameters.Add("@13", OleDbType.VarChar).Value = IIf(row.Model Is Nothing, "", row.Model)
                 cmd.Parameters.Add("@14", OleDbType.VarChar).Value = IIf(row.Comments Is Nothing, "", row.Comments)
-                cmd.Parameters.Add("@15", OleDbType.VarChar).Value = IIf(row.Retired_Date Is Nothing, "", row.Retired_Date)
-                cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.Create_Date
-                cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.Create_Time
-                cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.Create_User
-                cmd.Parameters.Add("@19", OleDbType.VarChar).Value = row.Update_Date
-                cmd.Parameters.Add("@20", OleDbType.VarChar).Value = row.Update_Time
-                cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.Update_User
+                cmd.Parameters.Add("@15", OleDbType.VarChar).Value = IIf(row.RetiredDate Is Nothing, "", row.RetiredDate)
+                cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.CreateDate
+                cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.CreateTime
+                cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.CreateUser
+                cmd.Parameters.Add("@19", OleDbType.VarChar).Value = row.UpdateDate
+                cmd.Parameters.Add("@20", OleDbType.VarChar).Value = row.UpdateTime
+                cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.UpdateUser
 
                 res = cmd.ExecuteNonQuery()
 
@@ -310,46 +275,48 @@ Public Class Property1
         End Try
         Return res
     End Function
+#End Region
 
-    Private Function UpdateProperty() As Boolean
+#Region "UPDATE"
+    Private Function Update() As Boolean
         Dim dbConn As New DbConnect()
         Dim res As Integer
 
         Try
             dbConn.Open()
             dbConn.BeginTran()
-            Dim sSQL As String = UpdatePropertySQL()
+            Dim sSQL As String = UpdateSQL()
             Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As AtomyDataSet.PropertyRow = _AtomyDataSet._Property.Rows(0)
+            Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
             Dim now As Date = Date.Now
-            row.Create_Date = now.ToString("yyyy/MM/dd")
-            row.Create_Time = now.ToString("HH:mm:ss")
-            row.Create_User = Utility.LoginUserCode
-            row.Update_Date = now.ToString("yyyy/MM/dd")
-            row.Update_Time = now.ToString("HH:mm:ss")
-            row.Update_User = Utility.LoginUserCode
-          
+            row.CreateDate = now.ToString("yyyy/MM/dd")
+            row.CreateTime = now.ToString("HH:mm:ss")
+            row.CreateUser = Utility.LoginUserCode
+            row.UpdateDate = now.ToString("yyyy/MM/dd")
+            row.UpdateTime = now.ToString("HH:mm:ss")
+            row.UpdateUser = Utility.LoginUserCode
+
             cmd.Parameters.Add("@PropName", OleDbType.VarChar).Value = row.PropName
             cmd.Parameters.Add("@Description", OleDbType.VarChar).Value = IIf(row.Description Is Nothing, "", row.Description)
             cmd.Parameters.Add("@Category", OleDbType.VarChar).Value = IIf(row.Category Is Nothing, "", row.Category)
             cmd.Parameters.Add("@Condition", OleDbType.VarChar).Value = IIf(row.Condition Is Nothing, "", row.Condition)
-            cmd.Parameters.Add("@Acquired_Date", OleDbType.VarChar).Value = IIf(row.Acquired_Date Is Nothing, now.ToString("yyyy/MM/dd"), row.Acquired_Date)
+            cmd.Parameters.Add("@AcquiredDate", OleDbType.VarChar).Value = IIf(row.AcquiredDate Is Nothing, now.ToString("yyyy/MM/dd"), row.AcquiredDate)
             cmd.Parameters.Add("@Unit", OleDbType.VarChar).Value = IIf(row.Unit Is Nothing, "", row.Unit)
-            cmd.Parameters.Add("@Purchase_Price", OleDbType.Currency).Value = row.Purchase_Price
-            cmd.Parameters.Add("@Sales_Price", OleDbType.Currency).Value = row.Sales_Price
-            cmd.Parameters.Add("@Current_Value", OleDbType.Currency).Value = row.Current_Value
+            cmd.Parameters.Add("@PurchasePrice", OleDbType.Currency).Value = row.PurchasePrice
+            cmd.Parameters.Add("@SalesPrice", OleDbType.Currency).Value = row.SalesPrice
+            cmd.Parameters.Add("@CurrentValue", OleDbType.Currency).Value = row.CurrentValue
             cmd.Parameters.Add("@Location", OleDbType.VarChar).Value = IIf(row.Location Is Nothing, Utility.DefaultData.DefaultLocation, row.Location)
             cmd.Parameters.Add("@Manufacturer", OleDbType.VarChar).Value = IIf(row.Manufacturer Is Nothing, Utility.DefaultData.DefaultManufacturer, row.Manufacturer)
             cmd.Parameters.Add("@Model", OleDbType.VarChar).Value = IIf(row.Model Is Nothing, "", row.Model)
             cmd.Parameters.Add("@Comments", OleDbType.VarChar).Value = IIf(row.Comments Is Nothing, "", row.Comments)
-            cmd.Parameters.Add("@Retired_Date", OleDbType.VarChar).Value = IIf(row.Retired_Date Is Nothing, "", row.Retired_Date)
-            cmd.Parameters.Add("@Create_Date", OleDbType.VarChar).Value = row.Create_Date
-            cmd.Parameters.Add("@Create_Time", OleDbType.VarChar).Value = row.Create_Time
-            cmd.Parameters.Add("@Create_User", OleDbType.VarChar).Value = row.Create_User
-            cmd.Parameters.Add("@Update_Date", OleDbType.VarChar).Value = row.Update_Date
-            cmd.Parameters.Add("@Update_Time", OleDbType.VarChar).Value = row.Update_Time
-            cmd.Parameters.Add("@Update_User", OleDbType.VarChar).Value = row.Update_User
+            cmd.Parameters.Add("@RetiredDate", OleDbType.VarChar).Value = IIf(row.RetiredDate Is Nothing, "", row.RetiredDate)
+            cmd.Parameters.Add("@CreateDate", OleDbType.VarChar).Value = row.CreateDate
+            cmd.Parameters.Add("@CreateTime", OleDbType.VarChar).Value = row.CreateTime
+            cmd.Parameters.Add("@CreateUser", OleDbType.VarChar).Value = row.CreateUser
+            cmd.Parameters.Add("@UpdateDate", OleDbType.VarChar).Value = row.UpdateDate
+            cmd.Parameters.Add("@UpdateTime", OleDbType.VarChar).Value = row.UpdateTime
+            cmd.Parameters.Add("@UpdateUser", OleDbType.VarChar).Value = row.UpdateUser
             cmd.Parameters.Add("@PropCode", OleDbType.VarChar).Value = row.PropCode
 
             res = cmd.ExecuteNonQuery()
@@ -363,9 +330,39 @@ Public Class Property1
         End Try
         Return res
     End Function
+#End Region
 
-#Region "HelpCreatePropCode"
-    Private Sub HelpCreatePropCode()
+#Region "DELETE"
+    Private Function Delete() As Boolean
+        Dim dbConn As New DbConnect()
+        Dim res As Integer
+
+        Try
+            dbConn.Open()
+            dbConn.BeginTran()
+            Dim sSQL As String = DeleteSQL()
+            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            cmd.Transaction = dbConn.Tran
+            Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
+            cmd.Parameters.Add("@1", OleDbType.Boolean).Value = True
+            cmd.Parameters.Add("@2", OleDbType.VarChar).Value = New Date().ToString("yyyy/MM/dd")
+            cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.PropCode
+
+            res = cmd.ExecuteNonQuery()
+            dbConn.CommitTran()
+        Catch ex As Exception
+            dbConn.RollbackTran()
+            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi xóa sản phẩm.", ex)
+        Finally
+            dbConn.DisposeTran()
+            dbConn.Close()
+        End Try
+        Return res
+    End Function
+#End Region
+
+#Region "HelpCreateCode"
+    Private Sub HelpCreateCode()
         lblPropCodeHint.Content = "Gợi ý: " + Utility.HelpCreateCode("Property")
     End Sub
 
@@ -374,7 +371,7 @@ Public Class Property1
 
 #Region "☆ SQL"
 #Region "InsertPropertySQL"
-    Private Function InsertPropertySQL() As String
+    Private Function InsertSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("INSERT INTO [Property]                               ")
         sb.AppendLine("            ( [PropCode], [PropName], [Description], [Category], [Condition], [Acquired Date], [Unit], [Purchase Price], [Sales Price], [Current Value], [Location], [Manufacturer], [Model], [Comments], [Retired Date], [Create Date], [Create Time], [Create User], [Update Date], [Update Time], [Update User]) ")
@@ -384,7 +381,7 @@ Public Class Property1
 #End Region
 
 #Region "UpdatePropertySQL"
-    Private Function UpdatePropertySQL() As String
+    Private Function UpdateSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("UPDATE [Property]                                ")
         sb.AppendLine("   SET [PropName] = ?                            ")
@@ -412,7 +409,7 @@ Public Class Property1
 #End Region
 
 #Region "DeletePropertySQL"
-    Private Function DeletePropertySQL() As String
+    Private Function DeleteSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("UPDATE [Property]                                ")
         sb.AppendLine("   SET [Retired] = ?                             ")
@@ -422,14 +419,5 @@ Public Class Property1
     End Function
 #End Region
 #End Region
-
-
-    Private Sub txtSalesPrice_LostFocus(sender As Object, e As RoutedEventArgs)
-        Try
-            '   DirectCast(sender, Control).GetBindingExpression(TextBox.TextProperty).UpdateSource()
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô giá bán.", ex)
-        End Try
-    End Sub
 
 End Class

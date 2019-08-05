@@ -6,7 +6,7 @@
       xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data" x:Class="SearchCustomer" 
       xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
       mc:Ignorable="d" 
-      d:DesignHeight="768" d:DesignWidth="1024"
+      d:DesignHeight="600" d:DesignWidth="800"
       Title="Tìm kiếm khách hàng">
     <Page.Resources>
         <bindValidation:NameConverter x:Key="nameConverter" />
@@ -39,34 +39,39 @@
                 <Button  Content="{Binding CusCode}" Tag="{Binding FullName}"  Style="{StaticResource Link}" Click="rowCusCode_Click"/>
             </DataTemplate>
         </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="14*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="81*"/>
-            <ColumnDefinition Width="431*"/>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="56*"/>
+            <ColumnDefinition Width="339*"/>
         </Grid.ColumnDefinitions>
-        <Label Content="Mã khách hàng:" HorizontalAlignment="Left" Margin="70,22,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="95" Height="26" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtCusCode" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="3,22,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="lblFirstName" Content="Họ:" HorizontalAlignment="Left" Margin="136,50,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.107,0.962" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtFirstName" HorizontalAlignment="Left" Height="23" Margin="3,50,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="170" Grid.Column="1"/>
-        <Label x:Name="lblLastName" Content="Tên:" HorizontalAlignment="Left" Margin="178,50,0,0" VerticalAlignment="Top" RenderTransformOrigin="8.289,0.559" Grid.Column="1"/>
-        <TextBox x:Name="txtLastName" HorizontalAlignment="Left" Height="23" Margin="210,50,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="170" Grid.Column="1"/>
-        <Button x:Name="btnSearch" Content="Tìm kiếm" Grid.Column="1" HorizontalAlignment="Left" Margin="622,127,0,0" VerticalAlignment="Top" Width="75" Click="btnSearch_Click" Height="22"/>
-        <DataGrid x:Name="grdData" HorizontalAlignment="Left" Margin="67,163,0,0" VerticalAlignment="Top" Height="268" Width="842" Grid.ColumnSpan="2" AutoGenerateColumns="False"
-                  CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True">
+        <Rectangle Fill="#FFE6E6E6" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="30" Grid.Column="0" Grid.Row="0"/>
+        <Label x:Name="lblTitle" Content="Tìm kiếm khách hàng" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Height="26" Width="304" Grid.ColumnSpan="3" Margin="10,0,0,0"/>
+        <Line Grid.ColumnSpan="3" X1="0" Y1="30" X2="1024" Y2="30" Stroke="#FFE6E6E6" StrokeDashArray="1,1" StrokeThickness="1"/>
+        <Label Content="Mã khách hàng:" HorizontalAlignment="Left" Margin="17,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.058,0.405" Width="95" Height="26" Grid.Row="1" Grid.Column="1"/>
+        <TextBox x:Name="txtCusCode" Grid.Column="2" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Row="1"/>
+        <Label x:Name="lblFirstName" Content="Họ:" HorizontalAlignment="Left" Margin="83,28,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.107,0.962" Grid.Row="1" Height="26" Width="28" Grid.Column="1"/>
+        <TextBox x:Name="txtFirstName" HorizontalAlignment="Left" Height="23" Margin="0,28,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="170" Grid.Column="2" Grid.Row="1"/>
+        <Label x:Name="lblLastName" Content="Tên:" HorizontalAlignment="Left" Margin="175,28,0,0" VerticalAlignment="Top" RenderTransformOrigin="8.289,0.559" Grid.Column="2" Grid.Row="1" Height="26" Width="32"/>
+        <TextBox x:Name="txtLastName" HorizontalAlignment="Left" Height="23" Margin="207,28,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="170" Grid.Column="2" Grid.Row="1"/>
+        <Label x:Name="lblPhone" Content="Điện thoại:" HorizontalAlignment="Left" Margin="44,56,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.107,0.962" Grid.Row="1" Height="26" Width="69" Grid.Column="1"/>
+        <TextBox x:Name="txtPhone" HorizontalAlignment="Left" Height="23" Margin="0,56,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="170" Grid.Column="2" Grid.Row="1"/>
+        <Button x:Name="btnSearch" Content="Tìm kiếm" Grid.Column="2" HorizontalAlignment="Left" Margin="433,84,0,0" VerticalAlignment="Top" Width="75" Click="btnSearch_Click" Height="22" Grid.Row="1"/>
+        <DataGrid x:Name="grdData" HorizontalAlignment="Left" Margin="0,131,0,0" VerticalAlignment="Top" Height="268" Width="723" Grid.ColumnSpan="2" AutoGenerateColumns="False"
+                  CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True" Grid.Row="1" Grid.Column="1">
             <DataGrid.Columns>
-                <DataGridTemplateColumn CellTemplate="{StaticResource LinkCusCodeTemplate}"  Header="Mã khách hàng" Width="100"/>
-                <DataGridTextColumn Binding="{Binding FullName}" Header="Điện thoại di động" Width="300"/>
-                <DataGridHyperlinkColumn Binding="{Binding Email, Converter={StaticResource emailConverter}}"  Header="Địa chỉ e-mail" Width="300"
-                                         ContentBinding="{Binding Email}">
-                    <!--<DataGridHyperlinkColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <EventSetter Event="Hyperlink.Click" Handler="cell_HyperlinkClick"/>
-                        </Style>
-                    </DataGridHyperlinkColumn.ElementStyle>-->
+                <DataGridTemplateColumn CellTemplate="{StaticResource LinkCusCodeTemplate}"  Header="Mã khách hàng" Width="95"/>
+                <DataGridTextColumn Binding="{Binding FullName}" Header="Tên khách hàng" Width="220"/>
+                <DataGridHyperlinkColumn Binding="{Binding EmailAddress, Converter={StaticResource emailConverter}}"  Header="Địa chỉ e-mail" Width="280"
+                                         ContentBinding="{Binding EmailAddress}">
                 </DataGridHyperlinkColumn>
-                <DataGridTextColumn Binding="{Binding MobilePhone}" Header="Điện thoại di động" Width="300"/>
+                <DataGridTextColumn Binding="{Binding MobilePhone}" Header="Điện thoại di động" Width="120"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="btnClose" Content="Kết thúc" Grid.Column="1" HorizontalAlignment="Left" Margin="655,438,0,0" VerticalAlignment="Top" Width="75" Click="btnClose_Click" Height="22"/>
+        <Button x:Name="btnClose" Content="Kết thúc" Grid.Column="2" HorizontalAlignment="Left" Margin="536,414,0,0" VerticalAlignment="Top" Width="75" Click="btnClose_Click" Height="22" Grid.Row="1"/>
 
 
     </Grid>

@@ -106,11 +106,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AtomyDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="AtomyDataSet.vb">
-      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Customer.xaml.vb">
       <DependentUpon>Customer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Home.xaml.vb">
+      <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
     <Compile Include="Order.xaml.vb">
       <DependentUpon>Order.xaml</DependentUpon>
@@ -130,6 +130,9 @@
     <Compile Include="Search\SearchProperty.xaml.vb">
       <DependentUpon>SearchProperty.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Search\SearchWarehouse.xaml.vb">
+      <DependentUpon>SearchWarehouse.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utility\Check.vb" />
     <Compile Include="Utility\CompanyInfo.vb" />
     <Compile Include="Utility\DbConnect.vb" />
@@ -141,6 +144,10 @@
       <DependentUpon>Warehouse.xaml</DependentUpon>
     </Compile>
     <Page Include="Customer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Home.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -177,6 +184,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Search\SearchProperty.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Search\SearchWarehouse.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -232,8 +243,8 @@
     </None>
     <None Include="AtomyDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AtomyDataSet.Designer.vb</LastGenOutput>
       <SubType>Designer</SubType>
-      <LastGenOutput>AtomyDataSet1.Designer.vb</LastGenOutput>
     </None>
     <None Include="AtomyDataSet.xss">
       <DependentUpon>AtomyDataSet.xsd</DependentUpon>

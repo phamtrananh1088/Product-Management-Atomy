@@ -45,12 +45,6 @@ Public Class NumericValidationRule
                 If Not canConvert Then
                     Return New ValidationResult(False, "Bạn phải nhập số tiền.")
                 End If
-            Case "LeadingZeroNumber"
-                Dim intVal As Integer = 0
-                canConvert = Integer.TryParse(strValue, intVal)
-                If Not canConvert Then
-                    Return New ValidationResult(False, "Bạn phải nhập số, các số 0 sẽ tự động thêm vào trước.")
-                End If
             Case Else
                 Throw New InvalidCastException("{ValidationType.Name} is not supported")
         End Select

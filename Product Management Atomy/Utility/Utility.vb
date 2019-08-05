@@ -25,6 +25,9 @@ Public Class Utility
     Public Shared Function CompanyName() As String
         Return DirectCast(Application.Current, Anh.Pmt.Atomy.Application).CompanyInfo.CompanyNm
     End Function
+    Public Shared Function AppCaption() As String
+        Return DirectCast(Application.Current, Anh.Pmt.Atomy.Application).AppCaption
+    End Function
 #End Region
 
     Public Structure DefaultData
@@ -53,7 +56,7 @@ Public Class Utility
                                 Case "Employee"
                                     sSQL = "select [EmpCode] from [Employee] order by [EmpCode]"
                                 Case "Warehouse"
-                                    sSQL = "select [WareCode] from [Warehouse Master] order by [WareCode]"
+                                    sSQL = "select [WareCode] from [WarehouseMaster] order by [WareCode]"
                                 Case Else
                                     sSQL = ""
                             End Select

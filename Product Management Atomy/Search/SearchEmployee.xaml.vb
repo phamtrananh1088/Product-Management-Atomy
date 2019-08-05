@@ -31,24 +31,24 @@ Class SearchEmployee
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select * from [Employee] where [EmpCode] like ?"
+            Dim sSQL As String = "select *,[FirstName] + ' ' + [LastName] as FullName from [Employee] where [EmpCode] like ?"
             Dim adapt As New OleDbDataAdapter()
             adapt.SelectCommand = New OleDbCommand()
             adapt.SelectCommand.Connection = dbConn.Conn
             adapt.SelectCommand.Parameters.Add("@EmpCode", OleDbType.VarChar).Value = txtEmpCode.Text.Trim + "%"
             If txtFirstName.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [First Name] like ?"
+                sSQL = sSQL + " and [FirstName] like ?"
                 adapt.SelectCommand.Parameters.Add("@FirstName", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
             End If
             If txtLastName.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [Last Name] like ?"
+                sSQL = sSQL + " and [LastName] like ?"
                 adapt.SelectCommand.Parameters.Add("@LastName", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
             End If
             If txtMobilePhone.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [Mobile Phone] like ?"
+                sSQL = sSQL + " and [MobilePhone] like ?"
                 adapt.SelectCommand.Parameters.Add("@MobilePhone", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
             End If
-            sSQL = sSQL + " order by [Last Name],[First Name]"
+            sSQL = sSQL + " order by [LastName],[FirstName]"
             adapt.SelectCommand.CommandText = sSQL
             _AtomyDataSet.Employee.Clear()
             adapt.Fill(_AtomyDataSet, "Employee")

@@ -18,7 +18,11 @@
                 Case EnumSearch.SearchCustomer
                     Dim page As SearchCustomer = New SearchCustomer(Me)
                     Me.Content = Page
-                    Me.Title = Page.Title
+                    Me.Title = page.Title
+                Case EnumSearch.SearchWareHouse
+                    Dim page As SearchWarehouse = New SearchWarehouse(Me)
+                    Me.Content = page
+                    Me.Title = page.Title
             End Select
         End Set
     End Property
@@ -41,6 +45,8 @@ Public Enum EnumSearch
     SearchProperty = 1
     SearchEmployee = 2
     SearchCustomer = 3
+    SearchWareHouse = 4
+
 End Enum
 
 Public MustInherit Class SearchDataArgs

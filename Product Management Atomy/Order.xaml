@@ -9,6 +9,12 @@
     d:DesignHeight="768" d:DesignWidth="1024"
     Title="Hóa đơn bán hàng">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55*"/>
+            <RowDefinition Height="713*"/>
+        </Grid.RowDefinitions>
+        <Rectangle Fill="#FFE6E6E6" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="30" Grid.Column="0" Grid.Row="0"/>
+        <Label x:Name="lblTitle" Content="Hóa đơn bán hàng" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Height="26" Width="304" Grid.ColumnSpan="3" Margin="10,0,0,0"/>
+        <Line Grid.ColumnSpan="3" X1="0" Y1="30" X2="1024" Y2="30" Stroke="#FFE6E6E6" StrokeDashArray="1,1" StrokeThickness="1"/>
     </Grid>
 </Page>

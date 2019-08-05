@@ -31,21 +31,21 @@ Class SearchCustomer
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select *,[First Name] + [Last Name] as FullName, [E-mail Address] as Email, [Mobile Phone] as MobilePhone from [Customer] where [CusCode] like ?"
+            Dim sSQL As String = "select *,[FirstName] + ' ' + [LastName] as FullName from [Customer] where [CusCode] like ?"
             Dim adapt As New OleDbDataAdapter()
             adapt.SelectCommand = New OleDbCommand()
             adapt.SelectCommand.Connection = dbConn.Conn
             adapt.SelectCommand.Parameters.Add("@CusCode", OleDbType.VarChar).Value = txtCusCode.Text.Trim + "%"
             If txtFirstName.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [First Name] like ?"
+                sSQL = sSQL + " and [FirstName] like ?"
                 adapt.SelectCommand.Parameters.Add("@FirstName", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
             End If
             If txtLastName.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [Last Name] like ?"
+                sSQL = sSQL + " and [LastName] like ?"
                 adapt.SelectCommand.Parameters.Add("@LastName", OleDbType.VarChar).Value = "%" + txtLastName.Text.Trim + "%"
             End If
 
-            sSQL = sSQL + " order by [Last Name],[First Name]"
+            sSQL = sSQL + " order by [LastName],[FirstName]"
             adapt.SelectCommand.CommandText = sSQL
             _AtomyDataSet.Customer.Clear()
             adapt.Fill(_AtomyDataSet, "Customer")
@@ -71,18 +71,6 @@ Class SearchCustomer
         Dim btn As Button = DirectCast(sender, Button)
         Dim data As New SearchDataCustomer() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
         _search.ResultF(data)
-    End Sub
-
-    Private Sub cell_HyperlinkClick(sender As Object, e As RoutedEventArgs)
-        Dim destination = DirectCast(e.OriginalSource, Hyperlink).NavigateUri
-        Using browser As New Process
-            browser.StartInfo = New ProcessStartInfo()
-            browser.StartInfo.FileName = destination.ToString
-            browser.StartInfo.UseShellExecute = True
-            browser.StartInfo.ErrorDialog = True
-            browser.Start()
-        End Using
-
     End Sub
     
 End Class
