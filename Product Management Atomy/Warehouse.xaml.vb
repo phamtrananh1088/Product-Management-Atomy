@@ -15,7 +15,7 @@ Public Class Warehouse
         Mode = DataRowState.Added
         ' This call is required by the designer.
         InitializeComponent()
-        btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
+
         ' Add any initialization after the InitializeComponent() call.
     End Sub
 #End Region
@@ -42,7 +42,7 @@ Public Class Warehouse
                 Mode = DataRowState.Modified
                 CtrEnable()
             Else
-                btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
+
             End If
 
         Catch ex As Exception
@@ -82,15 +82,12 @@ Public Class Warehouse
     Private Sub CtrEnable()
         If Mode = DataRowState.Modified Then
             txtWareCode.IsEnabled = False
-            btnDelete.IsEnabled = True
-            If AtomyDataSet.WarehouseMaster.Rows.Count > 0 Then
-                Dim row As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
-                cbRetired.IsEnabled = row.Retired
-            End If
+
+           
         Else
             txtWareCode.IsEnabled = True
-            btnDelete.IsEnabled = False
-            cbRetired.IsEnabled = False
+
+
         End If
 
     End Sub
@@ -540,7 +537,7 @@ Public Class Warehouse
                 If confirm Then
                     If Delete() Then
                         MessageBox.Show("Đã hoàn thành.")
-                        btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
+
                     End If
                 End If
             End If

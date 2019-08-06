@@ -7,11 +7,10 @@ Public Class Customer
 
     Public Sub New()
         AtomyDataSet = New AtomyDataSet()
-        Mode = DataRowState.Added
         ' This call is required by the designer.
         InitializeComponent()
+        Mode = ProcessSelection.Mode
         cboProvince.DataContext = Province.GetAllProvinces()
-        btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
         ' Add any initialization after the InitializeComponent() call.
     End Sub
 #Region "LoadData"
@@ -25,14 +24,7 @@ Public Class Customer
             adapt.SelectCommand.Parameters.Add("@CusCode", OleDbType.VarChar).Value = CusCode
             AtomyDataSet.Customer.Clear()
             adapt.Fill(AtomyDataSet, "Customer")
-            If AtomyDataSet.Customer.Rows.Count > 0 Then
-                Me.DataContext = AtomyDataSet.Customer.Rows(0)
-                Mode = DataRowState.Modified
-                CtrEnable()
-            Else
-                btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
-            End If
-
+            Me.DataContext = AtomyDataSet.Customer.Rows(0)
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi khi lấy dữ liệu.", ex)
         Finally
@@ -44,30 +36,61 @@ Public Class Customer
 
 #Region "EnableButton"
     Private Sub CtrEnable()
-        If Mode = DataRowState.Modified Then
-            'btnDelete.Background = Brushes.Red
-            'btnDelete.Foreground = Brushes.White
-            'btnDelete.BorderBrush = Brushes.Red
-            txtCusCode.IsEnabled = False
-            btnDelete.IsEnabled = True
-            If AtomyDataSet.Customer.Rows.Count > 0 Then
-                Dim row As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
-                cbRetired.IsEnabled = row.Retired
-            End If
-        Else
-            'btnDelete.Background = New SolidColorBrush(Color.FromRgb(244, 244, 244))
-            'btnDelete.Foreground = Brushes.Gray
-            'btnDelete.BorderBrush = Brushes.Gray
-            txtCusCode.IsEnabled = True
-            btnDelete.IsEnabled = False
-            cbRetired.IsEnabled = False
+        If Me.Mode = DataRowState.Added Then
+            txtFirstName.IsReadOnly = False
+            txtLastName.IsReadOnly = False
+            txtMobilePhone.IsReadOnly = False
+            txtFacebookID.IsReadOnly = False
+            txtEmailAddress.IsReadOnly = False
+            txtAddress.IsReadOnly = False
+            txtCompany.IsReadOnly = False
+            txtBusinessPhone.IsReadOnly = False
+            txtHomePhone.IsReadOnly = False
+            txtFaxNumber.IsReadOnly = False
+            txtCity.IsReadOnly = False
+            cboProvince.IsReadOnly = False
+            txtZip.IsReadOnly = False
+            txtCountry.IsReadOnly = False
+            txtWebPage.IsReadOnly = False
+            txtNotes.IsReadOnly = False
+
+        ElseIf Mode = DataRowState.Modified Then
+            txtFirstName.IsReadOnly = False
+            txtLastName.IsReadOnly = False
+            txtMobilePhone.IsReadOnly = False
+            txtFacebookID.IsReadOnly = False
+            txtEmailAddress.IsReadOnly = False
+            txtAddress.IsReadOnly = False
+            txtCompany.IsReadOnly = False
+            txtBusinessPhone.IsReadOnly = False
+            txtHomePhone.IsReadOnly = False
+            txtFaxNumber.IsReadOnly = False
+            txtCity.IsReadOnly = False
+            cboProvince.IsReadOnly = False
+            txtZip.IsReadOnly = False
+            txtCountry.IsReadOnly = False
+            txtWebPage.IsReadOnly = False
+            txtNotes.IsReadOnly = False
+
+        ElseIf Me.Mode = DataRowState.Deleted Then
+            txtFirstName.IsReadOnly = True
+            txtLastName.IsReadOnly = True
+            txtMobilePhone.IsReadOnly = True
+            txtFacebookID.IsReadOnly = True
+            txtEmailAddress.IsReadOnly = True
+            txtAddress.IsReadOnly = True
+            txtCompany.IsReadOnly = True
+            txtBusinessPhone.IsReadOnly = True
+            txtHomePhone.IsReadOnly = True
+            txtFaxNumber.IsReadOnly = True
+            txtCity.IsReadOnly = True
+            cboProvince.IsReadOnly = True
+            txtZip.IsReadOnly = True
+            txtCountry.IsReadOnly = True
+            txtWebPage.IsReadOnly = True
+            txtNotes.IsReadOnly = True
+
         End If
-
-    End Sub
-#End Region
-
-#Region "formload"
-    Private Sub formload(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
 
     End Sub
 #End Region
@@ -89,6 +112,7 @@ Public Class Customer
                     If InsertCustomer() Then
                         MessageBox.Show("Đã hoàn thành.")
                         lblCusCodeHint.Content = ""
+                        ProcessSelection.Mode = DataRowState.Modified
                         LoadData(txtCusCode.Text)
                     Else
                         MessageBox.Show("Không thành công.")
@@ -104,6 +128,19 @@ Public Class Customer
                     Else
                         MessageBox.Show("Không thành công.")
                     End If
+                Case DataRowState.Deleted
+                    If Not ValidateData(EnumAction.Delete) Then
+                        Return
+                    End If
+                    Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
+                    If confirm Then
+                        If DeleteCustomer() Then
+                            MessageBox.Show("Đã hoàn thành.")
+                            lblCusCodeHint.Content = ""
+                            ProcessSelection.Mode = DataRowState.Added
+                        End If
+                    End If
+
             End Select
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Cập nhật.", ex)
@@ -113,32 +150,9 @@ Public Class Customer
     End Sub
 #End Region
 
-#Region "btnDelete_Click"
-    Private Sub btnDelete_Click(sender As Object, e As RoutedEventArgs)
-        Try
-            If Not ValidateData(EnumAction.Delete) Then
-                Return
-            End If
-            If Mode = DataRowState.Modified Then
-                Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
-                If confirm Then
-                    If DeleteCustomer() Then
-                        MessageBox.Show("Đã hoàn thành.")
-                        lblCusCodeHint.Content = ""
-                        btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
-                    End If
-                End If
-            End If
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Xóa.", ex)
-        End Try
-
-    End Sub
-#End Region
-
-#Region "btnInsert_Click"
-    Private Sub btnInsert_Click(sender As Object, e As RoutedEventArgs)
-        Try
+#Region "ProcessSelection_ValueChange"
+    Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
+        If ProcessSelection.Mode = DataRowState.Added Then
             AtomyDataSet.Customer.Clear()
             Dim newRow As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.NewCustomerRow()
             AtomyDataSet.Customer.Rows.Add(newRow)
@@ -146,12 +160,15 @@ Public Class Customer
             Mode = DataRowState.Added
             CtrEnable()
             HelpCreateCusCode()
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Thêm.", ex)
-        End Try
+        ElseIf ProcessSelection.Mode = DataRowState.Modified Then
+            Me.Mode = DataRowState.Modified
+            CtrEnable()
+        ElseIf ProcessSelection.Mode = DataRowState.Deleted Then
+            Me.Mode = DataRowState.Deleted
+            CtrEnable()
+        End If
     End Sub
 #End Region
-
 #Region "searchSearchResult"
     Private Sub searchSearchResult(sender As Object, e As SearchDataArgs)
         LoadData(e.Code)
@@ -241,15 +258,15 @@ Public Class Customer
                 row.UpdateUser = Utility.LoginUserCode
 
                 cmd.Parameters.Add("@CusCode", OleDbType.VarChar).Value = row.CusCode
-                cmd.Parameters.Add("@Company", OleDbType.VarChar).Value = row.FirstName
-                cmd.Parameters.Add("@Last Name", OleDbType.VarChar).Value = row.LastName
-                cmd.Parameters.Add("@First Name", OleDbType.VarChar).Value = row.Company
-                cmd.Parameters.Add("@E-mail Address", OleDbType.VarChar).Value = row.EmailAddress
-                cmd.Parameters.Add("@Job Title", OleDbType.VarChar).Value = row.JobTitle
-                cmd.Parameters.Add("@Business Phone", OleDbType.VarChar).Value = row.BusinessPhone
-                cmd.Parameters.Add("@Home Phone", OleDbType.VarChar).Value = row.HomePhone
-                cmd.Parameters.Add("@MobilePhone", OleDbType.Currency).Value = row.MobilePhone
-                cmd.Parameters.Add("@FaxNumber", OleDbType.Currency).Value = row.FaxNumber
+                cmd.Parameters.Add("@Company", OleDbType.VarChar).Value = row.Company
+                cmd.Parameters.Add("@LastName", OleDbType.VarChar).Value = row.LastName
+                cmd.Parameters.Add("@FirstName", OleDbType.VarChar).Value = row.FirstName
+                cmd.Parameters.Add("@EmailAddress", OleDbType.VarChar).Value = row.EmailAddress
+                cmd.Parameters.Add("@JobTitle", OleDbType.VarChar).Value = row.JobTitle
+                cmd.Parameters.Add("@BusinessPhone", OleDbType.VarChar).Value = row.BusinessPhone
+                cmd.Parameters.Add("@HomePhone", OleDbType.VarChar).Value = row.HomePhone
+                cmd.Parameters.Add("@MobilePhone", OleDbType.VarChar).Value = row.MobilePhone
+                cmd.Parameters.Add("@FaxNumber", OleDbType.VarChar).Value = row.FaxNumber
                 cmd.Parameters.Add("@Address", OleDbType.VarChar).Value = row.Address
                 cmd.Parameters.Add("@City", OleDbType.VarChar).Value = row.City
                 cmd.Parameters.Add("@StateProvince", OleDbType.VarChar).Value = row.StateProvince
@@ -301,15 +318,15 @@ Public Class Customer
             row.UpdateTime = now.ToString("HH:mm:ss")
             row.UpdateUser = Utility.LoginUserCode
 
-            cmd.Parameters.Add("@FirstName", OleDbType.VarChar).Value = row.FirstName
-            cmd.Parameters.Add("@LastName", OleDbType.VarChar).Value = row.LastName
             cmd.Parameters.Add("@Company", OleDbType.VarChar).Value = row.Company
+            cmd.Parameters.Add("@LastName", OleDbType.VarChar).Value = row.LastName
+            cmd.Parameters.Add("@FirstName", OleDbType.VarChar).Value = row.FirstName
             cmd.Parameters.Add("@EmailAddress", OleDbType.VarChar).Value = row.EmailAddress
             cmd.Parameters.Add("@JobTitle", OleDbType.VarChar).Value = row.JobTitle
             cmd.Parameters.Add("@BusinessPhone", OleDbType.VarChar).Value = row.BusinessPhone
             cmd.Parameters.Add("@HomePhone", OleDbType.VarChar).Value = row.HomePhone
-            cmd.Parameters.Add("@MobilePhone", OleDbType.Currency).Value = row.MobilePhone
-            cmd.Parameters.Add("@FaxNumber", OleDbType.Currency).Value = row.FaxNumber
+            cmd.Parameters.Add("@MobilePhone", OleDbType.VarChar).Value = row.MobilePhone
+            cmd.Parameters.Add("@FaxNumber", OleDbType.VarChar).Value = row.FaxNumber
             cmd.Parameters.Add("@Address", OleDbType.VarChar).Value = row.Address
             cmd.Parameters.Add("@City", OleDbType.VarChar).Value = row.City
             cmd.Parameters.Add("@StateProvince", OleDbType.VarChar).Value = row.StateProvince
@@ -318,9 +335,8 @@ Public Class Customer
             cmd.Parameters.Add("@WebPage", OleDbType.VarChar).Value = row.WebPage
             cmd.Parameters.Add("@FacebookID", OleDbType.VarChar).Value = row.FacebookID
             cmd.Parameters.Add("@Notes", OleDbType.VarChar).Value = row.Notes
-            cmd.Parameters.Add("@CreateDate", OleDbType.VarChar).Value = row.CreateDate
-            cmd.Parameters.Add("@CreateTime", OleDbType.VarChar).Value = row.CreateTime
-            cmd.Parameters.Add("@CreateUser", OleDbType.VarChar).Value = row.CreateUser
+            cmd.Parameters.Add("@Retired", OleDbType.Boolean).Value = row.Retired
+            cmd.Parameters.Add("@RetiredDate", OleDbType.VarChar).Value = row.RetiredDate
             cmd.Parameters.Add("@UpdateDate", OleDbType.VarChar).Value = row.UpdateDate
             cmd.Parameters.Add("@UpdateTime", OleDbType.VarChar).Value = row.UpdateTime
             cmd.Parameters.Add("@UpdateUser", OleDbType.VarChar).Value = row.UpdateUser
@@ -351,7 +367,7 @@ Public Class Customer
     Private Function InsertCustomerSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("INSERT INTO [Customer]                               ")
-        sb.AppendLine("            ( [CusCode],[Company],[Last Name],[First Name], [E-mail Address], [Job Title], [Business Phone], [Home Phone], [Mobile Phone], [Fax Number], [Address], [City], [State/Province], [Zip/Postal Code], [Country/Region], [Web Page], [Facebook ID],[Notes],[Retired],[Retired Date], [Create Date], [Create Time], [Create User], [Update Date], [Update Time], [Update User]) ")
+        sb.AppendLine("            ( [CusCode],[Company],[LastName],[FirstName], [EmailAddress], [JobTitle], [BusinessPhone], [HomePhone], [MobilePhone], [FaxNumber], [Address], [City], [StateProvince], [ZipPostalCode], [CountryRegion], [WebPage], [FacebookID],[Notes],[Retired],[RetiredDate], [CreateDate], [CreateTime], [CreateUser], [UpdateDate], [UpdateTime], [UpdateUser]) ")
         sb.AppendLine("     VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)                                          ")
         Return sb.ToString()
     End Function
@@ -361,25 +377,7 @@ Public Class Customer
     Private Function UpdateCustomerSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("UPDATE [Customer]                                ")
-        sb.AppendLine("   SET [FirstName] = ?                            ")
-        sb.AppendLine("     , [Description] = ?                         ")
-        sb.AppendLine("     , [Category] = ?                            ")
-        sb.AppendLine("     , [Condition] = ?                           ")
-        sb.AppendLine("     , [Acquired Date] = ?                       ")
-        sb.AppendLine("     , [Unit] = ?                                ")
-        sb.AppendLine("     , [Purchase Price] = ?                      ")
-        sb.AppendLine("     , [Sales Price] = ?                         ")
-        sb.AppendLine("     , [Current Value] = ?                       ")
-        sb.AppendLine("     , [Location] = ?                            ")
-        sb.AppendLine("     , [Manufacturer] = ?                        ")
-        sb.AppendLine("     , [Model] = ?                               ")
-        sb.AppendLine("     , [Comments] = ?                            ")
-        sb.AppendLine("     , [Create Date] = ?                         ")
-        sb.AppendLine("     , [Create Time] = ?                         ")
-        sb.AppendLine("     , [Create User] = ?                         ")
-        sb.AppendLine("     , [Update Date] = ?                         ")
-        sb.AppendLine("     , [Update Time] = ?                         ")
-        sb.AppendLine("     , [Update User] = ?                         ")
+        sb.AppendLine("   set [Company] = ?,[LastName] = ?,[FirstName] = ?, [EmailAddress] = ?, [JobTitle] = ?, [BusinessPhone] = ?, [HomePhone] = ?, [MobilePhone] = ?, [FaxNumber] = ?, [Address] = ?, [City] = ?, [StateProvince] = ?, [ZipPostalCode] = ?, [CountryRegion] = ?, [WebPage] = ?, [FacebookID] = ?,[Notes] = ?,[Retired] = ?,[RetiredDate] = ?,[UpdateDate] = ?,[UpdateTime] = ?,[UpdateUser] = ? ")
         sb.AppendLine(" WHERE [CusCode] = ?                            ")
         Return sb.ToString()
     End Function
@@ -390,7 +388,7 @@ Public Class Customer
         Dim sb As New StringBuilder()
         sb.AppendLine("UPDATE [Customer]                                ")
         sb.AppendLine("   SET [Retired] = ?                             ")
-        sb.AppendLine("     , [Retired Date] = ?                        ")
+        sb.AppendLine("     , [RetiredDate] = ?                        ")
         sb.AppendLine(" WHERE [CusCode] = ?                            ")
         Return sb.ToString()
     End Function

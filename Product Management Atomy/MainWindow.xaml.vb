@@ -2,6 +2,10 @@
 
 Class MainWindow
 
+    Private Sub MenuItemEmployee_Click(ByVal sender As System.Object, ByVal e As System.Windows.RoutedEventArgs) Handles MenuItemEmployee.Click
+        My.Settings.OpenForm = "Employee"
+        ShowPage(My.Settings.OpenForm)
+    End Sub
 
     Private Sub MenuItemProp_Click(ByVal sender As System.Object, ByVal e As System.Windows.RoutedEventArgs) Handles MenuItemProp.Click
         My.Settings.OpenForm = "Property1"
@@ -23,7 +27,7 @@ Class MainWindow
         ShowPage(My.Settings.OpenForm)
     End Sub
 
-    Private Sub MenuItem5_Click(ByVal sender As System.Object, ByVal e As System.Windows.RoutedEventArgs) Handles MenuItemExit.Click
+    Private Sub btnUpdate_Click(ByVal sender As System.Object, ByVal e As System.Windows.RoutedEventArgs)
         Dim confirm = MessageBox.Show("Bạn có muốn thoát khỏi ứng dụng không?", "Atomy", MessageBoxButton.YesNo)
         If confirm = MessageBoxResult.Yes Then
             Application.Current.Shutdown()
@@ -37,6 +41,9 @@ Class MainWindow
 
     Private Sub ShowPage(pageKey As String)
         Select Case pageKey
+            Case "Employee"
+                Dim p As New Employee
+                Main.Content = p
             Case "Property1"
                 Dim p As New Property1
                 Main.Content = p

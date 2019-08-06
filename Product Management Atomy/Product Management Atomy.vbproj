@@ -109,6 +109,9 @@
     <Compile Include="Customer.xaml.vb">
       <DependentUpon>Customer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Employee.xaml.vb">
+      <DependentUpon>Employee.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Home.xaml.vb">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
@@ -133,6 +136,12 @@
     <Compile Include="Search\SearchWarehouse.xaml.vb">
       <DependentUpon>SearchWarehouse.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControl\PageTitle.xaml.vb">
+      <DependentUpon>PageTitle.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\ProcessSelection.xaml.vb">
+      <DependentUpon>ProcessSelection.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utility\Check.vb" />
     <Compile Include="Utility\CompanyInfo.vb" />
     <Compile Include="Utility\DbConnect.vb" />
@@ -144,6 +153,10 @@
       <DependentUpon>Warehouse.xaml</DependentUpon>
     </Compile>
     <Page Include="Customer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Employee.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -188,6 +201,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Search\SearchWarehouse.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControl\PageTitle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControl\ProcessSelection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -289,6 +310,18 @@
     <Content Include="Data\Atomy.accdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="icon\1x\outline_save_black_18dp.png" />
+    <Resource Include="icon\2x\outline_save_black_18dp.png" />
+    <Resource Include="icon\1x\outline_save_white_18dp.png" />
+    <Resource Include="icon\2x\outline_save_white_18dp.png" />
+    <Resource Include="icon\1x\outline_print_black_18dp.png" />
+    <Resource Include="icon\1x\outline_print_white_18dp.png" />
+    <Resource Include="icon\2x\outline_print_black_18dp.png" />
+    <Resource Include="icon\2x\outline_print_white_18dp.png" />
+    <Resource Include="icon\1x\outline_close_white_18dp.png" />
+    <Resource Include="icon\2x\outline_close_white_18dp.png" />
+    <Resource Include="icon\1x\outline_close_black_18dp.png" />
+    <Resource Include="icon\2x\outline_close_black_18dp.png" />
     <Content Include="Lib\SpreadsheetGear.dll" />
     <Content Include="Lib\System.Data.OleDb.dll" />
     <Content Include="Lib\WPFTextBoxAutoComplete\Caliburn.Micro.dll" />

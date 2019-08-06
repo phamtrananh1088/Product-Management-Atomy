@@ -4,6 +4,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data"
+    xmlns:local="clr-namespace:Anh.Pmt.Atomy"
     xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
     xmlns:behaviors="clr-namespace:WPFTextBoxAutoComplete;assembly=WPFTextBoxAutoComplete"
     mc:Ignorable="d" 
@@ -30,22 +31,29 @@
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="37"/>
+            <RowDefinition Height="39"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="53*"/>
-            <ColumnDefinition Width="454*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="103*"/>
+            <ColumnDefinition Width="911*"/>
         </Grid.ColumnDefinitions>
-        <Rectangle Fill="#FFE6E6E6" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="30" Grid.Column="0" Grid.Row="0"/>
-        <Label x:Name="lblTitle" Content="Sản phẩm" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Height="26" Width="304" Grid.ColumnSpan="2" Grid.Column="1"/>
-        <Line Grid.ColumnSpan="3" X1="0" Y1="30" X2="1024" Y2="30" Stroke="#FFE6E6E6" StrokeDashArray="1,1" StrokeThickness="1"/>
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="21,194,0,0" VerticalAlignment="Top" Foreground="Red" RenderTransformOrigin="0.5,2" Grid.Row="1" Height="26" Width="22" Grid.Column="1"/>
-        <Label x:Name="lblPropCd" HorizontalAlignment="Left" Margin="22,0,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="84" Grid.Column="1">
+        <local:PageTitle Title="Sản phẩm" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1024" Grid.ColumnSpan="3" Height="30"/>
+        <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="719" VerticalAlignment="Top" Width="1004" Grid.ColumnSpan="2" Margin="0,0,0,0" Grid.Row="1" Grid.Column="1" />
+        <Button x:Name="btnUpdate" HorizontalAlignment="Left" Margin="2,8,0,0" VerticalAlignment="Top" Width="68" Background="#FF23D164" Foreground="White" BorderBrush="Blue" Height="30" Grid.Column="1"
+			Click="btnUpdate_Click" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" Width="41">
+                <Image Source=".\icon\1x\outline_save_white_18dp.png" VerticalAlignment="Center" Width="18" Height="18"/>
+                <TextBlock Text="Cất" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+        <local:ProcessSelection x:Name="ProcessSelection" Grid.Column="2" HorizontalAlignment="Left" Margin="0,8,0,0" VerticalAlignment="Top" Height="30" Width="244" ValueChange="ProcessSelection_ValueChange" Grid.Row="1"/>
+        <Label Content="(*)" HorizontalAlignment="Left" Margin="17,239,0,0" VerticalAlignment="Top" Foreground="Red" RenderTransformOrigin="0.5,2" Grid.Row="1" Height="26" Width="22" Grid.Column="1"/>
+        <Label x:Name="lblPropCd" HorizontalAlignment="Left" Margin="18,45,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="84" Grid.Column="1">
             <Hyperlink x:Name="lnkPropCd" Click="lnkPropCd_Click">Mã sản phẩm:</Hyperlink>
         </Label>
-        <TextBox x:Name="txtPropCd" HorizontalAlignment="Left" Height="23" Margin="0,0,0,0" VerticalAlignment="Top" MaxLength="8" Width="68" Grid.Column="2"
+        <TextBox x:Name="txtPropCd" HorizontalAlignment="Left" Height="23" Margin="0,45,0,0" VerticalAlignment="Top" MaxLength="8" Width="68" Grid.Column="2"
                  LostFocus="txtCode_LostFocus"
                  Style="{StaticResource TextBoxInError}" Grid.Row="1">
             <TextBox.Text>
@@ -57,10 +65,10 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <Label x:Name="lblPropCodeHint" Content="" HorizontalAlignment="Left" Margin="122,0,0,0" VerticalAlignment="Top" Grid.Column="2" Width="250" Foreground="Gray" Grid.Row="1" Height="26"/>
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="6,0,0,0" VerticalAlignment="Top" Foreground="Red" Grid.Row="1" Height="26" Width="22" Grid.Column="1"/>
-        <Label x:Name="lblPropName" Content="Tên sản phẩm:" HorizontalAlignment="Left" Margin="19,28,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="87" Grid.Column="1"/>
-        <TextBox x:Name="txtPropName" HorizontalAlignment="Left" Height="23" Margin="0,28,0,0" VerticalAlignment="Top" MaxLength="50" Width="320" Grid.Column="2"
+        <Label x:Name="lblPropCodeHint" Content="" HorizontalAlignment="Left" Margin="118,45,0,0" VerticalAlignment="Top" Grid.Column="2" Width="250" Foreground="Gray" Grid.Row="1" Height="26"/>
+        <Label Content="(*)" HorizontalAlignment="Left" Margin="2,45,0,0" VerticalAlignment="Top" Foreground="Red" Grid.Row="1" Height="26" Width="22" Grid.Column="1"/>
+        <Label x:Name="lblPropName" Content="Tên sản phẩm:" HorizontalAlignment="Left" Margin="15,73,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="87" Grid.Column="1"/>
+        <TextBox x:Name="txtPropName" HorizontalAlignment="Left" Height="23" Margin="0,73,0,0" VerticalAlignment="Top" MaxLength="50" Width="320" Grid.Column="2"
                  Style="{StaticResource TextBoxInError}" Grid.Row="1">
             <TextBox.Text>
                 <Binding Path ="PropName">
@@ -70,18 +78,18 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <Label x:Name="lblDescription" Content="Mô tả:" HorizontalAlignment="Left" Margin="62,54,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="44" Grid.Column="1"/>
-        <TextBox x:Name="txtDescription" HorizontalAlignment="Left" Height="51" Margin="0,54,0,0" Text="{Binding Description}" VerticalAlignment="Top" 
+        <Label x:Name="lblDescription" Content="Mô tả:" HorizontalAlignment="Left" Margin="58,99,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="44" Grid.Column="1"/>
+        <TextBox x:Name="txtDescription" HorizontalAlignment="Left" Height="51" Margin="0,99,0,0" Text="{Binding Description}" VerticalAlignment="Top" 
                  ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True"
                  MaxLength="1000" Width="620" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblCategory" Content="Nhóm sản phẩm:" HorizontalAlignment="Left" Margin="5,110,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="101" Grid.Column="1"/>
-        <TextBox x:Name="txtCategory" HorizontalAlignment="Left" Height="23" Margin="0,110,0,0" Text="{Binding Category}" VerticalAlignment="Top" MaxLength="20" Width="140" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblCondition" Content="Điều kiện:" HorizontalAlignment="Left" Margin="44,138,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="62" Grid.Column="1"/>
-        <TextBox x:Name="txtCondition" HorizontalAlignment="Left" Height="23" Margin="0,138,0,0" Text="{Binding Condition}"
+        <Label x:Name="lblCategory" Content="Nhóm sản phẩm:" HorizontalAlignment="Left" Margin="1,155,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="101" Grid.Column="1"/>
+        <TextBox x:Name="txtCategory" HorizontalAlignment="Left" Height="23" Margin="0,155,0,0" Text="{Binding Category}" VerticalAlignment="Top" MaxLength="20" Width="140" Grid.Column="2" Grid.Row="1"/>
+        <Label x:Name="lblCondition" Content="Điều kiện:" HorizontalAlignment="Left" Margin="40,183,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="62" Grid.Column="1"/>
+        <TextBox x:Name="txtCondition" HorizontalAlignment="Left" Height="23" Margin="0,183,0,0" Text="{Binding Condition}"
                  behaviors:AutoCompleteBehavior.AutoCompleteItemsSource="{Binding Condition}" VerticalAlignment="Top" MaxLength="20" Width="140" Grid.Column="2" Grid.Row="1"/>
 
-        <Label x:Name="lblPurchasePrice" Content="Giá mua:" HorizontalAlignment="Left" Margin="50,166,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="56" Grid.Column="1"/>
-        <TextBox x:Name="txtPurchasePrice" HorizontalAlignment="Left" Height="23" Margin="0,166,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
+        <Label x:Name="lblPurchasePrice" Content="Giá mua:" HorizontalAlignment="Left" Margin="46,211,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="56" Grid.Column="1"/>
+        <TextBox x:Name="txtPurchasePrice" HorizontalAlignment="Left" Height="23" Margin="0,211,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
                   Style="{StaticResource TextBoxInError}" Grid.Row="1">
             <TextBox.Text>
                 <Binding Path="PurchasePrice" Converter="{StaticResource numericConverter}">
@@ -91,9 +99,9 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="6,0,0,0" VerticalAlignment="Top" Foreground="Red" Grid.Row="1" Height="26" Width="22" Grid.Column="1"/>
-        <Label x:Name="lblUnit" Content="Đơn vị tính:" HorizontalAlignment="Left" Margin="35,194,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="71" Grid.Column="1"/>
-        <TextBox x:Name="txtUnit" HorizontalAlignment="Left" Height="23" Margin="0,194,0,0" VerticalAlignment="Top" MaxLength="20" Width="140" Grid.Column="2"
+        <Label Content="(*)" HorizontalAlignment="Left" Margin="2,45,0,0" VerticalAlignment="Top" Foreground="Red" Grid.Row="1" Height="26" Width="22" Grid.Column="1"/>
+        <Label x:Name="lblUnit" Content="Đơn vị tính:" HorizontalAlignment="Left" Margin="31,239,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="71" Grid.Column="1"/>
+        <TextBox x:Name="txtUnit" HorizontalAlignment="Left" Height="23" Margin="0,239,0,0" VerticalAlignment="Top" MaxLength="20" Width="140" Grid.Column="2"
                  Style="{StaticResource TextBoxInError}" Grid.Row="1">
             <TextBox.Text>
                 <Binding Path ="Unit">
@@ -103,9 +111,9 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="39,222,0,0" VerticalAlignment="Top" Foreground="Red" RenderTransformOrigin="0.5,2" Grid.Row="1" Height="26" Width="22" Grid.Column="1"/>
-        <Label x:Name="lblSalesPrice" Content="Giá bán:" HorizontalAlignment="Left" Margin="53,222,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="53" Grid.Column="1"/>
-        <TextBox x:Name="txtSalesPrice" HorizontalAlignment="Left" Height="23" Margin="0,222,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
+        <Label Content="(*)" HorizontalAlignment="Left" Margin="35,267,0,0" VerticalAlignment="Top" Foreground="Red" RenderTransformOrigin="0.5,2" Grid.Row="1" Height="26" Width="22" Grid.Column="1"/>
+        <Label x:Name="lblSalesPrice" Content="Giá bán:" HorizontalAlignment="Left" Margin="49,267,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="53" Grid.Column="1"/>
+        <TextBox x:Name="txtSalesPrice" HorizontalAlignment="Left" Height="23" Margin="0,267,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
                  Style="{StaticResource TextBoxInError}" Grid.Row="1">
             <TextBox.Text>
                 <Binding Path="SalesPrice" Converter="{StaticResource numericConverter}">
@@ -115,8 +123,8 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <Label x:Name="lblCurrentValue" Content="Giá hiện tại:" HorizontalAlignment="Left" Margin="35,250,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="72" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtCurrentValue" HorizontalAlignment="Left" Height="23" Margin="0,250,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
+        <Label x:Name="lblCurrentValue" Content="Giá hiện tại:" HorizontalAlignment="Left" Margin="31,295,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="72" Grid.Column="1"/>
+        <TextBox x:Name="txtCurrentValue" HorizontalAlignment="Left" Height="23" Margin="0,295,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
                   Style="{StaticResource TextBoxInError}" Grid.Row="1">
             <TextBox.Text>
                 <Binding Path="CurrentValue" Converter="{StaticResource numericConverter}">
@@ -126,28 +134,18 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <Label x:Name="lblLocation" Content="Vị trí:" HorizontalAlignment="Left" Margin="69,278,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="37" Grid.Column="1" RenderTransformOrigin="-0.946,0.577"/>
-        <TextBox x:Name="txtLocation" HorizontalAlignment="Left" Height="23" Margin="0,278,0,0" Text="{Binding Location}" VerticalAlignment="Top" MaxLength="50" Width="320" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblManufacturer" Content="Nhà sản xuất:" HorizontalAlignment="Left" Margin="26,306,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="82" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtManufacturer" HorizontalAlignment="Left" Height="23" Margin="0,306,0,0" Text="{Binding Manufacturer}" VerticalAlignment="Top" MaxLength="50" Width="320" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblModel" Content="Kiểu mẫu:" HorizontalAlignment="Left" Margin="45,334,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="62" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtModel" HorizontalAlignment="Left" Height="23" Margin="0,334,0,0" Text="{Binding Model}" VerticalAlignment="Top" Width="120" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblComment" Content="Chú thích:" HorizontalAlignment="Left" Margin="44,362,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="63" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtComments" HorizontalAlignment="Left" Height="51" Margin="0,362,0,0" Text="{Binding Comments}" VerticalAlignment="Top" 
+        <Label x:Name="lblLocation" Content="Vị trí:" HorizontalAlignment="Left" Margin="65,323,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="37" Grid.Column="1" RenderTransformOrigin="-0.946,0.577"/>
+        <TextBox x:Name="txtLocation" HorizontalAlignment="Left" Height="23" Margin="0,323,0,0" Text="{Binding Location}" VerticalAlignment="Top" MaxLength="50" Width="320" Grid.Column="2" Grid.Row="1"/>
+        <Label x:Name="lblManufacturer" Content="Nhà sản xuất:" HorizontalAlignment="Left" Margin="22,351,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="82" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtManufacturer" HorizontalAlignment="Left" Height="23" Margin="0,351,0,0" Text="{Binding Manufacturer}" VerticalAlignment="Top" MaxLength="50" Width="320" Grid.Column="2" Grid.Row="1"/>
+        <Label x:Name="lblModel" Content="Kiểu mẫu:" HorizontalAlignment="Left" Margin="41,379,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="62" Grid.Column="1"/>
+        <TextBox x:Name="txtModel" HorizontalAlignment="Left" Height="23" Margin="0,379,0,0" Text="{Binding Model}" VerticalAlignment="Top" Width="120" Grid.Column="2" Grid.Row="1"/>
+        <Label x:Name="lblComment" Content="Chú thích:" HorizontalAlignment="Left" Margin="40,407,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="63" Grid.Column="1"/>
+        <TextBox x:Name="txtComments" HorizontalAlignment="Left" Height="51" Margin="0,407,0,0" Text="{Binding Comments}" VerticalAlignment="Top" 
                 ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextWrapping="Wrap"
                  MaxLength="1000" Width="620" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblAcquiredDate" Content="Ngày tiếp nhận:" HorizontalAlignment="Left" Margin="13,418,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="95" Grid.Column="1"/>
-        <TextBox x:Name="txtAccquiredDate" HorizontalAlignment="Left" Height="23" Margin="0,418,0,0" Text="{Binding Acquired_Date}" VerticalAlignment="Top" MaxLength="10" Width="80" Grid.Column="2" Grid.Row="1"/>
-        <Label Content="Ngừng sử dụng:" HorizontalAlignment="Left" Margin="12,446,0,0" VerticalAlignment="Top" ToolTip="Tích chọn tương đương với xóa" Grid.Row="1" Height="26" Width="96" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <CheckBox x:Name="cbRetired" Content="" Grid.Column="2" HorizontalAlignment="Left" Margin="4,453,0,0" VerticalAlignment="Top" IsChecked="{Binding Retired}" RenderTransformOrigin="0.412,0.188" Grid.Row="1" Height="16" Width="17"/>
-
-        <Button x:Name="btnUpdate" Content="Cập nhật" HorizontalAlignment="Left" Margin="0,509,0,0" VerticalAlignment="Top" Width="75" Background="Blue" Foreground="White" BorderBrush="Blue" Height="31" Grid.Column="2"
-                Click="btnUpdate_Click" Grid.Row="1"/>
-        <Button x:Name="btnDelete" Content="Xóa" HorizontalAlignment="Left" Margin="80,509,0,0" VerticalAlignment="Top" Width="37"  Background="Red" Foreground="White" BorderBrush="Red" Height="31" Grid.Column="2"
-                Click="btnDelete_Click" Grid.Row="1"/>
-        <Button x:Name="btnInsert" Content="Thêm" HorizontalAlignment="Left" Margin="123,509,0,0" VerticalAlignment="Top" Width="42"  Background="Green" Foreground="White" BorderBrush="Green" RenderTransformOrigin="1.906,0.5" Height="31" Grid.Column="2"
-                Click="btnInsert_Click" Grid.Row="1"/>
-
+        <Label x:Name="lblAcquiredDate" Content="Ngày tiếp nhận:" HorizontalAlignment="Left" Margin="9,463,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="95" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtAccquiredDate" HorizontalAlignment="Left" Height="23" Margin="0,463,0,0" Text="{Binding Acquired_Date}" VerticalAlignment="Top" MaxLength="10" Width="80" Grid.Column="2" Grid.Row="1"/>
 
     </Grid>
 </Page>

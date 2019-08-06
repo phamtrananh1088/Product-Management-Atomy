@@ -11,7 +11,7 @@ Public Class Property1
         Mode = DataRowState.Added
         ' This call is required by the designer.
         InitializeComponent()
-        btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
+
         ' Add any initialization after the InitializeComponent() call.
     End Sub
 #Region "LoadData"
@@ -30,7 +30,7 @@ Public Class Property1
                 Mode = DataRowState.Modified
                 CtrEnable()
             Else
-                btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
+
             End If
 
         Catch ex As Exception
@@ -45,22 +45,14 @@ Public Class Property1
 #Region "CtrEnable"
     Private Sub CtrEnable()
         If Mode = DataRowState.Modified Then
-            'btnDelete.Background = Brushes.Red
-            'btnDelete.Foreground = Brushes.White
-            'btnDelete.BorderBrush = Brushes.Red
+
             txtPropCd.IsEnabled = False
-            btnDelete.IsEnabled = True
-            If AtomyDataSet._Property.Rows.Count > 0 Then
-                Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
-                cbRetired.IsEnabled = row.Retired
-            End If
+
+     
         Else
-            'btnDelete.Background = New SolidColorBrush(Color.FromRgb(244, 244, 244))
-            'btnDelete.Foreground = Brushes.Gray
-            'btnDelete.BorderBrush = Brushes.Gray
+
             txtPropCd.IsEnabled = True
-            btnDelete.IsEnabled = False
-            cbRetired.IsEnabled = False
+          
         End If
 
     End Sub
@@ -125,7 +117,7 @@ Public Class Property1
                     If Delete() Then
                         MessageBox.Show("Đã hoàn thành.")
                         lblPropCodeHint.Content = ""
-                        btnInsert_Click(btnInsert, New System.Windows.RoutedEventArgs)
+
                     End If
                 End If
             End If

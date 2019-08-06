@@ -5,17 +5,24 @@
         Loaded="Window_Loaded">
     <Grid>
         <StackPanel>
-            <Menu Height="23" HorizontalAlignment="Left" Name="Menu1" VerticalAlignment="Top" Width="382">
+            <Menu Height="23" HorizontalAlignment="Left" Name="Menu1" VerticalAlignment="Top" Width="942">
                 <MenuItem Header="Khách hàng" x:Name="MenuItemCustomer" />
                 <MenuItem Header="Sản phẩm" Name="MenuItemProp" />
+                <MenuItem Header="Nhân viên" Name="MenuItemEmployee" />
                 <MenuItem Header="Nhập sản phẩm" Name="MenuItemWareHouseIn" />
                 <MenuItem Header="Bán sản phẩm" Name="MenuItemWareHouseOut" />
                 <MenuItem Header="Hóa đơn" Name="MenuItemOrder" />
-                <MenuItem Header="Thoát" Name="MenuItemExit" />
             </Menu>
         </StackPanel>
-        <Frame x:Name="Main" Margin="0,24,0,0" NavigationUIVisibility="Hidden">
+        <Frame x:Name="Main" Margin="0,30,0,0" NavigationUIVisibility="Hidden">
 
         </Frame>
+        <Button x:Name="btnUpdate" HorizontalAlignment="Left" Margin="944,0,0,0" VerticalAlignment="Top" Width="68" Background="#FFF5F5F5" Foreground="Black" BorderBrush="Transparent" Height="30"
+        	Click="btnUpdate_Click">
+            <StackPanel Orientation="Horizontal" Width="50">
+                <Image Source=".\icon\1x\outline_close_black_18dp.png" VerticalAlignment="Center" Width="18" Height="18"/>
+                <TextBlock Text="Đóng" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Button>
     </Grid>
 </Window>

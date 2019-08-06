@@ -4,17 +4,28 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data"
-         xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
+    xmlns:local="clr-namespace:Anh.Pmt.Atomy"
+    xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
     mc:Ignorable="d" 
     d:DesignHeight="768" d:DesignWidth="1024"
     Title="Hóa đơn bán hàng">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="507*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="55*"/>
-            <RowDefinition Height="713*"/>
+            <RowDefinition Height="39"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
-        <Rectangle Fill="#FFE6E6E6" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="30" Grid.Column="0" Grid.Row="0"/>
-        <Label x:Name="lblTitle" Content="Hóa đơn bán hàng" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Height="26" Width="304" Grid.ColumnSpan="3" Margin="10,0,0,0"/>
-        <Line Grid.ColumnSpan="3" X1="0" Y1="30" X2="1024" Y2="30" Stroke="#FFE6E6E6" StrokeDashArray="1,1" StrokeThickness="1"/>
+        <local:PageTitle Title="Quản lý hóa đơn" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1024" Grid.ColumnSpan="2" Height="30"/>
+        <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="719" VerticalAlignment="Top" Width="1004" Grid.Column="1" Grid.Row="1" />
+        <Button x:Name="btnPrint" HorizontalAlignment="Left" Margin="2,8,0,0" VerticalAlignment="Top" Width="68" Background="Black" Foreground="White" BorderBrush="Blue" Height="30" Grid.Column="1"
+			Click="btnPrint_Click" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" Width="41">
+                <Image Source=".\icon\1x\outline_print_white_18dp.png" VerticalAlignment="Center" Width="18" Height="18"/>
+                <TextBlock Text=" In" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Button>
     </Grid>
 </Page>
