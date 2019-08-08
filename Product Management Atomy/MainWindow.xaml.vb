@@ -40,32 +40,49 @@ Class MainWindow
     End Sub
 
     Private Sub ShowPage(pageKey As String)
+        Dim pop As New PopupWindow()
         Select Case pageKey
             Case "Employee"
                 Dim p As New Employee
-                Main.Content = p
+                pop.Content = p
+                pop.Title = p.Title
+                pop.ShowDialog()
             Case "Property1"
                 Dim p As New Property1
-                Main.Content = p
+                pop.Content = p
+                pop.Title = p.Title
+                pop.ShowDialog()
             Case "WarehouseIn"
                 Dim p As New Warehouse
-                Main.Content = p
+                pop.Content = p
+                pop.Title = p.Title
+                pop.ShowDialog()
             Case "Warehouse"
                 Dim p As New Warehouse
-                Main.Content = p
+                pop.Content = p
+                pop.Title = p.Title
+                pop.ShowDialog()
             Case "Order"
                 Dim p As New Order
-                Main.Content = p
+                pop.Content = p
+                pop.Title = p.Title
+                pop.ShowDialog()
             Case "Customer"
                 Dim p As New Customer
-                Main.Content = p
+                pop.Content = p
+                pop.Title = p.Title
+                pop.ShowDialog()
             Case Else
                 Dim p As New Home
-                Main.Content = p
+                pop.Content = p
+                pop.Title = p.Title
+                pop.ShowDialog()
         End Select
     End Sub
     Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
         Try
+            Dim p As New Home
+            Main.Content = p
             ShowPage(My.Settings.OpenForm)
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã có lỗi sảy ra khi mở ứng dụng", ex)

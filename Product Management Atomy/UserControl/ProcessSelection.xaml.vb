@@ -21,7 +21,6 @@ Public Class ProcessSelection
                 borAdd.Background = Brushes.White
                 borUpdate.Background = Brushes.White
                 borDelete.Background = Brushes.White
-                RaiseEvent ValueChange(Me, New EventArgs)
             End If
         End Set
     End Property
@@ -30,25 +29,25 @@ Public Class ProcessSelection
         Try
             Dim rb As RadioButton = DirectCast(sender, RadioButton)
             If rb.Equals(rbAdd) Then
-                Mode = DataRowState.Added
+                _Mode = DataRowState.Added
                 borAdd.Background = Brushes.Yellow
                 borUpdate.Background = Brushes.White
                 borDelete.Background = Brushes.White
                 RaiseEvent ValueChange(Me, New EventArgs)
             ElseIf rb.Equals(rbUpdate) Then
-                Mode = DataRowState.Modified
+                _Mode = DataRowState.Modified
                 borAdd.Background = Brushes.White
                 borUpdate.Background = Brushes.Yellow
                 borDelete.Background = Brushes.White
                 RaiseEvent ValueChange(Me, New EventArgs)
             ElseIf rb.Equals(rbDelete) Then
-                Mode = DataRowState.Deleted
+                _Mode = DataRowState.Deleted
                 borAdd.Background = Brushes.White
                 borUpdate.Background = Brushes.White
                 borDelete.Background = Brushes.Yellow
                 RaiseEvent ValueChange(Me, New EventArgs)
             Else
-                Mode = DataRowState.Detached
+                _Mode = DataRowState.Detached
                 borAdd.Background = Brushes.White
                 borUpdate.Background = Brushes.White
                 borDelete.Background = Brushes.White

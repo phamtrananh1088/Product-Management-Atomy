@@ -6,7 +6,6 @@ Public Class Warehouse
 #Region "FIELD"
     Private AtomyDataSet As AtomyDataSet
     Private Mode As DataRowState
-
 #End Region
 
 #Region "CONSTRUCTOR"
@@ -15,34 +14,51 @@ Public Class Warehouse
         Mode = DataRowState.Added
         ' This call is required by the designer.
         InitializeComponent()
-
+        InitialValue()
+        ProcessSelection.Mode = DataRowState.Added
         ' Add any initialization after the InitializeComponent() call.
     End Sub
 #End Region
 
-#Region "BUSINESS"
+#Region "InitialControl"
+    Private Sub InitialValue()
+        txtEmpCode.Text = ""
+        lblEmpName.Content = ""
+        txtCusCode.Text = ""
+        txtCusName.Text = ""
+        txtWareCode.Text = ""
+        txtWareDate.Text = ""
+        txtWareTitle.Text = ""
+        txtTotalAmount.Text = "0"
+        txtDiscount.Text = "0"
+        txtDescription.Text = ""
+        txtComment.Text = ""
+    End Sub
+#End Region
+
 #Region "LoadData"
-    Private Sub LoadData(Cd As String)
+    Private Sub LoadData(WareCode As String)
         Dim dbConn As New DbConnect
 
         Try
             dbConn.Open()
             Dim sSQL As String = "select * from [WarehouseMaster] where [WareCode] = ?"
             Dim adapt As New OleDbDataAdapter(sSQL, dbConn.Conn)
-            adapt.SelectCommand.Parameters.Add("@WareCode", OleDbType.VarChar).Value = Cd
+            adapt.SelectCommand.Parameters.Add("@WareCode", OleDbType.VarChar).Value = WareCode
             AtomyDataSet.WarehouseMaster.Clear()
-            adapt.Fill(AtomyDataSet, "WarehouseMaster")
-            If AtomyDataSet.WarehouseMaster.Rows.Count > 0 Then
+            AtomyDataSet.Warehouse.Clear()
+
+
+            If adapt.Fill(AtomyDataSet, "WarehouseMaster") > 0 Then
+                Me.DataContext = AtomyDataSet.WarehouseMaster.Rows(0)
                 sSQL = "select * from [Warehouse] where [WareCode] = ?"
                 adapt.SelectCommand.CommandText = sSQL
-                AtomyDataSet.Warehouse.Clear()
                 adapt.Fill(AtomyDataSet, "Warehouse")
-                Me.DataContext = AtomyDataSet.WarehouseMaster.Rows(0)
                 grdWareHouse.ItemsSource = AtomyDataSet.Warehouse.DefaultView
-                Mode = DataRowState.Modified
-                CtrEnable()
             Else
-
+                MessageBox.Show("Phiếu xuất [" + WareCode + "] không tồn tại hoặc đã bị xóa.")
+                InitialValue()
+                CtrEnable()
             End If
 
         Catch ex As Exception
@@ -54,50 +70,206 @@ Public Class Warehouse
     End Sub
 #End Region
 
+#Region "CtrEnable"
+    Private Sub CtrEnable()
+        If Me.Mode = DataRowState.Added Then
+            txtEmpCode.IsEnabled = True
+            txtCusCode.IsEnabled = True
+            txtCusName.IsEnabled = True
+            txtWareDate.IsEnabled = True
+            txtWareTitle.IsEnabled = True
+            txtDiscount.IsEnabled = True
+            txtDescription.IsEnabled = True
+            txtComment.IsEnabled = True
+            grdWareHouse.IsEnabled = True
+        ElseIf Mode = DataRowState.Modified Then
+            txtEmpCode.IsEnabled = True
+            txtCusCode.IsEnabled = True
+            txtCusName.IsEnabled = True
+            txtWareDate.IsEnabled = True
+            txtWareTitle.IsEnabled = True
+            txtDiscount.IsEnabled = True
+            txtDescription.IsEnabled = True
+            txtComment.IsEnabled = True
+            grdWareHouse.IsEnabled = True
+        ElseIf Me.Mode = DataRowState.Deleted Then
+            txtEmpCode.IsEnabled = False
+            txtCusCode.IsEnabled = False
+            txtCusName.IsEnabled = False
+            txtWareDate.IsEnabled = False
+            txtWareTitle.IsEnabled = False
+            txtDiscount.IsEnabled = False
+            txtDescription.IsEnabled = False
+            txtComment.IsEnabled = False
+            grdWareHouse.IsEnabled = False
+        End If
+    End Sub
+#End Region
+
+
+#Region "ProcessSelection_ValueChange"
+    Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
+        If ProcessSelection.Mode = DataRowState.Added Then
+            AtomyDataSet.WarehouseMaster.Clear()
+            AtomyDataSet.Warehouse.Clear()
+            Dim newRow As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.NewWarehouseMasterRow()
+            AtomyDataSet.WarehouseMaster.Rows.Add(newRow)
+            Me.DataContext = AtomyDataSet.WarehouseMaster.Rows(0)
+            grdWareHouse.ItemsSource = AtomyDataSet.Warehouse.DefaultView
+            Mode = DataRowState.Added
+            CtrEnable()
+            HelpCreateWareCode()
+        ElseIf ProcessSelection.Mode = DataRowState.Modified Then
+            Me.Mode = DataRowState.Modified
+            CtrEnable()
+        ElseIf ProcessSelection.Mode = DataRowState.Deleted Then
+            Me.Mode = DataRowState.Deleted
+            CtrEnable()
+        End If
+    End Sub
+#End Region
+
+#Region "BUSINESS"
+#Region "btnProcess_Click"
+    Private Sub btnProcess_Click(sender As Object, e As RoutedEventArgs)
+        Try
+            Select Case Mode
+                Case DataRowState.Added
+                    If Not ValidateData(EnumAction.Insert) Then
+                        Return
+                    End If
+                    If Insert() Then
+                        MessageBox.Show("Cập nhật thành công.", Me.Title, MessageBoxButton.OK)
+                        lblWareCodeHint.Content = ""
+                        ProcessSelection.Mode = DataRowState.Modified
+                        LoadData(txtCusCode.Text.Trim)
+                    Else
+                        MessageBox.Show("Cập nhật không thành công.", Me.Title, MessageBoxButton.OK)
+                    End If
+                Case DataRowState.Modified
+                    If Not ValidateData(EnumAction.Update) Then
+                        Return
+                    End If
+                    If Update() Then
+                        MessageBox.Show("Cập nhật thành công.", Me.Title, MessageBoxButton.OK)
+                        lblWareCodeHint.Content = ""
+                        LoadData(txtWareCode.Text.Trim)
+                    Else
+                        MessageBox.Show("Cập nhật không thành công.", Me.Title, MessageBoxButton.OK)
+                    End If
+                Case DataRowState.Deleted
+                    If Not ValidateData(EnumAction.Delete) Then
+                        Return
+                    End If
+                    Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
+                    If confirm Then
+                        If Delete() Then
+                            MessageBox.Show("Xóa thành công.", Me.Title, MessageBoxButton.OK)
+                            lblWareCodeHint.Content = ""
+                            ProcessSelection.Mode = DataRowState.Added
+                        Else
+                            MessageBox.Show("Xóa không thành công.", Me.Title, MessageBoxButton.OK)
+                        End If
+                    End If
+            End Select
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Cập nhật.", ex)
+        End Try
+    End Sub
+#End Region
+
 #Region "ValidateData"
     Private Function ValidateData(action As EnumAction) As Boolean
-        Dim hasError As Boolean
+        Dim valid As Boolean = True
         Select Case action
-            Case EnumAction.Update
-                hasError = Validation.GetHasError(txtWareCode)
-                hasError = hasError OrElse Validation.GetHasError(txtWareTitle)
-                hasError = hasError OrElse Validation.GetHasError(txtCusCd)
-                hasError = hasError OrElse Validation.GetHasError(txtEmpCode)
-                hasError = hasError OrElse Validation.GetHasError(txtCusName)
-                hasError = hasError OrElse Validation.GetHasError(grdWareHouse)
             Case EnumAction.Insert
-                hasError = Validation.GetHasError(txtWareCode)
-                hasError = hasError OrElse Validation.GetHasError(txtWareTitle)
-                hasError = hasError OrElse Validation.GetHasError(txtCusCd)
-                hasError = hasError OrElse Validation.GetHasError(txtEmpCode)
-                hasError = hasError OrElse Validation.GetHasError(txtCusName)
-                hasError = hasError OrElse Validation.GetHasError(grdWareHouse)
+                If Validation.GetHasError(txtEmpCode) Then
+                    MessageBox.Show("Vui lòng nhập mã nhân viên", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtEmpCode.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtCusCode) Then
+                    MessageBox.Show("Vui lòng nhập mã khách hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtCusCode.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtCusName) Then
+                    MessageBox.Show("Vui lòng nhập tên khách hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtCusName.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtWareCode) Then
+                    MessageBox.Show("Vui lòng nhập số phiếu", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareCode.Focus()
+                    Return False
+                End If
+                If Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
+                    MessageBox.Show("Mã phiếu xuất đã tồn tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareCode.Focus()
+                    HelpCreateWareCode()
+                    Return False
+                End If
+                If Validation.GetHasError(txtWareDate) Then
+                    MessageBox.Show("Vui lòng nhập ngày xuất", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareDate.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtWareTitle) Then
+                    MessageBox.Show("Vui lòng nhập tiêu đề", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareTitle.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(grdWareHouse) Then
+                    MessageBox.Show("Vui lòng nhập chi tiết sản phẩm", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    grdWareHouse.Focus()
+                    Return False
+                End If
+            Case EnumAction.Update
+                If Validation.GetHasError(txtEmpCode) Then
+                    MessageBox.Show("Vui lòng nhập mã nhân viên", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtEmpCode.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtCusCode) Then
+                    MessageBox.Show("Vui lòng nhập mã khách hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtCusCode.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtCusName) Then
+                    MessageBox.Show("Vui lòng nhập tên khách hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtCusName.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtWareCode) Then
+                    MessageBox.Show("Vui lòng nhập số phiếu", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareCode.Focus()
+                    Return False
+                End If
+                If Not Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
+                    MessageBox.Show("Mã phiếu xuất chưa được đăng ký hoặc đã bị xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareCode.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtWareDate) Then
+                    MessageBox.Show("Vui lòng nhập ngày xuất", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareDate.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtWareTitle) Then
+                    MessageBox.Show("Vui lòng nhập tiêu đề", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareTitle.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(grdWareHouse) Then
+                    MessageBox.Show("Vui lòng nhập chi tiết sản phẩm", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    grdWareHouse.Focus()
+                    Return False
+                End If
             Case EnumAction.Delete
 
         End Select
-        Return Not hasError
+        Return Not valid
     End Function
-#End Region
-#Region "CtrEnable"
-    Private Sub CtrEnable()
-        If Mode = DataRowState.Modified Then
-            txtWareCode.IsEnabled = False
-
-           
-        Else
-            txtWareCode.IsEnabled = True
-
-
-        End If
-
-    End Sub
-#End Region
-
-#Region "HelpCreateCode"
-    Private Sub HelpCreateCode()
-        lblWareCodeHint.Content = "Gợi ý: " + Utility.HelpCreateCode("Warehouse")
-    End Sub
-
 #End Region
 
 #Region "INSERT"
@@ -154,7 +326,7 @@ Public Class Warehouse
                     Dim rowM As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
                     Dim row As AtomyDataSet.WarehouseRow = AtomyDataSet.Warehouse.Rows(index)
                     row.Type = rowM.Type
-                    row.WareCode = rowM.WareCode    
+                    row.WareCode = rowM.WareCode
                     row.WareDate = rowM.WareDate
                     row.Status = rowM.Status
                     row.Description = rowM.Description
@@ -331,7 +503,7 @@ Public Class Warehouse
                     End Using
                 ElseIf row.RowState = DataRowState.Deleted Then
                     Using cmd As New OleDbCommand(sSQLD, dbConn.Conn)
-                        cmd.Transaction = dbConn.Tran    
+                        cmd.Transaction = dbConn.Tran
 
                         cmd.Parameters.Add("@1", OleDbType.BigInt).Value = row("ID", DataRowVersion.Original)
 
@@ -381,6 +553,13 @@ Public Class Warehouse
         End Try
         Return res
     End Function
+#End Region
+
+#Region "HelpCreateCode"
+    Private Sub HelpCreateWareCode()
+        lblWareCodeHint.Content = "Gợi ý: " + Utility.HelpCreateCode("Warehouse")
+    End Sub
+
 #End Region
 #End Region
 
@@ -443,8 +622,15 @@ Public Class Warehouse
 #End Region
 
 #Region "EVENT"
-#Region "txtEmpCodeLostFocus"
-    Private Sub lnkCusCd_Click(sender As Object, e As RoutedEventArgs)
+
+#Region "searchWareHouseSearchResult"
+    Private Sub searchWareHouseSearchResult(sender As Object, e As SearchDataArgs)
+        LoadData(e.Code)
+    End Sub
+#End Region
+
+#Region "lnkCusCode_Click"
+    Private Sub lnkCusCode_Click(sender As Object, e As RoutedEventArgs)
         Try
             Dim search As New Search()
             AddHandler search.SearchResult, AddressOf searchCusSearchResult
@@ -469,88 +655,10 @@ Public Class Warehouse
     End Sub
 #End Region
 
-#Region "btnInsert_Click"
-    Private Sub btnInsert_Click(sender As Object, e As RoutedEventArgs)
-        Try
-            AtomyDataSet.WarehouseMaster.Clear()
-            AtomyDataSet.Warehouse.Clear()
-            Dim newRow As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.NewWarehouseMasterRow()
-            AtomyDataSet.WarehouseMaster.Rows.Add(newRow)
-            Me.DataContext = AtomyDataSet.WarehouseMaster.Rows(0)
-            grdWareHouse.ItemsSource = AtomyDataSet.Warehouse.DefaultView
-            Mode = DataRowState.Added
-            CtrEnable()
-            HelpCreateCode()
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Thêm.", ex)
-        End Try
-    End Sub
-#End Region
-
-#Region "btnUpdate_Click"
-    Private Sub btnUpdate_Click(sender As Object, e As RoutedEventArgs)
-        Try
-            Select Case Mode
-                Case DataRowState.Added
-                    If Not ValidateData(EnumAction.Insert) Then
-                        Return
-                    End If
-                    If Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
-                        MessageBox.Show("Mã phiếu xuất đã tồn tại.")
-                        HelpCreateCode()
-                        Return
-                    End If
-
-                    If Insert() Then
-                        MessageBox.Show("Đã hoàn thành.")
-                        lblWareCodeHint.Content = ""
-                        LoadData(txtWareCode.Text.Trim)
-                    Else
-                        MessageBox.Show("Không thành công.")
-                    End If
-                Case DataRowState.Modified
-                    If Not ValidateData(EnumAction.Update) Then
-                        Return
-                    End If
-                    If Update() Then
-                        MessageBox.Show("Đã hoàn thành.")
-                        lblWareCodeHint.Content = ""
-                        LoadData(txtWareCode.Text.Trim)
-                    Else
-                        MessageBox.Show("Không thành công.")
-                    End If
-            End Select
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Cập nhật.", ex)
-        End Try
-    End Sub
-#End Region
-
-#Region "btnDelete_Click"
-    Private Sub btnDelete_Click(sender As Object, e As RoutedEventArgs)
-        Try
-            If Not ValidateData(EnumAction.Delete) Then
-                Return
-            End If
-            If Mode = DataRowState.Modified Then
-                Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa phiếu này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
-                If confirm Then
-                    If Delete() Then
-                        MessageBox.Show("Đã hoàn thành.")
-
-                    End If
-                End If
-            End If
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Xóa.", ex)
-        End Try
-
-    End Sub
-#End Region
 
 #Region "searchCusSearchResult"
     Private Sub searchCusSearchResult(sender As Object, e As SearchDataArgs)
-        txtCusCd.Text = e.Code
+        txtCusCode.Text = e.Code
         txtCusName.Text = e.Name
     End Sub
 #End Region
@@ -562,30 +670,25 @@ Public Class Warehouse
     End Sub
 #End Region
 
-#Region "searchWareHouseSearchResult"
-    Private Sub searchWareHouseSearchResult(sender As Object, e As SearchDataArgs)
-         LoadData(e.Code)
-    End Sub
-#End Region
-
 #Region "txtWareCode_LostFocus"
     Private Sub txtWareCode_LostFocus(sender As Object, e As RoutedEventArgs)
         Try
             Dim txtCode = DirectCast(sender, TextBox)
+            Dim s = txtCode.Text.Trim()
+            If s.Length = 0 Then
+                Return
+            End If
+            If s.Length < 8 Then
+                Dim lead As String = New String("0", 8 - s.Length)
+                s = lead + s
+                txtCode.Text = s
+            End If
             If Mode = DataRowState.Added Then
-                Dim s = txtCode.Text.Trim()
-                If s.Length = 0 Then
-                    Return
-                End If
-                If s.Length < 8 Then
-                    Dim lead As String = New String("0", 8 - s.Length)
-                    s = lead + s
-                    txtCode.Text = s
-                End If
-
                 If txtWareCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
-                    MessageBox.Show("Mã phiếu bán hàng đã tồn tại.", Utility.AppCaption)
+                    MessageBox.Show("Mã phiếu bán hàng đã tồn tại.", Me.Title)
                     txtWareCode.Text = ""
+                ElseIf Mode = DataRowState.Modified OrElse Mode = DataRowState.Deleted Then
+                    LoadData(txtWareCode.Text.Trim)
                 End If
             End If
         Catch ex As Exception
@@ -605,14 +708,14 @@ Public Class Warehouse
                 s = lead + s
                 txtCode.Text = s
             End If
-            If txtCode.Equals(txtCusCd) Then
+            If txtCode.Equals(txtCusCode) Then
                 If txtCode.Text.Trim.Length > 0 Then
-                    Dim dr As DataRow = Check.GetDataByCode("Customer", txtCusCd.Text.Trim)
+                    Dim dr As DataRow = Check.GetDataByCode("Customer", txtCusCode.Text.Trim)
                     If dr IsNot Nothing Then
                         txtCusName.Text = dr("FirstName").ToString() + " " + dr("LastName").ToString()
                     Else
                         MessageBox.Show("Mã khách hàng không tồn tại.", Utility.AppCaption)
-                        txtCusCd.Text = ""
+                        txtCusCode.Text = ""
                         txtCusName.Text = ""
                     End If
                 Else
@@ -656,24 +759,6 @@ Public Class Warehouse
             End If
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
-        End Try
-    End Sub
-#End Region
-
-#Region "txtCode_LostKeyboardFocus"
-    Private Sub grdWareHouse_CellEditEnding(sender As Object, e As DataGridCellEditEndingEventArgs)
-        Try
-            Dim el As FrameworkElement = e.Column.GetCellContent(e.Row)
-            If TypeOf el Is TextBox Then
-                Dim tEl As TextBox = DirectCast(el, TextBox)
-                If tEl.Name.StartsWith("txtPropCode") Then
-
-                End If
-
-            End If
-
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở lưới.", ex)
         End Try
     End Sub
 #End Region

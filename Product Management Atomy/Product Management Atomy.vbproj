@@ -118,9 +118,13 @@
     <Compile Include="Order.xaml.vb">
       <DependentUpon>Order.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PopupWindow.xaml.vb">
+      <DependentUpon>PopupWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Property.xaml.vb">
       <DependentUpon>Property.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Province.vb" />
     <Compile Include="Search\Search.xaml.vb">
       <DependentUpon>Search.xaml</DependentUpon>
     </Compile>
@@ -177,6 +181,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Order.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PopupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

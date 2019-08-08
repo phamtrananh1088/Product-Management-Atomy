@@ -3,17 +3,47 @@ Imports System.Data
 Imports System.Text
 
 Public Class Employee
+
+#Region "FIELD"
     Private AtomyDataSet As AtomyDataSet
     Private Mode As DataRowState
+#End Region
 
+#Region "CONSTRUCTOR"
     Public Sub New()
         AtomyDataSet = New AtomyDataSet()
         ' This call is required by the designer.
         InitializeComponent()
-        Mode = ProcessSelection.Mode
-        cboProvince.DataContext = Province.GetAllProvinces()
+        cboProvince.ItemsSource = Province.GetAllProvinces()
+        ProcessSelection.Mode = DataRowState.Added
         ' Add any initialization after the InitializeComponent() call.
     End Sub
+#End Region
+
+#Region "InitialControl"
+    Private Sub InitialValue()
+        txtEmpCode.Text = ""
+        txtFirstName.Text = ""
+        txtLastName.Text = ""
+        txtDepartment.Text = ""
+        txtPosition.Text = ""
+        txtMobilePhone.Text = ""
+        txtFacebookID.Text = ""
+        txtEmailAddress.Text = ""
+        txtAddress.Text = ""
+        txtBusinessPhone.Text = ""
+        txtHomePhone.Text = ""
+        txtFaxNumber.Text = ""
+        txtCity.Text = ""
+        cboProvince.Text = ""
+        txtZip.Text = ""
+        txtCountry.Text = ""
+        txtNotes.Text = ""
+        lblRetiredDate.Visibility = Windows.Visibility.Hidden
+        txtRetiredDate.Visibility = Windows.Visibility.Hidden
+    End Sub
+#End Region
+
 #Region "LoadData"
     Private Sub LoadData(EmpCode As String)
         Dim dbConn As New DbConnect
@@ -24,8 +54,14 @@ Public Class Employee
             Dim adapt As New OleDbDataAdapter(sSQL, dbConn.Conn)
             adapt.SelectCommand.Parameters.Add("@EmpCode", OleDbType.VarChar).Value = EmpCode
             AtomyDataSet.Employee.Clear()
-            adapt.Fill(AtomyDataSet, "Employee")
-            Me.DataContext = AtomyDataSet.Employee.Rows(0)
+
+            If adapt.Fill(AtomyDataSet, "Employee") > 0 Then
+                Me.DataContext = AtomyDataSet.Employee.Rows(0)
+            Else
+                MessageBox.Show("Nhân viên [" + EmpCode + "] không tồn tại hoặc đã bị xóa.")
+                InitialValue()
+                CtrEnable()
+            End If
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi khi lấy dữ liệu.", ex)
         Finally
@@ -35,69 +71,69 @@ Public Class Employee
     End Sub
 #End Region
 
-#Region "EnableButton"
+#Region "CtrEnable"
     Private Sub CtrEnable()
         If Me.Mode = DataRowState.Added Then
-            txtFirstName.IsReadOnly = False
-            txtLastName.IsReadOnly = False
-            txtDepartment.IsReadOnly = False
-            txtPosition.IsReadOnly = False
-            txtMobilePhone.IsReadOnly = False
-            txtFacebookID.IsReadOnly = False
-            txtEmailAddress.IsReadOnly = False
-            txtAddress.IsReadOnly = False
+            txtFirstName.IsEnabled = True
+            txtLastName.IsEnabled = True
+            txtDepartment.IsEnabled = True
+            txtPosition.IsEnabled = True
+            txtMobilePhone.IsEnabled = True
+            txtFacebookID.IsEnabled = True
+            txtEmailAddress.IsEnabled = True
+            txtAddress.IsEnabled = True
 
-            txtBusinessPhone.IsReadOnly = False
-            txtHomePhone.IsReadOnly = False
-            txtFaxNumber.IsReadOnly = False
-            txtCity.IsReadOnly = False
-            cboProvince.IsReadOnly = False
-            txtZip.IsReadOnly = False
-            txtCountry.IsReadOnly = False
+            txtBusinessPhone.IsEnabled = True
+            txtHomePhone.IsEnabled = True
+            txtFaxNumber.IsEnabled = True
+            txtCity.IsEnabled = True
+            cboProvince.IsEnabled = True
+            txtZip.IsEnabled = True
+            txtCountry.IsEnabled = True
 
-            txtNotes.IsReadOnly = False
+            txtNotes.IsEnabled = True
             lblRetiredDate.Visibility = Windows.Visibility.Hidden
             txtRetiredDate.Visibility = Windows.Visibility.Hidden
         ElseIf Mode = DataRowState.Modified Then
-            txtFirstName.IsReadOnly = False
-            txtLastName.IsReadOnly = False
-            txtDepartment.IsReadOnly = False
-            txtPosition.IsReadOnly = False
-            txtMobilePhone.IsReadOnly = False
-            txtFacebookID.IsReadOnly = False
-            txtEmailAddress.IsReadOnly = False
-            txtAddress.IsReadOnly = False
+            txtFirstName.IsEnabled = True
+            txtLastName.IsEnabled = True
+            txtDepartment.IsEnabled = True
+            txtPosition.IsEnabled = True
+            txtMobilePhone.IsEnabled = True
+            txtFacebookID.IsEnabled = True
+            txtEmailAddress.IsEnabled = True
+            txtAddress.IsEnabled = True
 
-            txtBusinessPhone.IsReadOnly = False
-            txtHomePhone.IsReadOnly = False
-            txtFaxNumber.IsReadOnly = False
-            txtCity.IsReadOnly = False
-            cboProvince.IsReadOnly = False
-            txtZip.IsReadOnly = False
-            txtCountry.IsReadOnly = False
+            txtBusinessPhone.IsEnabled = True
+            txtHomePhone.IsEnabled = True
+            txtFaxNumber.IsEnabled = True
+            txtCity.IsEnabled = True
+            cboProvince.IsEnabled = True
+            txtZip.IsEnabled = True
+            txtCountry.IsEnabled = True
 
-            txtNotes.IsReadOnly = False
+            txtNotes.IsEnabled = True
             lblRetiredDate.Visibility = Windows.Visibility.Hidden
             txtRetiredDate.Visibility = Windows.Visibility.Hidden
         ElseIf Me.Mode = DataRowState.Deleted Then
-            txtFirstName.IsReadOnly = True
-            txtLastName.IsReadOnly = True
-            txtDepartment.IsReadOnly = True
-            txtPosition.IsReadOnly = True
-            txtMobilePhone.IsReadOnly = True
-            txtFacebookID.IsReadOnly = True
-            txtEmailAddress.IsReadOnly = True
-            txtAddress.IsReadOnly = True
+            txtFirstName.IsEnabled = False
+            txtLastName.IsEnabled = False
+            txtDepartment.IsEnabled = False
+            txtPosition.IsEnabled = False
+            txtMobilePhone.IsEnabled = False
+            txtFacebookID.IsEnabled = False
+            txtEmailAddress.IsEnabled = False
+            txtAddress.IsEnabled = False
 
-            txtBusinessPhone.IsReadOnly = True
-            txtHomePhone.IsReadOnly = True
-            txtFaxNumber.IsReadOnly = True
-            txtCity.IsReadOnly = True
-            cboProvince.IsReadOnly = True
-            txtZip.IsReadOnly = True
-            txtCountry.IsReadOnly = True
+            txtBusinessPhone.IsEnabled = False
+            txtHomePhone.IsEnabled = False
+            txtFaxNumber.IsEnabled = False
+            txtCity.IsEnabled = False
+            cboProvince.IsEnabled = False
+            txtZip.IsEnabled = False
+            txtCountry.IsEnabled = False
 
-            txtNotes.IsReadOnly = True
+            txtNotes.IsEnabled = False
             lblRetiredDate.Visibility = Windows.Visibility.Visible
             txtRetiredDate.Visibility = Windows.Visibility.Visible
         End If
@@ -105,8 +141,8 @@ Public Class Employee
     End Sub
 #End Region
 
-#Region "btnUpdate_Click"
-    Private Sub btnUpdate_Click(sender As Object, e As RoutedEventArgs)
+#Region "btnProcess_Click"
+    Private Sub btnProcess_Click(sender As Object, e As RoutedEventArgs)
         Try
             Select Case Mode
                 Case DataRowState.Added
@@ -179,6 +215,7 @@ Public Class Employee
         End If
     End Sub
 #End Region
+
 #Region "searchSearchResult"
     Private Sub searchSearchResult(sender As Object, e As SearchDataArgs)
         LoadData(e.Code)
@@ -371,6 +408,33 @@ Public Class Employee
 #End Region
 #End Region
 
+#Region "txtCode_LostFocus"
+    Private Sub txtCode_LostFocus(sender As Object, e As RoutedEventArgs)
+        Try
+            Dim txtCode = DirectCast(sender, TextBox)
+            Dim s = txtCode.Text.Trim()
+            If s.Length = 0 Then
+                Return
+            End If
+            If s.Length < 8 Then
+                Dim lead As String = New String("0", 8 - s.Length)
+                s = lead + s
+                txtCode.Text = s
+            End If
+            If Mode = DataRowState.Added Then
+                If txtCode.Equals(txtEmpCode) AndAlso txtEmpCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Employee", txtEmpCode.Text.Trim) Then
+                    MessageBox.Show("Mã nhân viên đã tồn tại.", Utility.AppCaption)
+                    txtEmpCode.Text = ""
+                End If
+            ElseIf Mode = DataRowState.Modified OrElse Mode = DataRowState.Deleted Then
+                LoadData(txtEmpCode.Text.Trim)
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
+        End Try
+    End Sub
+#End Region
+
 #Region "☆ SQL"
 #Region "InsertEmployeeSQL"
     Private Function InsertEmployeeSQL() As String
@@ -402,38 +466,6 @@ Public Class Employee
         Return sb.ToString()
     End Function
 #End Region
-#End Region
-
-#Region "txtCode_LostFocus"
-    Private Sub txtCode_LostFocus(sender As Object, e As RoutedEventArgs)
-        Try
-            Dim txtCode = DirectCast(sender, TextBox)
-            Dim s = txtCode.Text.Trim()
-            If s.Length = 0 Then
-                Return
-            End If
-            If s.Length < 8 Then
-                Dim lead As String = New String("0", 8 - s.Length)
-                s = lead + s
-                txtCode.Text = s
-            End If
-            If Mode = DataRowState.Added Then
-                If txtCode.Equals(txtEmpCode) AndAlso txtEmpCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Employee", txtEmpCode.Text.Trim) Then
-                    MessageBox.Show("Mã nhân viên đã tồn tại.", Utility.AppCaption)
-                    txtEmpCode.Text = ""
-                End If
-            Else
-                If txtCode.Equals(txtEmpCode) AndAlso txtEmpCode.Text.Trim.Length > 0 AndAlso (Not Check.IsExisted("Employee", txtEmpCode.Text.Trim)) Then
-                    MessageBox.Show("Mã nhân viên không tồn tại.", Utility.AppCaption)
-                    txtEmpCode.Text = ""
-                Else
-                    LoadData(txtEmpCode.Text.Trim)
-                End If
-            End If
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
-        End Try
-    End Sub
 #End Region
 
 End Class

@@ -3,36 +3,60 @@ Imports System.Data
 Imports System.Text
 
 Public Class Property1
+#Region "FIELD"
     Private AtomyDataSet As AtomyDataSet
     Private Mode As DataRowState
+#End Region
 
+#Region "CONSTRUCTOR"
     Public Sub New()
         AtomyDataSet = New AtomyDataSet()
         Mode = DataRowState.Added
         ' This call is required by the designer.
         InitializeComponent()
-
+        InitialValue()
+        ProcessSelection.Mode = DataRowState.Added
         ' Add any initialization after the InitializeComponent() call.
     End Sub
+#End Region
+
+#Region "InitialControl"
+    Private Sub InitialValue()
+        txtPropCode.Text = ""
+        txtPropName.Text = ""
+        txtDescription.Text = ""
+        txtCategory.Text = ""
+        txtCondition.Text = ""
+        txtPurchasePrice.Text = ""
+        txtUnit.Text = ""
+        txtSalesPrice.Text = ""
+        txtCurrentValue.Text = ""
+        txtLocation.Text = ""
+        txtManufacturer.Text = ""
+        txtModel.Text = ""
+        txtComments.Text = ""
+        txtAccquiredDate.Text = ""
+    End Sub
+#End Region
+
 #Region "LoadData"
-    Private Sub LoadData(PropCd As String)
+    Private Sub LoadData(PropCode As String)
         Dim dbConn As New DbConnect
 
         Try
             dbConn.Open()
             Dim sSQL As String = "select * from [Property] where [PropCode] = ?"
             Dim adapt As New OleDbDataAdapter(sSQL, dbConn.Conn)
-            adapt.SelectCommand.Parameters.Add("@PropCode", OleDbType.VarChar).Value = PropCd
+            adapt.SelectCommand.Parameters.Add("@PropCode", OleDbType.VarChar).Value = PropCode
             AtomyDataSet._Property.Clear()
-            adapt.Fill(AtomyDataSet, "Property")
-            If AtomyDataSet._Property.Rows.Count > 0 Then
+
+            If adapt.Fill(AtomyDataSet, "Property") > 0 Then
                 Me.DataContext = AtomyDataSet._Property.Rows(0)
-                Mode = DataRowState.Modified
-                CtrEnable()
             Else
-
+                MessageBox.Show("Sản phẩm [" + PropCode + "] không tồn tại hoặc đã bị xóa.")
+                InitialValue()
+                CtrEnable()
             End If
-
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi khi lấy dữ liệu.", ex)
         Finally
@@ -44,35 +68,64 @@ Public Class Property1
 
 #Region "CtrEnable"
     Private Sub CtrEnable()
-        If Mode = DataRowState.Modified Then
+        If Me.Mode = DataRowState.Added Then
+            txtPropName.IsEnabled = True
+            txtDescription.IsEnabled = True
+            txtCategory.IsEnabled = True
+            txtCondition.IsEnabled = True
+            txtPurchasePrice.IsEnabled = True
+            txtUnit.IsEnabled = True
+            txtSalesPrice.IsEnabled = True
+            txtCurrentValue.IsEnabled = True
+            txtLocation.IsEnabled = True
+            txtManufacturer.IsEnabled = True
+            txtModel.IsEnabled = True
+            txtComments.IsEnabled = True
+            txtAccquiredDate.IsEnabled = True
+        ElseIf Mode = DataRowState.Modified Then
+            txtPropName.IsEnabled = True
+            txtDescription.IsEnabled = True
+            txtCategory.IsEnabled = True
+            txtCondition.IsEnabled = True
+            txtPurchasePrice.IsEnabled = True
+            txtUnit.IsEnabled = True
+            txtSalesPrice.IsEnabled = True
+            txtCurrentValue.IsEnabled = True
+            txtLocation.IsEnabled = True
+            txtManufacturer.IsEnabled = True
+            txtModel.IsEnabled = True
+            txtComments.IsEnabled = True
+            txtAccquiredDate.IsEnabled = True
 
-            txtPropCd.IsEnabled = False
+        ElseIf Me.Mode = DataRowState.Deleted Then
+            txtPropName.IsEnabled = False
+            txtDescription.IsEnabled = False
+            txtCategory.IsEnabled = False
+            txtCondition.IsEnabled = False
+            txtPurchasePrice.IsEnabled = False
+            txtUnit.IsEnabled = False
+            txtSalesPrice.IsEnabled = False
+            txtCurrentValue.IsEnabled = False
+            txtLocation.IsEnabled = False
+            txtManufacturer.IsEnabled = False
+            txtModel.IsEnabled = False
+            txtComments.IsEnabled = False
+            txtAccquiredDate.IsEnabled = False
 
-     
-        Else
-
-            txtPropCd.IsEnabled = True
-          
         End If
 
     End Sub
 #End Region
 
-#Region "formload"
-    Private Sub formload(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-
-    End Sub
-#End Region
-
-#Region "btnUpdate_Click"
-    Private Sub btnUpdate_Click(sender As Object, e As RoutedEventArgs)
+#Region "btnProcess_Click"
+    Private Sub btnProcess_Click(sender As Object, e As RoutedEventArgs)
         Try
             Select Case Mode
                 Case DataRowState.Added
                     If Not ValidateData(EnumAction.Insert) Then
                         Return
                     End If
-                    If Check.IsExisted("Property", txtPropCd.Text.Trim) Then
+                    If Check.IsExisted("Property", txtPropCode.Text.Trim) Then
                         MessageBox.Show("Mã sản phẩm đã tồn tại.")
                         HelpCreateCode()
                         Return
@@ -81,7 +134,7 @@ Public Class Property1
                     If Insert() Then
                         MessageBox.Show("Đã hoàn thành.")
                         lblPropCodeHint.Content = ""
-                        LoadData(txtPropCd.Text.Trim)
+                        LoadData(txtPropCode.Text.Trim)
                     Else
                         MessageBox.Show("Không thành công.")
                     End If
@@ -92,9 +145,21 @@ Public Class Property1
                     If Update() Then
                         MessageBox.Show("Đã hoàn thành.")
                         lblPropCodeHint.Content = ""
-                        LoadData(txtPropCd.Text.Trim)
+                        LoadData(txtPropCode.Text.Trim)
                     Else
                         MessageBox.Show("Không thành công.")
+                    End If
+                Case DataRowState.Deleted
+                    If Not ValidateData(EnumAction.Delete) Then
+                        Return
+                    End If
+                    Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
+                    If confirm Then
+                        If Delete() Then
+                            MessageBox.Show("Đã hoàn thành.")
+                            lblPropCodeHint.Content = ""
+                            ProcessSelection.Mode = DataRowState.Added
+                        End If
                     End If
             End Select
         Catch ex As Exception
@@ -105,32 +170,9 @@ Public Class Property1
     End Sub
 #End Region
 
-#Region "btnDelete_Click"
-    Private Sub btnDelete_Click(sender As Object, e As RoutedEventArgs)
-        Try
-            If Not ValidateData(EnumAction.Delete) Then
-                Return
-            End If
-            If Mode = DataRowState.Modified Then
-                Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
-                If confirm Then
-                    If Delete() Then
-                        MessageBox.Show("Đã hoàn thành.")
-                        lblPropCodeHint.Content = ""
-
-                    End If
-                End If
-            End If
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Xóa.", ex)
-        End Try
-
-    End Sub
-#End Region
-
-#Region "btnInsert_Click"
-    Private Sub btnInsert_Click(sender As Object, e As RoutedEventArgs)
-        Try
+#Region "ProcessSelection_ValueChange"
+    Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
+        If ProcessSelection.Mode = DataRowState.Added Then
             AtomyDataSet._Property.Clear()
             Dim newRow As AtomyDataSet.PropertyRow = AtomyDataSet._Property.NewPropertyRow()
             AtomyDataSet._Property.Rows.Add(newRow)
@@ -138,9 +180,13 @@ Public Class Property1
             Mode = DataRowState.Added
             CtrEnable()
             HelpCreateCode()
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào nút Thêm.", ex)
-        End Try
+        ElseIf ProcessSelection.Mode = DataRowState.Modified Then
+            Me.Mode = DataRowState.Modified
+            CtrEnable()
+        ElseIf ProcessSelection.Mode = DataRowState.Deleted Then
+            Me.Mode = DataRowState.Deleted
+            CtrEnable()
+        End If
     End Sub
 #End Region
 
@@ -163,49 +209,27 @@ Public Class Property1
     End Sub
 #End Region
 
-#Region "txtCode_LostFocus"
-    Private Sub txtCode_LostFocus(sender As Object, e As RoutedEventArgs)
-        Try
-            Dim txtCode = DirectCast(sender, TextBox)
-            If Mode = DataRowState.Added Then
-                Dim s = txtCode.Text.Trim()
-                If s.Length = 0 Then
-                    Return
-                End If
-                If s.Length < 8 Then
-                    Dim lead As String = New String("0", 8 - s.Length)
-                    s = lead + s
-                    txtCode.Text = s
-                End If
-
-            End If
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
-        End Try
-    End Sub
-#End Region
-
 #Region "BUSINESS"
 #Region "ValidateData"
     Private Function ValidateData(action As EnumAction) As Boolean
         Dim hasError As Boolean
         Select Case action
             Case EnumAction.Update
-                hasError = Validation.GetHasError(txtPropCd)
+                hasError = Validation.GetHasError(txtPropCode)
                 hasError = hasError OrElse Validation.GetHasError(txtPropName)
                 hasError = hasError OrElse Validation.GetHasError(txtSalesPrice)
                 hasError = hasError OrElse Validation.GetHasError(txtUnit)
                 hasError = hasError OrElse Validation.GetHasError(txtPurchasePrice)
                 hasError = hasError OrElse Validation.GetHasError(txtCurrentValue)
             Case EnumAction.Insert
-                hasError = Validation.GetHasError(txtPropCd)
+                hasError = Validation.GetHasError(txtPropCode)
                 hasError = hasError OrElse Validation.GetHasError(txtPropName)
                 hasError = hasError OrElse Validation.GetHasError(txtSalesPrice)
                 hasError = hasError OrElse Validation.GetHasError(txtUnit)
                 hasError = hasError OrElse Validation.GetHasError(txtPurchasePrice)
                 hasError = hasError OrElse Validation.GetHasError(txtCurrentValue)
             Case EnumAction.Delete
-
+                hasError = Validation.GetHasError(txtPropCode)
         End Select
         Return Not hasError
     End Function
@@ -359,6 +383,35 @@ Public Class Property1
     End Sub
 
 #End Region
+#End Region
+
+#Region "txtCode_LostFocus"
+    Private Sub txtCode_LostFocus(sender As Object, e As RoutedEventArgs)
+        Try
+            Dim txtCode = DirectCast(sender, TextBox)
+            Dim s = txtCode.Text.Trim()
+            If s.Length = 0 Then
+                Return
+            End If
+            If s.Length < 8 Then
+                Dim lead As String = New String("0", 8 - s.Length)
+                s = lead + s
+                txtCode.Text = s
+            End If
+            If Mode = DataRowState.Added Then
+                If Mode = DataRowState.Added Then
+                    If txtCode.Equals(txtPropCode) AndAlso txtPropCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Property", txtPropCode.Text.Trim) Then
+                        MessageBox.Show("Mã sản phẩm đã tồn tại.", Utility.AppCaption)
+                        txtPropCode.Text = ""
+                    End If
+                End If
+            ElseIf Mode = DataRowState.Modified OrElse Mode = DataRowState.Deleted Then
+                LoadData(txtPropCode.Text.Trim)
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
+        End Try
+    End Sub
 #End Region
 
 #Region "☆ SQL"

@@ -2,17 +2,46 @@
 Imports System.Data
 Imports System.Text
 Public Class Customer
+
+#Region "FIELD"
     Private AtomyDataSet As AtomyDataSet
     Private Mode As DataRowState
+#End Region
 
+#Region "CONSTRUCTOR"
     Public Sub New()
         AtomyDataSet = New AtomyDataSet()
         ' This call is required by the designer.
         InitializeComponent()
-        Mode = ProcessSelection.Mode
-        cboProvince.DataContext = Province.GetAllProvinces()
+        InitialValue()
+        cboProvince.ItemsSource = Province.GetAllProvinces()
+        ProcessSelection.Mode = DataRowState.Added
         ' Add any initialization after the InitializeComponent() call.
     End Sub
+#End Region
+
+#Region "InitialControl"
+    Private Sub InitialValue()
+        txtCusCode.Text = ""
+        txtFirstName.Text = ""
+        txtLastName.Text = ""
+        txtMobilePhone.Text = ""
+        txtFacebookID.Text = ""
+        txtEmailAddress.Text = ""
+        txtAddress.Text = ""
+        txtCompany.Text = ""
+        txtBusinessPhone.Text = ""
+        txtHomePhone.Text = ""
+        txtFaxNumber.Text = ""
+        txtCity.Text = ""
+        cboProvince.Text = ""
+        txtZip.Text = ""
+        txtCountry.Text = ""
+        txtWebPage.Text = ""
+        txtNotes.Text = ""
+    End Sub
+#End Region
+
 #Region "LoadData"
     Private Sub LoadData(CusCode As String)
         Dim dbConn As New DbConnect
@@ -23,8 +52,15 @@ Public Class Customer
             Dim adapt As New OleDbDataAdapter(sSQL, dbConn.Conn)
             adapt.SelectCommand.Parameters.Add("@CusCode", OleDbType.VarChar).Value = CusCode
             AtomyDataSet.Customer.Clear()
-            adapt.Fill(AtomyDataSet, "Customer")
-            Me.DataContext = AtomyDataSet.Customer.Rows(0)
+
+            If adapt.Fill(AtomyDataSet, "Customer") > 0 Then
+                Me.DataContext = AtomyDataSet.Customer.Rows(0)
+            Else
+                MessageBox.Show("Khách hàng [" + CusCode + "] không tồn tại hoặc đã bị xóa.")
+                InitialValue()
+                CtrEnable()
+            End If
+
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi khi lấy dữ liệu.", ex)
         Finally
@@ -34,69 +70,69 @@ Public Class Customer
     End Sub
 #End Region
 
-#Region "EnableButton"
+#Region "CtrEnable"
     Private Sub CtrEnable()
         If Me.Mode = DataRowState.Added Then
-            txtFirstName.IsReadOnly = False
-            txtLastName.IsReadOnly = False
-            txtMobilePhone.IsReadOnly = False
-            txtFacebookID.IsReadOnly = False
-            txtEmailAddress.IsReadOnly = False
-            txtAddress.IsReadOnly = False
-            txtCompany.IsReadOnly = False
-            txtBusinessPhone.IsReadOnly = False
-            txtHomePhone.IsReadOnly = False
-            txtFaxNumber.IsReadOnly = False
-            txtCity.IsReadOnly = False
-            cboProvince.IsReadOnly = False
-            txtZip.IsReadOnly = False
-            txtCountry.IsReadOnly = False
-            txtWebPage.IsReadOnly = False
-            txtNotes.IsReadOnly = False
+            txtFirstName.IsEnabled = True
+            txtLastName.IsEnabled = True
+            txtMobilePhone.IsEnabled = True
+            txtFacebookID.IsEnabled = True
+            txtEmailAddress.IsEnabled = True
+            txtAddress.IsEnabled = True
+            txtCompany.IsEnabled = True
+            txtBusinessPhone.IsEnabled = True
+            txtHomePhone.IsEnabled = True
+            txtFaxNumber.IsEnabled = True
+            txtCity.IsEnabled = True
+            cboProvince.IsEnabled = True
+            txtZip.IsEnabled = True
+            txtCountry.IsEnabled = True
+            txtWebPage.IsEnabled = True
+            txtNotes.IsEnabled = True
 
         ElseIf Mode = DataRowState.Modified Then
-            txtFirstName.IsReadOnly = False
-            txtLastName.IsReadOnly = False
-            txtMobilePhone.IsReadOnly = False
-            txtFacebookID.IsReadOnly = False
-            txtEmailAddress.IsReadOnly = False
-            txtAddress.IsReadOnly = False
-            txtCompany.IsReadOnly = False
-            txtBusinessPhone.IsReadOnly = False
-            txtHomePhone.IsReadOnly = False
-            txtFaxNumber.IsReadOnly = False
-            txtCity.IsReadOnly = False
-            cboProvince.IsReadOnly = False
-            txtZip.IsReadOnly = False
-            txtCountry.IsReadOnly = False
-            txtWebPage.IsReadOnly = False
-            txtNotes.IsReadOnly = False
+            txtFirstName.IsEnabled = True
+            txtLastName.IsEnabled = True
+            txtMobilePhone.IsEnabled = True
+            txtFacebookID.IsEnabled = True
+            txtEmailAddress.IsEnabled = True
+            txtAddress.IsEnabled = True
+            txtCompany.IsEnabled = True
+            txtBusinessPhone.IsEnabled = True
+            txtHomePhone.IsEnabled = True
+            txtFaxNumber.IsEnabled = True
+            txtCity.IsEnabled = True
+            cboProvince.IsEnabled = True
+            txtZip.IsEnabled = True
+            txtCountry.IsEnabled = True
+            txtWebPage.IsEnabled = True
+            txtNotes.IsEnabled = True
 
         ElseIf Me.Mode = DataRowState.Deleted Then
-            txtFirstName.IsReadOnly = True
-            txtLastName.IsReadOnly = True
-            txtMobilePhone.IsReadOnly = True
-            txtFacebookID.IsReadOnly = True
-            txtEmailAddress.IsReadOnly = True
-            txtAddress.IsReadOnly = True
-            txtCompany.IsReadOnly = True
-            txtBusinessPhone.IsReadOnly = True
-            txtHomePhone.IsReadOnly = True
-            txtFaxNumber.IsReadOnly = True
-            txtCity.IsReadOnly = True
-            cboProvince.IsReadOnly = True
-            txtZip.IsReadOnly = True
-            txtCountry.IsReadOnly = True
-            txtWebPage.IsReadOnly = True
-            txtNotes.IsReadOnly = True
+            txtFirstName.IsEnabled = False
+            txtLastName.IsEnabled = False
+            txtMobilePhone.IsEnabled = False
+            txtFacebookID.IsEnabled = False
+            txtEmailAddress.IsEnabled = False
+            txtAddress.IsEnabled = False
+            txtCompany.IsEnabled = False
+            txtBusinessPhone.IsEnabled = False
+            txtHomePhone.IsEnabled = False
+            txtFaxNumber.IsEnabled = False
+            txtCity.IsEnabled = False
+            cboProvince.IsEnabled = False
+            txtZip.IsEnabled = False
+            txtCountry.IsEnabled = False
+            txtWebPage.IsEnabled = False
+            txtNotes.IsEnabled = False
 
         End If
 
     End Sub
 #End Region
 
-#Region "btnUpdate_Click"
-    Private Sub btnUpdate_Click(sender As Object, e As RoutedEventArgs)
+#Region "btnProcess_Click"
+    Private Sub btnProcess_Click(sender As Object, e As RoutedEventArgs)
         Try
             Select Case Mode
                 Case DataRowState.Added
@@ -110,23 +146,23 @@ Public Class Customer
                     End If
 
                     If InsertCustomer() Then
-                        MessageBox.Show("Đã hoàn thành.")
+                        MessageBox.Show("Cập nhật thành công.", Me.Title, MessageBoxButton.OK)
                         lblCusCodeHint.Content = ""
                         ProcessSelection.Mode = DataRowState.Modified
-                        LoadData(txtCusCode.Text)
+                        LoadData(txtCusCode.Text.Trim)
                     Else
-                        MessageBox.Show("Không thành công.")
+                        MessageBox.Show("Cập nhật không thành công.", Me.Title, MessageBoxButton.OK)
                     End If
                 Case DataRowState.Modified
                     If Not ValidateData(EnumAction.Update) Then
                         Return
                     End If
                     If UpdateCustomer() Then
-                        MessageBox.Show("Đã hoàn thành.")
+                        MessageBox.Show("Cập nhật thành công.", Me.Title, MessageBoxButton.OK)
                         lblCusCodeHint.Content = ""
-                        LoadData(txtCusCode.Text)
+                        LoadData(txtCusCode.Text.Trim)
                     Else
-                        MessageBox.Show("Không thành công.")
+                        MessageBox.Show("Cập nhật không thành công.", Me.Title, MessageBoxButton.OK)
                     End If
                 Case DataRowState.Deleted
                     If Not ValidateData(EnumAction.Delete) Then
@@ -135,9 +171,11 @@ Public Class Customer
                     Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
                     If confirm Then
                         If DeleteCustomer() Then
-                            MessageBox.Show("Đã hoàn thành.")
+                            MessageBox.Show("Xóa thành công.", Me.Title, MessageBoxButton.OK)
                             lblCusCodeHint.Content = ""
                             ProcessSelection.Mode = DataRowState.Added
+                        Else
+                            MessageBox.Show("Xóa không thành công.", Me.Title, MessageBoxButton.OK)
                         End If
                     End If
 
@@ -169,10 +207,10 @@ Public Class Customer
         End If
     End Sub
 #End Region
+
 #Region "searchSearchResult"
     Private Sub searchSearchResult(sender As Object, e As SearchDataArgs)
         LoadData(e.Code)
-
     End Sub
 #End Region
 
@@ -205,12 +243,13 @@ Public Class Customer
                 hasError = hasError OrElse Validation.GetHasError(txtLastName)
                 hasError = hasError OrElse Validation.GetHasError(txtMobilePhone)
             Case EnumAction.Delete
-
+                hasError = Validation.GetHasError(txtCusCode)
         End Select
         Return Not hasError
     End Function
 #End Region
 
+#Region "DeleteCustomer"
     Private Function DeleteCustomer() As Boolean
         Dim dbConn As New DbConnect()
         Dim res As Integer
@@ -237,7 +276,9 @@ Public Class Customer
         End Try
         Return res
     End Function
+#End Region
 
+#Region "InsertCustomer"
     Private Function InsertCustomer() As Boolean
         Dim dbConn As New DbConnect()
         Dim res As Integer
@@ -298,7 +339,9 @@ Public Class Customer
         End Try
         Return res
     End Function
+#End Region
 
+#Region "UpdateCustomer"
     Private Function UpdateCustomer() As Boolean
         Dim dbConn As New DbConnect()
         Dim res As Integer
@@ -353,6 +396,7 @@ Public Class Customer
         End Try
         Return res
     End Function
+#End Region
 
 #Region "HelpCreateCusCode"
     Private Sub HelpCreateCusCode()
@@ -360,6 +404,33 @@ Public Class Customer
     End Sub
 
 #End Region
+#End Region
+
+#Region "txtCode_LostFocus"
+    Private Sub txtCode_LostFocus(sender As Object, e As RoutedEventArgs)
+        Try
+            Dim txtCode = DirectCast(sender, TextBox)
+            Dim s = txtCode.Text.Trim()
+            If s.Length = 0 Then
+                Return
+            End If
+            If s.Length < 8 Then
+                Dim lead As String = New String("0", 8 - s.Length)
+                s = lead + s
+                txtCode.Text = s
+            End If
+            If Mode = DataRowState.Added Then
+                If txtCode.Equals(txtCusCode) AndAlso txtCusCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Customer", txtCusCode.Text.Trim) Then
+                    MessageBox.Show("Mã khách hàng đã tồn tại.", Me.Title)
+                    txtCusCode.Text = ""
+                End If
+            ElseIf Mode = DataRowState.Modified OrElse Mode = DataRowState.Deleted Then
+                LoadData(txtCusCode.Text.Trim)
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
+        End Try
+    End Sub
 #End Region
 
 #Region "☆ SQL"
@@ -395,117 +466,6 @@ Public Class Customer
 #End Region
 #End Region
 
-#Region "txtCode_LostFocus"
-    Private Sub txtCode_LostFocus(sender As Object, e As RoutedEventArgs)
-        Try
-            Dim txtCode = DirectCast(sender, TextBox)
-            If Mode = DataRowState.Added Then
-                Dim s = txtCode.Text.Trim()
-                If s.Length = 0 Then
-                    Return
-                End If
-                If s.Length < 8 Then
-                    Dim lead As String = New String("0", 8 - s.Length)
-                    s = lead + s
-                    txtCode.Text = s
-                End If
-                If txtCode.Equals(txtCusCode) AndAlso txtCusCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Customer", txtCusCode.Text.Trim) Then
-                    MessageBox.Show("Mã khách hàng đã tồn tại.", Utility.AppCaption)
-                    txtCusCode.Text = ""
-                End If
-            End If
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
-        End Try
-    End Sub
-#End Region
-
 End Class
 
-Public Class Province
-    Public Property ZipCode As String
-    Public Property Province As String
-    Public Property Country As String
-    Public Property IsCapital As String
-    Public Sub New(a As String, b As String, c As String, d As Boolean)
-        Me.ZipCode = a
-        Me.Province = b
-        Me.Country = c
-        Me.IsCapital = d
-    End Sub
-    Private Shared ListProvince As List(Of Province)
-    Public Shared Function GetAllProvinces() As List(Of Province)
-        If ListProvince Is Nothing Then
-            ListProvince = New List(Of Province)
-            ListProvince.Add(New Province("100000", "Hà Nội", "Việt Nam", True))
-            ListProvince.Add(New Province("700000", "Thành phố Hồ Chí Minh", "Việt Nam", False))
-            ListProvince.Add(New Province("880000", "An Giang", "Việt Nam", False))
-            ListProvince.Add(New Province("790000", "Bà Rịa-Vũng Tàu", "Việt Nam", False))
-            ListProvince.Add(New Province("960000", "Bạc Liêu", "Việt Nam", False))
-            ListProvince.Add(New Province("260000", "Bắc Kạn", "Việt Nam", False))
-            ListProvince.Add(New Province("230000", "Bắc Giang", "Việt Nam", False))
-            ListProvince.Add(New Province("220000", "Bắc Ninh", "Việt Nam", False))
-            ListProvince.Add(New Province("930000", "Bến Tre", "Việt Nam", False))
-            ListProvince.Add(New Province("820000", "Bình Dương", "Việt Nam", False))
-            ListProvince.Add(New Province("590000", "Bình Định", "Việt Nam", False))
-            ListProvince.Add(New Province("830000", "Bình Phước", "Việt Nam", False))
-            ListProvince.Add(New Province("800000", "Bình Thuận", "Việt Nam", False))
-            ListProvince.Add(New Province("970000", "Cà Mau", "Việt Nam", False))
-            ListProvince.Add(New Province("270000", "Cao Bằng", "Việt Nam", False))
-            ListProvince.Add(New Province("900000", "Cần Thơ", "Việt Nam", False))
-            ListProvince.Add(New Province("550000", "Đà Nẵng", "Việt Nam", False))
-            ListProvince.Add(New Province("630000", "Đắk Lắk", "Việt Nam", False))
-            ListProvince.Add(New Province("640000", "Đắk Nông", "Việt Nam", False))
-            ListProvince.Add(New Province("380000", "Điện Biên", "Việt Nam", False))
-            ListProvince.Add(New Province("810000", "Đồng Nai", "Việt Nam", False))
-            ListProvince.Add(New Province("870000", "Đồng Tháp", "Việt Nam", False))
-            ListProvince.Add(New Province("600000", "Gia Lai", "Việt Nam", False))
-            ListProvince.Add(New Province("310000", "Hà Giang", "Việt Nam", False))
-            ListProvince.Add(New Province("400000", "Hà Nam", "Việt Nam", False))
-            ListProvince.Add(New Province("480000", "Hà Tĩnh", "25", False))
-            ListProvince.Add(New Province("170000", "Hải Dương", "26", False))
-            ListProvince.Add(New Province("180000", "Hải Phòng", "27", False))
-            ListProvince.Add(New Province("910000", "Hậu Giang", "28", False))
-            ListProvince.Add(New Province("350000", "Hòa Bình", "29", False))
-            ListProvince.Add(New Province("160000", "Hưng Yên", "31", False))
-            ListProvince.Add(New Province("650000", "Khánh Hoà", "32", False))
-            ListProvince.Add(New Province("920000", "Kiên Giang", "33", False))
-            ListProvince.Add(New Province("580000", "Kon Tum", "34", False))
-            ListProvince.Add(New Province("390000", "Lai Châu", "35", False))
-            ListProvince.Add(New Province("240000", "Lạng Sơn", "36", False))
-            ListProvince.Add(New Province("330000", "Lào Cai", "37", False))
-            ListProvince.Add(New Province("670000", "Lâm Đồng", "38", False))
-            ListProvince.Add(New Province("850000", "Long An", "39", False))
-            ListProvince.Add(New Province("420000", "Nam Định", "40", False))
-            ListProvince.Add(New Province("460000", "Nghệ An", "41", False))
-            ListProvince.Add(New Province("430000", "Ninh Bình", "42", False))
-            ListProvince.Add(New Province("660000", "Ninh Thuận", "43", False))
-            ListProvince.Add(New Province("290000", "Phú Thọ", "44", False))
-            ListProvince.Add(New Province("620000", "Phú Yên", "45", False))
-            ListProvince.Add(New Province("510000", "Quảng Bình", "46", False))
-            ListProvince.Add(New Province("560000", "Quảng Nam", "47", False))
-            ListProvince.Add(New Province("570000", "Quảng Ngãi", "48", False))
-            ListProvince.Add(New Province("200000", "Quảng Ninh", "49", False))
-            ListProvince.Add(New Province("520000", "Quảng Trị", "50", False))
-            ListProvince.Add(New Province("950000", "Sóc Trăng", "51", False))
-            ListProvince.Add(New Province("360000", "Sơn La", "52", False))
-            ListProvince.Add(New Province("840000", "Tây Ninh", "53", False))
-            ListProvince.Add(New Province("410000", "Thái Bình", "54", False))
-            ListProvince.Add(New Province("250000", "Thái Nguyên", "55", False))
-            ListProvince.Add(New Province("440000", "Thanh Hoá", "56", False))
-            ListProvince.Add(New Province("530000", "Thừa Thiên-Huế", "57", False))
-            ListProvince.Add(New Province("860000", "Tiền Giang", "58", False))
-            ListProvince.Add(New Province("940000", "Trà Vinh", "59", False))
-            ListProvince.Add(New Province("300000", "Tuyên Quang", "60", False))
-            ListProvince.Add(New Province("890000", "Vĩnh Long", "61", False))
-            ListProvince.Add(New Province("280000", "Vĩnh Phúc", "62", False))
-            ListProvince.Add(New Province("320000", "Yên Bái", "63", False))
-
-
-        End If
-
-        Return ListProvince
-    End Function
-
-End Class
 
