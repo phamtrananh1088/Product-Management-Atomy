@@ -13,11 +13,11 @@
                     Me.Title = page.Title
                 Case EnumSearch.SearchEmployee
                     Dim page As SearchEmployee = New SearchEmployee(Me)
-                    Me.Content = Page
-                    Me.Title = Page.Title
+                    Me.Content = page
+                    Me.Title = page.Title
                 Case EnumSearch.SearchCustomer
                     Dim page As SearchCustomer = New SearchCustomer(Me)
-                    Me.Content = Page
+                    Me.Content = page
                     Me.Title = page.Title
                 Case EnumSearch.SearchWareHouse
                     Dim page As SearchWarehouse = New SearchWarehouse(Me)
@@ -29,6 +29,21 @@
     Public Event SearchResult(sender As Object, data As SearchDataArgs)
     Public Event SearchClose(sender As Object, data As EventArgs)
 
+    Public Sub New()
+
+        ' This call is required by the designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+
+    End Sub
+
+    Private _callback As Action(Of SearchDataArgs)
+    Public Sub New(callback As Action(Of SearchDataArgs), ByRef caller As System.Windows.Controls.TextBox, searchKind As EnumSearch)
+        _callback = callback
+        SearchByKey(caller, searchKind)
+    End Sub
+
     Sub CloseF()
         Me.Close()
         RaiseEvent SearchClose(Me, New EventArgs)
@@ -37,6 +52,27 @@
     Sub ResultF(data As SearchDataArgs)
         Me.Close()
         RaiseEvent SearchResult(Me, data)
+    End Sub
+
+    Private Sub SearchByKey(caller As TextBox, searchKind As EnumSearch)
+        Select Case searchKind
+            Case EnumSearch.SearchProperty
+                Dim page As SearchProperty = New SearchProperty(caller.Text.Trim())
+                Dim res As SearchDataArgs = page.SearchByKey()
+                _callback(res)
+            Case EnumSearch.SearchEmployee
+                Dim page As SearchEmployee = New SearchEmployee(caller.Text.Trim())
+                Dim res As SearchDataArgs = page.SearchByKey()
+                _callback(res)
+            Case EnumSearch.SearchCustomer
+                Dim page As SearchCustomer = New SearchCustomer(caller.Text.Trim())
+                Dim res As SearchDataArgs = page.SearchByKey()
+                _callback(res)
+            Case EnumSearch.SearchWareHouse
+                Dim page As SearchWarehouse = New SearchWarehouse(caller.Text.Trim())
+                Dim res As SearchDataArgs = page.SearchByKey()
+                _callback(res)
+        End Select
     End Sub
 
 End Class

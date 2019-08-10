@@ -1,6 +1,7 @@
 ﻿Imports System.Data
 Imports System.Data.OleDb
 Imports System.Text
+Imports System.Windows.Controls.Primitives
 
 Public Class Warehouse
 #Region "FIELD"
@@ -220,7 +221,7 @@ Public Class Warehouse
                     Return False
                 End If
                 If Validation.GetHasError(grdWareHouse) Then
-                    MessageBox.Show("Vui lòng nhập chi tiết sản phẩm", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBox.Show("Vui lòng nhập chi tiết mặt hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     grdWareHouse.Focus()
                     Return False
                 End If
@@ -261,7 +262,7 @@ Public Class Warehouse
                     Return False
                 End If
                 If Validation.GetHasError(grdWareHouse) Then
-                    MessageBox.Show("Vui lòng nhập chi tiết sản phẩm", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBox.Show("Vui lòng nhập chi tiết mặt hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     grdWareHouse.Focus()
                     Return False
                 End If
@@ -546,7 +547,7 @@ Public Class Warehouse
             dbConn.CommitTran()
         Catch ex As Exception
             dbConn.RollbackTran()
-            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi xóa sản phẩm.", ex)
+            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi xóa mặt hàng.", ex)
         Finally
             dbConn.DisposeTran()
             dbConn.Close()
@@ -637,7 +638,7 @@ Public Class Warehouse
             search.Kind = EnumSearch.SearchCustomer
             search.ShowDialog()
         Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã sản phẩm.", ex)
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã mặt hàng.", ex)
         End Try
     End Sub
 #End Region
@@ -650,7 +651,7 @@ Public Class Warehouse
             search.Kind = EnumSearch.SearchEmployee
             search.ShowDialog()
         Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã sản phẩm.", ex)
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã mặt hàng.", ex)
         End Try
     End Sub
 #End Region
@@ -743,13 +744,23 @@ Public Class Warehouse
                 Dim drv As DataRowView = grdWareHouse.SelectedItem
                 If txtCode.Text.Trim.Length > 0 Then
                     Dim row As DataGridRow = Nothing
-                    row = grdWareHouse.ItemContainerGenerator.ContainerFromIndex(grdWareHouse.SelectedIndex)
-                    Dim ctr = row.FindName("lblPropName")
+                    row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
                     Dim dr As DataRow = Check.GetDataByCode("Property", txtCode.Text.Trim)
                     If dr IsNot Nothing Then
-                        drv.Row("PropName") = dr("PropName").ToString()
+                        drv.Row("PropName") = dr("PropName")
+                        Dim cellName As DataGridCell = grdWareHouse.GetCell(row, 1)
+                        cellName.SetTemplateLabelContent("lblPropName", dr("PropName"))
+
+                        drv.Row("Unit") = dr("Unit")
+                        Dim cellUnit As DataGridCell = grdWareHouse.GetCell(row, 2)
+                        cellUnit.SetTemplateLabelContent("lblUnit", dr("Unit"))
+
+                        drv.Row("UnitPrice") = dr("SalesPrice")
+                        drv.Row("CurrentPrice") = dr("SalesPrice")
+                        Dim cellCurrentPrice As DataGridCell = grdWareHouse.GetCell(row, 4)
+                        cellCurrentPrice.SetTemplateLabelContent("lblCurrentPrice", dr("SalesPrice"))
                     Else
-                        MessageBox.Show("Mã sản phẩm không tồn tại.", Utility.AppCaption)
+                        MessageBox.Show("Mã mặt hàng không tồn tại.", Utility.AppCaption)
                         txtCode.Text = ""
                         drv.Row("PropName") = ""
                     End If
@@ -778,6 +789,28 @@ Public Class Warehouse
     End Sub
 #End Region
 
+#Region "txtPropCode_KeyDown"
+    Private Sub txtPropCode_KeyDown(sender As Object, e As KeyEventArgs)
+        Try
+            If e.Key = Key.OemPlus Then
+                Dim search As New Search(AddressOf SearchPropCode_Result, sender, EnumSearch.SearchProperty)
+                e.Handled = True
+            End If
+
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi chọn mặt hàng.", ex)
+        End Try
+    End Sub
+
+    Private Sub SearchPropCode_Result(SearchDataArgs As SearchDataArgs)
+        If SearchDataArgs Is Nothing Then
+            MessageBox.Show("Mã mặt hàng không tồn tại", Me.Title, MessageBoxButton.OK)
+        Else
+
+        End If
+
+    End Sub
+#End Region
 #End Region
 
 End Class

@@ -74,15 +74,11 @@ Class MainWindow
                 pop.ShowDialog()
             Case Else
                 Dim p As New Home
-                pop.Content = p
-                pop.Title = p.Title
-                pop.ShowDialog()
+                Main.Content = p
         End Select
     End Sub
     Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
         Try
-            Dim p As New Home
-            Main.Content = p
             ShowPage(My.Settings.OpenForm)
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã có lỗi sảy ra khi mở ứng dụng", ex)

@@ -8,10 +8,10 @@
         <StackPanel>
             <Menu Height="23" HorizontalAlignment="Left" Name="Menu1" VerticalAlignment="Top" Width="942">
                 <MenuItem Header="Khách hàng" x:Name="MenuItemCustomer" />
-                <MenuItem Header="Sản phẩm" Name="MenuItemProp" />
+                <MenuItem Header="Mặt hàng" Name="MenuItemProp" />
                 <MenuItem Header="Nhân viên" Name="MenuItemEmployee" />
-                <MenuItem Header="Nhập sản phẩm" Name="MenuItemWareHouseIn" />
-                <MenuItem Header="Bán sản phẩm" Name="MenuItemWareHouseOut" />
+                <MenuItem Header="Nhập hàng" Name="MenuItemWareHouseIn" />
+                <MenuItem Header="Bán hàng" Name="MenuItemWareHouseOut" />
                 <MenuItem Header="Hóa đơn" Name="MenuItemOrder" />
             </Menu>
         </StackPanel>

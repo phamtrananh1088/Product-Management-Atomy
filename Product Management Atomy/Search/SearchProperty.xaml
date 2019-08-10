@@ -6,7 +6,7 @@
       xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data" x:Class="SearchProperty" 
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
-      Title="Tìm kiếm sản phẩm">
+      Title="Tìm kiếm mặt hàng">
     <Page.Resources>
         <Style x:Key="Link" TargetType="Button">
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -50,25 +50,25 @@
             <ColumnDefinition Width="341*"/>
         </Grid.ColumnDefinitions>
         <Rectangle Fill="#FFE6E6E6" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="30" Grid.Column="0" Grid.Row="0"/>
-        <Label x:Name="lblTitle" Content="Tìm kiếm sản phẩm" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Height="26" Width="304" Grid.ColumnSpan="3" Margin="10,0,0,0"/>
+        <Label x:Name="lblTitle" Content="Tìm kiếm mặt hàng" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Height="26" Width="304" Grid.ColumnSpan="3" Margin="10,0,0,0"/>
         <Line Grid.ColumnSpan="3" X1="0" Y1="30" X2="1024" Y2="30" Stroke="#FFE6E6E6" StrokeDashArray="1,1" StrokeThickness="1"/>
-        <Label Content="Mã sản phẩm:" HorizontalAlignment="Left" Margin="25,0,0,0" VerticalAlignment="Top" Width="87" Grid.Row="1" Grid.Column="1" Height="26" Grid.ColumnSpan="2"/>
+        <Label Content="Mã mặt hàng:" HorizontalAlignment="Left" Margin="25,0,0,0" VerticalAlignment="Top" Width="87" Grid.Row="1" Grid.Column="1" Height="26" Grid.ColumnSpan="2"/>
         <TextBox x:Name="txtPropCd" Grid.Column="2" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Row="1"/>
-        <Label Content="Tên sản phẩm:" HorizontalAlignment="Left" Margin="23,28,0,0" VerticalAlignment="Top" Width="87" Height="28" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <Label Content="Tên mặt hàng:" HorizontalAlignment="Left" Margin="23,28,0,0" VerticalAlignment="Top" Width="87" Height="28" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
         <TextBox x:Name="txtPropName" HorizontalAlignment="Left" Height="23" Margin="0,28,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="392" Grid.Column="2" Grid.Row="1"/>
         <Label Content="Ngày tiếp nhận:" HorizontalAlignment="Left" Margin="16,56,0,0" VerticalAlignment="Top" Width="95" Height="28" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
         <TextBox x:Name="txtAcquiredDateF" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="0,56,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Row="1"/>
         <Label Content="đến:" HorizontalAlignment="Left" Margin="121,56,0,0" VerticalAlignment="Top" Width="33" Grid.Column="2" Height="26" Grid.Row="1"/>
         <TextBox x:Name="txtAcquiredDateT" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="155,56,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Row="1"/>
-        <Label Content="Nhóm sản phẩm:" HorizontalAlignment="Left" Margin="9,84,0,0" VerticalAlignment="Top" Width="101" Height="28" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <Label Content="Nhóm mặt hàng:" HorizontalAlignment="Left" Margin="9,84,0,0" VerticalAlignment="Top" Width="101" Height="28" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
         <TextBox x:Name="txtCategory" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="0,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Row="1"/>
         <Button x:Name="btnSearch" Content="Tìm kiếm" Grid.Column="2" HorizontalAlignment="Left" Margin="443,112,0,0" VerticalAlignment="Top" Width="75" Click="btnSearch_Click" Grid.Row="1" Height="22"/>
         <DataGrid x:Name="grdData" HorizontalAlignment="Left" Margin="1,156,0,0" VerticalAlignment="Top" Height="268" Width="783" Grid.ColumnSpan="2" AutoGenerateColumns="False"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" IsReadOnly="True" Grid.Row="1" Grid.Column="1">
             <DataGrid.Columns>
-                <DataGridTemplateColumn CellTemplate="{StaticResource LinkPropCdTemplate}" Header="Mã sản phẩm" HeaderStyle="{StaticResource ResourceKey=chCenter}" Width="90"/>
-                <DataGridTextColumn Binding="{Binding PropName}" Header="Tên sản phẩm" HeaderStyle="{StaticResource chCenter}" Width="auto" MinWidth="280"/>
+                <DataGridTemplateColumn CellTemplate="{StaticResource LinkPropCdTemplate}" Header="Mã mặt hàng" HeaderStyle="{StaticResource ResourceKey=chCenter}" Width="90"/>
+                <DataGridTextColumn Binding="{Binding PropName}" Header="Tên mặt hàng" HeaderStyle="{StaticResource chCenter}" Width="auto" MinWidth="280"/>
                 <DataGridTextColumn Binding="{Binding Unit}" Header="Đơn vị tính" HeaderStyle="{StaticResource chCenter}" Width="90"/>
                 <DataGridTextColumn Binding="{Binding Sales_Price}" Header="Giá bán" HeaderStyle="{StaticResource chCenter}" Width="100"/>
                 <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Nhà sản xuất" HeaderStyle="{StaticResource chCenter}" Width="150"/>

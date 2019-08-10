@@ -1,6 +1,8 @@
 ﻿Imports System.Data.OleDb
 
 Class SearchCustomer
+    Implements ISearch
+
     Private _search As Search
     Private _AtomyDataSet As AtomyDataSet
     Public Property AtomyDataSet As AtomyDataSet
@@ -11,6 +13,7 @@ Class SearchCustomer
 
         End Set
     End Property
+
     Protected Sub New()
 
         ' This call is required by the designer.
@@ -19,11 +22,17 @@ Class SearchCustomer
         ' Add any initialization after the InitializeComponent() call.
 
     End Sub
+
     Public Sub New(search As Search)
         _AtomyDataSet = New AtomyDataSet()
         _search = search
         ' This call is required by the designer.
         InitializeComponent()
+    End Sub
+
+    Public Property Keycode As String
+    Public Sub New(code As String)
+        Keycode = code
     End Sub
 
     Private Sub SearchData()
@@ -72,7 +81,26 @@ Class SearchCustomer
         Dim data As New SearchDataCustomer() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
         _search.ResultF(data)
     End Sub
-    
+
+    Public Function SearchByKey() As SearchDataArgs Implements ISearch.SearchByKey
+        Dim dbConn As New DbConnect
+        Dim res As SearchDataCustomer = Nothing
+        Try
+            dbConn.Open()
+            Dim sSQL As String = "select *,[FirstName] + ' ' + [LastName] as FullName from [Customer] where [CusCode] = ?"
+            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            cmd.Parameters.Add("@CusCode", OleDbType.VarChar).Value = Keycode
+            Dim read As OleDbDataReader = cmd.ExecuteReader()
+            If read.Read() Then
+                res = New SearchDataCustomer() With {.Code = read("[CusCode]").ToString, .Name = read("[FullName]").ToString()}
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã có lỗi khi tìm kiếm khách hàng.", ex)
+        Finally
+            dbConn.Close()
+        End Try
+        Return res
+    End Function
 End Class
 Public Class SearchDataCustomer
     Inherits SearchDataArgs

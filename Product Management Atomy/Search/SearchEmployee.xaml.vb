@@ -1,6 +1,8 @@
 ﻿Imports System.Data.OleDb
 
 Class SearchEmployee
+    Implements ISearch
+
     Private _search As Search
     Private _AtomyDataSet As AtomyDataSet
     Public Property AtomyDataSet As AtomyDataSet
@@ -24,6 +26,11 @@ Class SearchEmployee
         _search = search
         ' This call is required by the designer.
         InitializeComponent()
+    End Sub
+
+    Public Property Keycode As String
+    Public Sub New(code As String)
+        Keycode = code
     End Sub
 
     Private Sub SearchData()
@@ -75,6 +82,26 @@ Class SearchEmployee
         Dim data As New SearchDataEmployee() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
         _search.ResultF(data)
     End Sub
+
+    Public Function SearchByKey() As SearchDataArgs Implements ISearch.SearchByKey
+        Dim dbConn As New DbConnect
+        Dim res As SearchDataEmployee = Nothing
+        Try
+            dbConn.Open()
+            Dim sSQL As String = "select *,[FirstName] + ' ' + [LastName] as FullName from [Employee] where [EmpCode] = ?"
+            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            cmd.Parameters.Add("@EmpCode", OleDbType.VarChar).Value = Keycode
+            Dim read As OleDbDataReader = cmd.ExecuteReader()
+            If read.Read() Then
+                res = New SearchDataEmployee() With {.Code = read("[EmpCode]").ToString, .Name = read("[FullName]").ToString()}
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã có lỗi khi tìm kiếm nhân viên.", ex)
+        Finally
+            dbConn.Close()
+        End Try
+        Return res
+    End Function
 End Class
 Public Class SearchDataEmployee
     Inherits SearchDataArgs

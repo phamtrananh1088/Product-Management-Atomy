@@ -183,16 +183,16 @@
         </TextBox>
         <DataGrid x:Name="grdWareHouse" HorizontalAlignment="Left" Height="280" Margin="0,198,0,0" VerticalAlignment="Top" Width="912" Grid.ColumnSpan="3" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Mã sản phẩm" Width="90" HeaderStyle="{StaticResource ResourceKey=chCenter}">
+                <DataGridTemplateColumn Header="Mã mặt hàng" Width="90" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Label Content="{Binding PropCode}" HorizontalAlignment="Stretch" Margin="1,1,1,1" VerticalAlignment="Top" Grid.Column="3" Height="23" HorizontalContentAlignment="Center"/>
+                            <Label Content="{Binding PropCode}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="3" Height="26" HorizontalContentAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>
                             <TextBox x:Name="txtPropCode" Height="23" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="1,1,1,1"
-                                 LostKeyboardFocus="txtCode_LostKeyboardFocus"
+                                 LostKeyboardFocus="txtCode_LostKeyboardFocus" KeyDown="txtPropCode_KeyDown"
                                      Style="{StaticResource TextBoxInError}" Grid.Row="1">
                                 <TextBox.Text>
                                     <Binding Path ="PropCode" Converter="{StaticResource codeConverter}">
@@ -206,31 +206,17 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Tên sản phẩm" Width="auto" MinWidth="300" HeaderStyle="{StaticResource ResourceKey=chCenter}">
+                <DataGridTemplateColumn Header="Tên mặt hàng" Width="auto" MinWidth="300" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Label x:Name="lblPropName" Content="{Binding PropName}" HorizontalAlignment="Stretch" Margin="1,1,1,1" VerticalAlignment="Top" Grid.Column="3" Height="23"/>
+                            <Label x:Name="lblPropName" Content="{Binding PropName}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="3" Height="26"/>
                         </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.CellEditingTemplate>
-                        <DataTemplate>
-                            <TextBox x:Name="txtPropName" Height="23" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="1,1,1,1"
-                                Style="{StaticResource TextBoxInError}" Grid.Row="1">
-                                <TextBox.Text>
-                                    <Binding Path ="PropName">
-                                        <Binding.ValidationRules>
-                                            <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
-                                        </Binding.ValidationRules>
-                                    </Binding>
-                                </TextBox.Text>
-                            </TextBox>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn.CellTemplate>  
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Đơn vị tính" Width="100" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Label Content="{Binding Unit}" HorizontalAlignment="Stretch" Margin="1,1,1,1" VerticalAlignment="Top" Grid.Column="3" Height="23"/>
+                            <Label x:Name="lblUnit" Content="{Binding Unit}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="3" Height="26"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
@@ -248,16 +234,16 @@
                 <DataGridTextColumn IsReadOnly="True" CellStyle="{StaticResource ResourceKey= ceReadOnly}"
                                     Header="Giá ĐL" Width="100" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                     <DataGridTextColumn.Binding>
-                        <Binding Path ="UnitPrice" StringFormat="{}{0:#,#.}">
+                        <Binding Path ="UnitPrice">
                         </Binding>
                     </DataGridTextColumn.Binding>
                 </DataGridTextColumn>
                 <DataGridTemplateColumn Header="Giá bán" Width="100" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Label HorizontalAlignment="Stretch" Margin="1,1,1,1" VerticalAlignment="Top" Grid.Column="3" Height="23" HorizontalContentAlignment="Right">
+                            <Label x:Name="lblCurrentPrice" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="3" Height="26" HorizontalContentAlignment="Right">
                                 <Label.Content>
-                                    <Binding Path ="CurrentPrice" StringFormat="{}{0:#,#.}">
+                                    <Binding Path ="CurrentPrice">
                                     </Binding>
                                 </Label.Content>
                             </Label>
@@ -284,7 +270,7 @@
                         <DataTemplate>
                             <Label HorizontalAlignment="Stretch" Margin="1,1,1,1" VerticalAlignment="Top" Grid.Column="3" Height="23" HorizontalContentAlignment="Right">
                                 <Label.Content>
-                                    <Binding Path ="Quantity" StringFormat="{}{0:#,#.}">
+                                    <Binding Path ="Quantity">
                                     </Binding>
                                 </Label.Content>
                             </Label>

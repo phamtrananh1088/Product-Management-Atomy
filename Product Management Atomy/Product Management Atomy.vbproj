@@ -112,6 +112,7 @@
     <Compile Include="Employee.xaml.vb">
       <DependentUpon>Employee.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\DataGridExtensions.vb" />
     <Compile Include="Home.xaml.vb">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
@@ -125,6 +126,7 @@
       <DependentUpon>Property.xaml</DependentUpon>
     </Compile>
     <Compile Include="Province.vb" />
+    <Compile Include="Search\ISearch.vb" />
     <Compile Include="Search\Search.xaml.vb">
       <DependentUpon>Search.xaml</DependentUpon>
     </Compile>
@@ -272,7 +274,6 @@
     </None>
     <None Include="AtomyDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>AtomyDataSet.Designer.vb</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <None Include="AtomyDataSet.xss">

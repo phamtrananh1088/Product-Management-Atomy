@@ -1,6 +1,8 @@
 ﻿Imports System.Data.OleDb
 
 Class SearchProperty
+    Implements ISearch
+
     Private _search As Search
     Private _AtomyDataSet As AtomyDataSet
     Public Property AtomyDataSet As AtomyDataSet
@@ -26,6 +28,10 @@ Class SearchProperty
         InitializeComponent()
     End Sub
 
+    Public Property Keycode As String
+    Public Sub New(code As String)
+        Keycode = code
+    End Sub
     Private Sub SearchData(PropCd As String)
         Dim dbConn As New DbConnect
 
@@ -87,6 +93,27 @@ Class SearchProperty
         Dim data As New SearchDataProperty() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
         _search.ResultF(data)
     End Sub
+
+    Public Function SearchByKey() As SearchDataArgs Implements ISearch.SearchByKey
+        Dim dbConn As New DbConnect
+        Dim res As SearchDataProperty = Nothing
+        Try
+            dbConn.Open()
+            Dim sSQL As String = "select * from [Property] where [PropCode] = ?"
+            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            cmd.Parameters.Add("@PropCode", OleDbType.VarChar).Value = Keycode
+
+            Dim read As OleDbDataReader = cmd.ExecuteReader()
+            If read.Read() Then
+                res = New SearchDataProperty() With {.Code = read("[PropCode]").ToString, .Name = read("[PropName]").ToString()}
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã có lỗi khi tìm kiếm mặt hàng.", ex)
+        Finally
+            dbConn.Close()
+        End Try
+        Return res
+    End Function
 End Class
 Public Class SearchDataProperty
     Inherits SearchDataArgs

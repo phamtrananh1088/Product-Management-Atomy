@@ -53,7 +53,7 @@ Public Class Property1
             If adapt.Fill(AtomyDataSet, "Property") > 0 Then
                 Me.DataContext = AtomyDataSet._Property.Rows(0)
             Else
-                MessageBox.Show("Sản phẩm [" + PropCode + "] không tồn tại hoặc đã bị xóa.")
+                MessageBox.Show("Mặt hàng [" + PropCode + "] không tồn tại hoặc đã bị xóa.")
                 InitialValue()
                 CtrEnable()
             End If
@@ -126,7 +126,7 @@ Public Class Property1
                         Return
                     End If
                     If Check.IsExisted("Property", txtPropCode.Text.Trim) Then
-                        MessageBox.Show("Mã sản phẩm đã tồn tại.")
+                        MessageBox.Show("Mã mặt hàng đã tồn tại.")
                         HelpCreateCode()
                         Return
                     End If
@@ -204,7 +204,7 @@ Public Class Property1
             search.Kind = EnumSearch.SearchProperty
             search.ShowDialog()
         Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã sản phẩm.", ex)
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã mặt hàng.", ex)
         End Try
     End Sub
 #End Region
@@ -257,19 +257,18 @@ Public Class Property1
 
                 cmd.Parameters.Add("@1", OleDbType.VarChar).Value = row.PropCode
                 cmd.Parameters.Add("@2", OleDbType.VarChar).Value = row.PropName
-                cmd.Parameters.Add("@3", OleDbType.VarChar).Value = IIf(row.Description Is Nothing, "", row.Description)
-                cmd.Parameters.Add("@4", OleDbType.VarChar).Value = IIf(row.Category Is Nothing, "", row.Category)
-                cmd.Parameters.Add("@5", OleDbType.VarChar).Value = IIf(row.Condition Is Nothing, "", row.Condition)
-                cmd.Parameters.Add("@6", OleDbType.VarChar).Value = IIf(row.AcquiredDate Is Nothing, now.ToString("yyyy/MM/dd"), row.AcquiredDate)
-                cmd.Parameters.Add("@7", OleDbType.VarChar).Value = IIf(row.Unit Is Nothing, "", row.Unit)
+                cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.Description
+                cmd.Parameters.Add("@4", OleDbType.VarChar).Value = row.Category
+                cmd.Parameters.Add("@5", OleDbType.VarChar).Value = row.Condition
+                cmd.Parameters.Add("@6", OleDbType.VarChar).Value = row.AcquiredDate
+                cmd.Parameters.Add("@7", OleDbType.VarChar).Value = row.Unit
                 cmd.Parameters.Add("@8", OleDbType.Currency).Value = row.PurchasePrice
                 cmd.Parameters.Add("@9", OleDbType.Currency).Value = row.SalesPrice
                 cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.CurrentValue
-                cmd.Parameters.Add("@11", OleDbType.VarChar).Value = IIf(row.Location Is Nothing, Utility.DefaultData.DefaultLocation, row.Location)
-                cmd.Parameters.Add("@12", OleDbType.VarChar).Value = IIf(row.Manufacturer Is Nothing, Utility.DefaultData.DefaultManufacturer, row.Manufacturer)
-                cmd.Parameters.Add("@13", OleDbType.VarChar).Value = IIf(row.Model Is Nothing, "", row.Model)
-                cmd.Parameters.Add("@14", OleDbType.VarChar).Value = IIf(row.Comments Is Nothing, "", row.Comments)
-                cmd.Parameters.Add("@15", OleDbType.VarChar).Value = IIf(row.RetiredDate Is Nothing, "", row.RetiredDate)
+                cmd.Parameters.Add("@11", OleDbType.VarChar).Value = row.Location
+                cmd.Parameters.Add("@12", OleDbType.VarChar).Value = row.Manufacturer
+                cmd.Parameters.Add("@13", OleDbType.VarChar).Value = row.Model
+                cmd.Parameters.Add("@14", OleDbType.VarChar).Value = row.Comments
                 cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.CreateDate
                 cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.CreateTime
                 cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.CreateUser
@@ -284,7 +283,7 @@ Public Class Property1
             dbConn.CommitTran()
         Catch ex As Exception
             dbConn.RollbackTran()
-            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi cập nhật sản phẩm.", ex)
+            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi cập nhật mặt hàng.", ex)
         Finally
             dbConn.DisposeTran()
             dbConn.Close()
@@ -314,22 +313,18 @@ Public Class Property1
             row.UpdateUser = Utility.LoginUserCode
 
             cmd.Parameters.Add("@PropName", OleDbType.VarChar).Value = row.PropName
-            cmd.Parameters.Add("@Description", OleDbType.VarChar).Value = IIf(row.Description Is Nothing, "", row.Description)
-            cmd.Parameters.Add("@Category", OleDbType.VarChar).Value = IIf(row.Category Is Nothing, "", row.Category)
-            cmd.Parameters.Add("@Condition", OleDbType.VarChar).Value = IIf(row.Condition Is Nothing, "", row.Condition)
-            cmd.Parameters.Add("@AcquiredDate", OleDbType.VarChar).Value = IIf(row.AcquiredDate Is Nothing, now.ToString("yyyy/MM/dd"), row.AcquiredDate)
-            cmd.Parameters.Add("@Unit", OleDbType.VarChar).Value = IIf(row.Unit Is Nothing, "", row.Unit)
+            cmd.Parameters.Add("@Description", OleDbType.VarChar).Value = row.Description
+            cmd.Parameters.Add("@Category", OleDbType.VarChar).Value = row.Category
+            cmd.Parameters.Add("@Condition", OleDbType.VarChar).Value = row.Condition
+            cmd.Parameters.Add("@AcquiredDate", OleDbType.VarChar).Value = row.AcquiredDate
+            cmd.Parameters.Add("@Unit", OleDbType.VarChar).Value = row.Unit
             cmd.Parameters.Add("@PurchasePrice", OleDbType.Currency).Value = row.PurchasePrice
             cmd.Parameters.Add("@SalesPrice", OleDbType.Currency).Value = row.SalesPrice
             cmd.Parameters.Add("@CurrentValue", OleDbType.Currency).Value = row.CurrentValue
-            cmd.Parameters.Add("@Location", OleDbType.VarChar).Value = IIf(row.Location Is Nothing, Utility.DefaultData.DefaultLocation, row.Location)
-            cmd.Parameters.Add("@Manufacturer", OleDbType.VarChar).Value = IIf(row.Manufacturer Is Nothing, Utility.DefaultData.DefaultManufacturer, row.Manufacturer)
-            cmd.Parameters.Add("@Model", OleDbType.VarChar).Value = IIf(row.Model Is Nothing, "", row.Model)
-            cmd.Parameters.Add("@Comments", OleDbType.VarChar).Value = IIf(row.Comments Is Nothing, "", row.Comments)
-            cmd.Parameters.Add("@RetiredDate", OleDbType.VarChar).Value = IIf(row.RetiredDate Is Nothing, "", row.RetiredDate)
-            cmd.Parameters.Add("@CreateDate", OleDbType.VarChar).Value = row.CreateDate
-            cmd.Parameters.Add("@CreateTime", OleDbType.VarChar).Value = row.CreateTime
-            cmd.Parameters.Add("@CreateUser", OleDbType.VarChar).Value = row.CreateUser
+            cmd.Parameters.Add("@Location", OleDbType.VarChar).Value = row.Location
+            cmd.Parameters.Add("@Manufacturer", OleDbType.VarChar).Value = row.Manufacturer
+            cmd.Parameters.Add("@Model", OleDbType.VarChar).Value = row.Model
+            cmd.Parameters.Add("@Comments", OleDbType.VarChar).Value = row.Comments
             cmd.Parameters.Add("@UpdateDate", OleDbType.VarChar).Value = row.UpdateDate
             cmd.Parameters.Add("@UpdateTime", OleDbType.VarChar).Value = row.UpdateTime
             cmd.Parameters.Add("@UpdateUser", OleDbType.VarChar).Value = row.UpdateUser
@@ -339,7 +334,7 @@ Public Class Property1
             dbConn.CommitTran()
         Catch ex As Exception
             dbConn.RollbackTran()
-            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi cập nhật sản phẩm.", ex)
+            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi cập nhật mặt hàng.", ex)
         Finally
             dbConn.DisposeTran()
             dbConn.Close()
@@ -368,7 +363,7 @@ Public Class Property1
             dbConn.CommitTran()
         Catch ex As Exception
             dbConn.RollbackTran()
-            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi xóa sản phẩm.", ex)
+            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi xóa mặt hàng.", ex)
         Finally
             dbConn.DisposeTran()
             dbConn.Close()
@@ -401,7 +396,7 @@ Public Class Property1
             If Mode = DataRowState.Added Then
                 If Mode = DataRowState.Added Then
                     If txtCode.Equals(txtPropCode) AndAlso txtPropCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Property", txtPropCode.Text.Trim) Then
-                        MessageBox.Show("Mã sản phẩm đã tồn tại.", Utility.AppCaption)
+                        MessageBox.Show("Mã mặt hàng đã tồn tại.", Utility.AppCaption)
                         txtPropCode.Text = ""
                     End If
                 End If
@@ -419,8 +414,8 @@ Public Class Property1
     Private Function InsertSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("INSERT INTO [Property]                               ")
-        sb.AppendLine("            ( [PropCode], [PropName], [Description], [Category], [Condition], [Acquired Date], [Unit], [Purchase Price], [Sales Price], [Current Value], [Location], [Manufacturer], [Model], [Comments], [Retired Date], [Create Date], [Create Time], [Create User], [Update Date], [Update Time], [Update User]) ")
-        sb.AppendLine("     VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                                          ")
+        sb.AppendLine("            ( [PropCode], [PropName], [Description], [Category], [Condition], [AcquiredDate], [Unit], [PurchasePrice], [SalesPrice], [CurrentValue], [Location], [Manufacturer], [Model], [Comments], [CreateDate], [CreateTime], [CreateUser], [UpdateDate], [UpdateTime], [UpdateUser]) ")
+        sb.AppendLine("     VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                                          ")
         Return sb.ToString()
     End Function
 #End Region
@@ -433,21 +428,18 @@ Public Class Property1
         sb.AppendLine("     , [Description] = ?                         ")
         sb.AppendLine("     , [Category] = ?                            ")
         sb.AppendLine("     , [Condition] = ?                           ")
-        sb.AppendLine("     , [Acquired Date] = ?                       ")
+        sb.AppendLine("     , [AcquiredDate] = ?                       ")
         sb.AppendLine("     , [Unit] = ?                                ")
-        sb.AppendLine("     , [Purchase Price] = ?                      ")
-        sb.AppendLine("     , [Sales Price] = ?                         ")
-        sb.AppendLine("     , [Current Value] = ?                       ")
+        sb.AppendLine("     , [PurchasePrice] = ?                      ")
+        sb.AppendLine("     , [SalesPrice] = ?                         ")
+        sb.AppendLine("     , [CurrentValue] = ?                       ")
         sb.AppendLine("     , [Location] = ?                            ")
         sb.AppendLine("     , [Manufacturer] = ?                        ")
         sb.AppendLine("     , [Model] = ?                               ")
         sb.AppendLine("     , [Comments] = ?                            ")
-        sb.AppendLine("     , [Create Date] = ?                         ")
-        sb.AppendLine("     , [Create Time] = ?                         ")
-        sb.AppendLine("     , [Create User] = ?                         ")
-        sb.AppendLine("     , [Update Date] = ?                         ")
-        sb.AppendLine("     , [Update Time] = ?                         ")
-        sb.AppendLine("     , [Update User] = ?                         ")
+        sb.AppendLine("     , [UpdateDate] = ?                         ")
+        sb.AppendLine("     , [UpdateTime] = ?                         ")
+        sb.AppendLine("     , [UpdateUser] = ?                         ")
         sb.AppendLine(" WHERE [PropCode] = ?                            ")
         Return sb.ToString()
     End Function
@@ -458,7 +450,7 @@ Public Class Property1
         Dim sb As New StringBuilder()
         sb.AppendLine("UPDATE [Property]                                ")
         sb.AppendLine("   SET [Retired] = ?                             ")
-        sb.AppendLine("     , [Retired Date] = ?                        ")
+        sb.AppendLine("     , [RetiredDate] = ?                        ")
         sb.AppendLine(" WHERE [PropCode] = ?                            ")
         Return sb.ToString()
     End Function

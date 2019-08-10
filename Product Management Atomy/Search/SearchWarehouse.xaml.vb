@@ -1,6 +1,8 @@
 ﻿Imports System.Data.OleDb
 
 Class SearchWarehouse
+    Implements ISearch
+
     Private _search As Search
     Private AtomyDataSet As AtomyDataSet
     Protected Sub New()
@@ -16,6 +18,11 @@ Class SearchWarehouse
         _search = search
         ' This call is required by the designer.
         InitializeComponent()
+    End Sub
+
+    Public Property Keycode As String
+    Public Sub New(code As String)
+        Keycode = code
     End Sub
 
     Private Sub SearchData()
@@ -89,6 +96,26 @@ Class SearchWarehouse
         Dim data As New SearchDataWarehouse() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
         _search.ResultF(data)
     End Sub
+
+    Public Function SearchByKey() As SearchDataArgs Implements ISearch.SearchByKey
+        Dim dbConn As New DbConnect
+        Dim res As SearchDataWarehouse = Nothing
+        Try
+            dbConn.Open()
+            Dim sSQL As String = "select [WarehouseMaster].*,[Customer].[MobilePhone] from [WarehouseMaster] left join [Customer] on [WarehouseMaster].[CusCode] = [Customer].[CusCode] where [WareCode] like ?"
+            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            cmd.Parameters.Add("@WareCode", OleDbType.VarChar).Value = Keycode
+            Dim read As OleDbDataReader = cmd.ExecuteReader()
+            If read.Read() Then
+                res = New SearchDataWarehouse() With {.Code = read("[CusCode]").ToString, .Name = read("[FullName]").ToString()}
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã có lỗi khi tìm kiếm khách hàng.", ex)
+        Finally
+            dbConn.Close()
+        End Try
+        Return res
+    End Function
 End Class
 Public Class SearchDataWarehouse
     Inherits SearchDataArgs

@@ -3254,7 +3254,7 @@ Partial Public Class AtomyDataSet
             Me.columnCurrentPrice.Caption = "UnitPrice"
             Me.columnCurrentPrice.DefaultValue = CType(0D, Decimal)
             Me.columnAmount.DefaultValue = CType(0D, Decimal)
-            Me.columnQuantity.DefaultValue = CType(0, Short)
+            Me.columnQuantity.DefaultValue = CType(1, Short)
             Me.columnComments.MaxLength = 536870910
             Me.columnAttachments.MaxLength = 536870910
             Me.columnUpdateCount.DefaultValue = CType(1, Short)
