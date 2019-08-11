@@ -97,7 +97,7 @@ Public Class Utility
                                     Return "00000001"
                                 End If
                             Catch ex As Exception
-                                ErrorLog.SetError("", "Đã sảy ra lỗi khi lấy mã cho bản ghi thêm mới.", ex)
+                                ErrorLog.SetError(Utility.Name, "Đã sảy ra lỗi khi lấy mã cho bản ghi thêm mới.", ex)
                             Finally
                                 dbConn.Close()
                             End Try
@@ -105,6 +105,50 @@ Public Class Utility
                         End Function)
     End Function
 #End Region
+
+#Region "HelpGetLastCode"
+    Public Shared Function HelpGetLastCode(tableName As String) As String
+        Dim i = TaskHelpGetLastCode(tableName)
+        Return Task.WhenAny(i).Result.Result
+    End Function
+    Friend Shared Function TaskHelpGetLastCode(tableName As String) As Task(Of String)
+        Return Task.Run(Function()
+                            Dim res As String = ""
+                            Dim sSQL As String
+                            Select Case tableName
+                                Case "Property"
+                                    sSQL = "select TOP 1 [PropCode] from [Property] where [Retired] = 0 order by [PropCode] DESC"
+                                Case "Customer"
+                                    sSQL = "select TOP 1 [CusCode] from [Customer] where [Retired] = 0 order by [CusCode] DESC"
+                                Case "Employee"
+                                    sSQL = "select TOP 1 [EmpCode] from [Employee] where [Retired] = 0 order by [EmpCode] DESC"
+                                Case "Warehouse"
+                                    sSQL = "select TOP 1 [WareCode] from [WarehouseMaster] where [Retired] = 0 order by [WareCode] DESC"
+                                Case Else
+                                    sSQL = ""
+                            End Select
+                            Dim dbConn As New DbConnect
+                            Dim dataset As New DataSet
+                            Try
+                                dbConn.Open()
+                                Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+                                Dim read As OleDbDataReader = cmd.ExecuteReader()
+                                If read.Read() Then
+                                    Return read(0).ToString
+                                Else
+                                    Return ""
+                                End If
+                            Catch ex As Exception
+                                ErrorLog.SetError(Utility.Name, "Đã sảy ra lỗi khi lấy mã cho bản ghi thêm mới.", ex)
+                            Finally
+                                dbConn.Close()
+                            End Try
+                            Return res
+                        End Function)
+    End Function
+#End Region
+    
+    Private Shared Property Name = "Utility"
 End Class
 
 Public Class BinarySearch

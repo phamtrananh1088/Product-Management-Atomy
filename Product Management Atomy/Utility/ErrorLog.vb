@@ -24,6 +24,10 @@ Public Class ErrorLog
         Task.WhenAny(i)
     End Sub
     Public Shared Sub SetError(windowName As String, errorText As String, ex As Exception)
+        If String.IsNullOrEmpty(windowName) Then
+            windowName = Utility.AppCaption
+        End If
+
         Dim i = LogError(windowName, errorText, ex)
         Task.WhenAny(i)
     End Sub
@@ -43,16 +47,16 @@ Friend Class DbLogging
 
     Public Function LogError(windowName As String, errorText As String, ex As Exception) As Integer Implements ILogging.LogError
         Dim sb As New StringBuilder()
-        sb.AppendLine("INSERT INTO [Error Log]              ")
+        sb.AppendLine("INSERT INTO [ErrorLog]              ")
         sb.AppendLine("          ( [Title]                  ")
         sb.AppendLine("          , [Message]                ")
         sb.AppendLine("          , [Source]                 ")
         sb.AppendLine("          , [StackTrace]             ")
         sb.AppendLine("          , [InnerException]         ")
         sb.AppendLine("          , [Window]                 ")
-        sb.AppendLine("          , [Create Date]            ")
-        sb.AppendLine("          , [Create Time]            ")
-        sb.AppendLine("          , [Create User]            ")
+        sb.AppendLine("          , [CreateDate]            ")
+        sb.AppendLine("          , [CreateTime]            ")
+        sb.AppendLine("          , [CreateUser]            ")
         sb.AppendLine("          )                          ")
         sb.AppendLine("     VALUES                          ")
         sb.AppendLine("          ( ?                        ")

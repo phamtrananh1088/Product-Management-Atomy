@@ -41,7 +41,7 @@
         </Grid.ColumnDefinitions>
         <local:PageTitle Title="Mặt hàng" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1024" Grid.ColumnSpan="3" Height="30"/>
         <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="719" VerticalAlignment="Top" Width="1004" Grid.ColumnSpan="2" Margin="0,0,0,0" Grid.Row="1" Grid.Column="1" />
-        <Button x:Name="btnUpdate" HorizontalAlignment="Left" Margin="2,8,0,0" VerticalAlignment="Top" Width="68" Background="#FF23D164" Foreground="White" BorderBrush="Blue" Height="30" Grid.Column="1"
+        <Button x:Name="btnUpdate" HorizontalAlignment="Left" Margin="8,8,0,0" VerticalAlignment="Top" Width="68" Background="#FF23D164" Foreground="White" BorderBrush="Blue" Height="30" Grid.Column="1"
 			Click="btnProcess_Click" Grid.Row="1">
             <StackPanel Orientation="Horizontal" Width="41">
                 <Image Source=".\icon\1x\outline_save_white_18dp.png" VerticalAlignment="Center" Width="18" Height="18"/>
@@ -90,7 +90,7 @@
 
         <Label x:Name="lblPurchasePrice" Content="Giá mua:" HorizontalAlignment="Left" Margin="46,211,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="56" Grid.Column="1"/>
         <TextBox x:Name="txtPurchasePrice" HorizontalAlignment="Left" Height="23" Margin="0,211,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
-                  Style="{StaticResource TextBoxInError}" Grid.Row="1">
+                 bindValidation:SelectAllAttacher.SelectAllTextOnFocus="True" Style="{StaticResource TextBoxInError}" Grid.Row="1">
             <TextBox.Text>
                 <Binding Path="PurchasePrice" Converter="{StaticResource numericConverter}">
                     <Binding.ValidationRules>
@@ -115,7 +115,7 @@
         <Label Content="(*)" HorizontalAlignment="Left" Margin="35,267,0,0" VerticalAlignment="Top" Foreground="Red" RenderTransformOrigin="0.5,2" Grid.Row="1" Height="26" Width="22" Grid.Column="1"/>
         <Label x:Name="lblSalesPrice" Content="Giá bán:" HorizontalAlignment="Left" Margin="49,267,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="53" Grid.Column="1"/>
         <TextBox x:Name="txtSalesPrice" HorizontalAlignment="Left" Height="23" Margin="0,267,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
-                 Style="{StaticResource TextBoxInError}" Grid.Row="1">
+                bindValidation:SelectAllAttacher.SelectAllTextOnFocus="True" Style="{StaticResource TextBoxInError}" Grid.Row="1">
             <TextBox.Text>
                 <Binding Path="SalesPrice" Converter="{StaticResource numericConverter}" UpdateSourceTrigger="PropertyChanged" NotifyOnTargetUpdated="True">
                     <Binding.ValidationRules>
@@ -126,7 +126,7 @@
         </TextBox>
         <Label x:Name="lblCurrentValue" Content="Giá hiện tại:" HorizontalAlignment="Left" Margin="31,295,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="72" Grid.Column="1"/>
         <TextBox x:Name="txtCurrentValue" HorizontalAlignment="Left" Height="23" Margin="0,295,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
-                  Style="{StaticResource TextBoxInError}" Grid.Row="1">
+                 bindValidation:SelectAllAttacher.SelectAllTextOnFocus="True" Style="{StaticResource TextBoxInError}" Grid.Row="1">
             <TextBox.Text>
                 <Binding Path="CurrentValue" Converter="{StaticResource numericConverter}">
                     <Binding.ValidationRules>

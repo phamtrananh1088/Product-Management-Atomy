@@ -394,14 +394,12 @@ Public Class Property1
                 txtCode.Text = s
             End If
             If Mode = DataRowState.Added Then
-                If Mode = DataRowState.Added Then
-                    If txtCode.Equals(txtPropCode) AndAlso txtPropCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Property", txtPropCode.Text.Trim) Then
-                        MessageBox.Show("Mã mặt hàng đã tồn tại.", Utility.AppCaption)
-                        txtPropCode.Text = ""
-                    End If
+                If txtCode.Equals(txtPropCode) AndAlso txtPropCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Property", txtPropCode.Text.Trim) Then
+                    MessageBox.Show("Mã mặt hàng đã tồn tại.", Utility.AppCaption)
+                    txtPropCode.Text = ""
                 End If
             ElseIf Mode = DataRowState.Modified OrElse Mode = DataRowState.Deleted Then
-                LoadData(txtPropCode.Text.Trim)
+            LoadData(txtPropCode.Text.Trim)
             End If
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)

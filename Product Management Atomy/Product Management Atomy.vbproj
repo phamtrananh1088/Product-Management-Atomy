@@ -106,6 +106,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AtomyDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="AtomyDataSet.vb">
+      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Customer.xaml.vb">
       <DependentUpon>Customer.xaml</DependentUpon>
     </Compile>

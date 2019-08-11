@@ -123,9 +123,11 @@ Public Class Warehouse
         ElseIf ProcessSelection.Mode = DataRowState.Modified Then
             Me.Mode = DataRowState.Modified
             CtrEnable()
+            HelpGetLastWareCode()
         ElseIf ProcessSelection.Mode = DataRowState.Deleted Then
             Me.Mode = DataRowState.Deleted
             CtrEnable()
+            HelpGetLastWareCode()
         End If
     End Sub
 #End Region
@@ -249,6 +251,7 @@ Public Class Warehouse
                 If Not Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
                     MessageBox.Show("Mã phiếu xuất chưa được đăng ký hoặc đã bị xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtWareCode.Focus()
+                    HelpGetLastWareCode()
                     Return False
                 End If
                 If Validation.GetHasError(txtWareDate) Then
@@ -267,9 +270,14 @@ Public Class Warehouse
                     Return False
                 End If
             Case EnumAction.Delete
-
+                If Not Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
+                    MessageBox.Show("Mã phiếu xuất chưa được đăng ký hoặc đã bị xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareCode.Focus()
+                    HelpGetLastWareCode()
+                    Return False
+                End If
         End Select
-        Return Not valid
+        Return valid
     End Function
 #End Region
 
@@ -558,7 +566,13 @@ Public Class Warehouse
 
 #Region "HelpCreateCode"
     Private Sub HelpCreateWareCode()
-        lblWareCodeHint.Content = "Gợi ý: " + Utility.HelpCreateCode("Warehouse")
+        lblWareCodeHint.Content = "Mã tiếp theo: " + Utility.HelpCreateCode("Warehouse")
+    End Sub
+
+#End Region
+#Region "HelpCreateCode"
+    Private Sub HelpGetLastWareCode()
+        lblWareCodeHint.Content = "Mã gần nhất: " + Utility.HelpGetLastCode("Warehouse")
     End Sub
 
 #End Region
@@ -688,9 +702,9 @@ Public Class Warehouse
                 If txtWareCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
                     MessageBox.Show("Mã phiếu bán hàng đã tồn tại.", Me.Title)
                     txtWareCode.Text = ""
-                ElseIf Mode = DataRowState.Modified OrElse Mode = DataRowState.Deleted Then
-                    LoadData(txtWareCode.Text.Trim)
                 End If
+            ElseIf Mode = DataRowState.Modified OrElse Mode = DataRowState.Deleted Then
+                LoadData(txtWareCode.Text.Trim)
             End If
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
@@ -742,9 +756,18 @@ Public Class Warehouse
 
             If txtCode.Name.Equals("txtPropCode") Then
                 Dim drv As DataRowView = grdWareHouse.SelectedItem
+                If drv Is Nothing Then
+                    Return
+                End If
+
                 If txtCode.Text.Trim.Length > 0 Then
                     Dim row As DataGridRow = Nothing
                     row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
+                    'Check whether value change or not
+                    If String.Compare(drv.Row("PropCode").ToString, txtCode.Text.Trim) = 0 Then
+                        Return
+                    End If
+                 
                     Dim dr As DataRow = Check.GetDataByCode("Property", txtCode.Text.Trim)
                     If dr IsNot Nothing Then
                         drv.Row("PropName") = dr("PropName")
@@ -756,6 +779,8 @@ Public Class Warehouse
                         cellUnit.SetTemplateLabelContent("lblUnit", dr("Unit"))
 
                         drv.Row("UnitPrice") = dr("SalesPrice")
+                        Dim cellUnitPrice As DataGridCell = grdWareHouse.GetCell(row, 3)
+                        cellUnitPrice.SetTemplateLabelContent("lblUnitPrice", dr("SalesPrice"))
                         drv.Row("CurrentPrice") = dr("SalesPrice")
                         Dim cellCurrentPrice As DataGridCell = grdWareHouse.GetCell(row, 4)
                         cellCurrentPrice.SetTemplateLabelContent("lblCurrentPrice", dr("SalesPrice"))
@@ -773,7 +798,118 @@ Public Class Warehouse
         End Try
     End Sub
 #End Region
+#Region "txtCurrentPrice_LostKeyboardFocus"
+    Private Sub txtCurrentPrice_LostKeyboardFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
+        Try
+            Dim txtCurrentPrice = DirectCast(sender, TextBox)
+            Dim drv As DataRowView = grdWareHouse.SelectedItem
+            If drv Is Nothing Then
+                Return
+            End If
+            If txtCurrentPrice.Text.Trim.Length > 0 Then
+                Dim row As DataGridRow = Nothing
+                row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
+                'Check whether value change or not
+                If String.Compare(drv.Row("CurrentPrice").ToString, txtCurrentPrice.Text.Trim) = 0 Then
+                    Return
+                End If
+                Dim decVal As Decimal = 0
+                Dim canConvert As Boolean = Decimal.TryParse(txtCurrentPrice.Text.Trim, decVal)
+                If Not canConvert Then
+                    Return
+                End If
+                Dim currentPrice As Decimal = CDec(txtCurrentPrice.Text.Trim)
+                drv.Row("CurrentPrice") = currentPrice
+                Dim amount As Decimal = 0
+                Dim quantity As Int16 = drv.Row("Quantity")
+                amount = currentPrice * quantity
+                Dim cellAmount As DataGridCell = grdWareHouse.GetCell(row, 6)
+                cellAmount.SetTemplateLabelContent("lblAmount", amount)
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô giá bán.", ex)
+        End Try
+    End Sub
+#End Region
+#Region "txtQuantity_LostKeyboardFocus"
+    Private Sub txtQuantity_LostKeyboardFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
+        Try
+            Dim txtQuantity = DirectCast(sender, TextBox)
+            Dim drv As DataRowView = grdWareHouse.SelectedItem
+            If drv Is Nothing Then
+                Return
+            End If
+            If txtQuantity.Text.Trim.Length > 0 Then
+                Dim row As DataGridRow = Nothing
+                row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
+                'Check whether value change or not
+                If String.Compare(drv.Row("Quantity").ToString, txtQuantity.Text.Trim) = 0 Then
+                    Return
+                End If
+                Dim intVal As Int16 = 0
+                Dim canConvert As Boolean = Int16.TryParse(txtQuantity.Text.Trim, intVal)
+                If Not canConvert Then
+                    Return
+                End If
 
+                Dim currentPrice As Decimal = drv.Row("CurrentPrice")
+                Dim amount As Decimal = 0
+                Dim quantity As Int16 = CShort(txtQuantity.Text.Trim)
+                drv.Row("Quantity") = quantity
+                amount = currentPrice * quantity
+                drv.Row("Amount") = amount
+                Dim cellAmount As DataGridCell = grdWareHouse.GetCell(row, 6)
+                cellAmount.SetTemplateLabelContent("lblAmount", amount)
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô số lượng.", ex)
+        End Try
+    End Sub
+#End Region
+#Region "TextBox_GotFocus"
+    Private Sub TextBox_GotFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
+        Try
+            CType(sender, TextBox).SelectAll()
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi bắt đầu nhập liệu ô.", ex)
+        End Try
+    End Sub
+#End Region
+
+#Region "grdWareHouse_CellEditEnding"
+    Private Sub grdWareHouse_CellEditEnding(sender As Object, e As DataGridCellEditEndingEventArgs)
+        Try
+
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhập liệu trên lưới.", ex)
+        End Try
+    End Sub
+#End Region
+#End Region
+#Region "grdWareHouse_PreparingCellForEdit"
+    Private Sub grdWareHouse_PreparingCellForEdit(sender As Object, e As DataGridPreparingCellForEditEventArgs)
+        Try
+            Dim drv As DataRowView = grdWareHouse.SelectedItem
+            If drv Is Nothing Then
+                Return
+            End If
+            Dim row As DataGridRow = Nothing
+            row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
+            Select Case e.Column.DisplayIndex
+                Case 4
+                    Dim cell4 As DataGridCell = grdWareHouse.GetCell(row, 4)
+                    Dim textbox As TextBox = cell4.GetItem(Of TextBox)("txtCurrentPrice")
+                    textbox.SelectAll()
+                Case 5
+                Case 6
+                Case Else
+
+            End Select
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi chuẩn bị nhập liệu trên lưới.", ex)
+        End Try
+    End Sub
+#End Region
 #End Region
 
 #Region "lnkWareCode_Click"
@@ -810,7 +946,6 @@ Public Class Warehouse
         End If
 
     End Sub
-#End Region
 #End Region
 
 End Class
