@@ -80,6 +80,10 @@
     <Reference Include="System.Data.OleDb">
       <HintPath>Lib\System.Data.OleDb.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System" />
@@ -119,6 +123,7 @@
     <Compile Include="Home.xaml.vb">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utility\ModuleEnum.vb" />
     <Compile Include="Order.xaml.vb">
       <DependentUpon>Order.xaml</DependentUpon>
     </Compile>
@@ -278,6 +283,7 @@
     <None Include="AtomyDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <SubType>Designer</SubType>
+      <LastGenOutput>AtomyDataSet.Designer.vb</LastGenOutput>
     </None>
     <None Include="AtomyDataSet.xss">
       <DependentUpon>AtomyDataSet.xsd</DependentUpon>
@@ -289,6 +295,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <AppDesigner Include="My Project\" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

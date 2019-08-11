@@ -111,20 +111,25 @@ Public Class Warehouse
 #Region "ProcessSelection_ValueChange"
     Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
         If ProcessSelection.Mode = DataRowState.Added Then
+            grdWareHouse.ItemsSource = Nothing
             AtomyDataSet.WarehouseMaster.Clear()
             AtomyDataSet.Warehouse.Clear()
             Dim newRow As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.NewWarehouseMasterRow()
             AtomyDataSet.WarehouseMaster.Rows.Add(newRow)
+            'Dim newRowD As AtomyDataSet.WarehouseRow = AtomyDataSet.Warehouse.NewWarehouseRow()
+            'AtomyDataSet.Warehouse.Rows.Add(newRowD)
             Me.DataContext = AtomyDataSet.WarehouseMaster.Rows(0)
             grdWareHouse.ItemsSource = AtomyDataSet.Warehouse.DefaultView
             Mode = DataRowState.Added
             CtrEnable()
             HelpCreateWareCode()
         ElseIf ProcessSelection.Mode = DataRowState.Modified Then
+            grdWareHouse.ItemsSource = Nothing
             Me.Mode = DataRowState.Modified
             CtrEnable()
             HelpGetLastWareCode()
         ElseIf ProcessSelection.Mode = DataRowState.Deleted Then
+            grdWareHouse.ItemsSource = Nothing
             Me.Mode = DataRowState.Deleted
             CtrEnable()
             HelpGetLastWareCode()
@@ -314,16 +319,21 @@ Public Class Warehouse
                 cmd.Parameters.Add("@10", OleDbType.VarChar).Value = row.Description
                 cmd.Parameters.Add("@11", OleDbType.Currency).Value = row.TotalAmount
                 cmd.Parameters.Add("@12", OleDbType.Currency).Value = row.Discount
-                cmd.Parameters.Add("@13", OleDbType.VarChar).Value = row.Comments
-                cmd.Parameters.Add("@14", OleDbType.SmallInt).Value = row.UpdateCount
-                cmd.Parameters.Add("@15", OleDbType.Boolean).Value = row.Retired
-                cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.RetiredDate
-                cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.CreateDate
-                cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.CreateTime
-                cmd.Parameters.Add("@19", OleDbType.VarChar).Value = row.CreateUser
-                cmd.Parameters.Add("@20", OleDbType.VarChar).Value = row.UpdateDate
-                cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.UpdateTime
-                cmd.Parameters.Add("@22", OleDbType.VarChar).Value = row.UpdateUser
+                cmd.Parameters.Add("@13", OleDbType.Currency).Value = row.SalesAmount
+                cmd.Parameters.Add("@14", OleDbType.SmallInt).Value = row.PaymentType
+                cmd.Parameters.Add("@15", OleDbType.SmallInt).Value = row.FinishFlag
+                cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.PaymentDate
+                cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.FinishDate
+                cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.Comments
+                cmd.Parameters.Add("@19", OleDbType.SmallInt).Value = row.UpdateCount
+                cmd.Parameters.Add("@20", OleDbType.Boolean).Value = row.Retired
+                cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.RetiredDate
+                cmd.Parameters.Add("@22", OleDbType.VarChar).Value = row.CreateDate
+                cmd.Parameters.Add("@23", OleDbType.VarChar).Value = row.CreateTime
+                cmd.Parameters.Add("@24", OleDbType.VarChar).Value = row.CreateUser
+                cmd.Parameters.Add("@25", OleDbType.VarChar).Value = row.UpdateDate
+                cmd.Parameters.Add("@26", OleDbType.VarChar).Value = row.UpdateTime
+                cmd.Parameters.Add("@27", OleDbType.VarChar).Value = row.UpdateUser
 
                 res = cmd.ExecuteNonQuery()
 
@@ -416,14 +426,19 @@ Public Class Warehouse
                 cmd.Parameters.Add("@9", OleDbType.VarChar).Value = row.Description
                 cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.TotalAmount
                 cmd.Parameters.Add("@11", OleDbType.Currency).Value = row.Discount
-                cmd.Parameters.Add("@12", OleDbType.VarChar).Value = row.Comments
-                cmd.Parameters.Add("@13", OleDbType.SmallInt).Value = row.UpdateCount
-                cmd.Parameters.Add("@14", OleDbType.Boolean).Value = row.Retired
-                cmd.Parameters.Add("@15", OleDbType.VarChar).Value = row.RetiredDate
-                cmd.Parameters.Add("@26", OleDbType.VarChar).Value = row.UpdateDate
-                cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.UpdateTime
-                cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.UpdateUser
-                cmd.Parameters.Add("@19", OleDbType.VarChar).Value = row.WareCode
+                cmd.Parameters.Add("@12", OleDbType.Currency).Value = row.SalesAmount
+                cmd.Parameters.Add("@13", OleDbType.SmallInt).Value = row.PaymentType
+                cmd.Parameters.Add("@14", OleDbType.SmallInt).Value = row.FinishFlag
+                cmd.Parameters.Add("@15", OleDbType.VarChar).Value = row.PaymentDate
+                cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.FinishDate
+                cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.Comments
+                cmd.Parameters.Add("@18", OleDbType.SmallInt).Value = row.UpdateCount
+                cmd.Parameters.Add("@19", OleDbType.Boolean).Value = row.Retired
+                cmd.Parameters.Add("@20", OleDbType.VarChar).Value = row.RetiredDate
+                cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.UpdateDate
+                cmd.Parameters.Add("@22", OleDbType.VarChar).Value = row.UpdateTime
+                cmd.Parameters.Add("@23", OleDbType.VarChar).Value = row.UpdateUser
+                cmd.Parameters.Add("@24", OleDbType.VarChar).Value = row.WareCode
                 res = cmd.ExecuteNonQuery()
 
             End Using
@@ -570,21 +585,52 @@ Public Class Warehouse
     End Sub
 
 #End Region
+
 #Region "HelpCreateCode"
     Private Sub HelpGetLastWareCode()
         lblWareCodeHint.Content = "Mã gần nhất: " + Utility.HelpGetLastCode("Warehouse")
     End Sub
 
 #End Region
+
+#Region "CalculateTotal"
+    Private Function CalculateTotal() As Tuple(Of Short, Decimal)
+        Dim T1 As Short = 0
+        Dim T2 As Decimal = 0
+
+        For Each rv As DataRowView In grdWareHouse.Items
+            T1 += rv.Row("Quantity")
+            T2 += rv.Row("Amount")
+        Next
+        Return New Tuple(Of Short, Decimal)(T1, T2)
+    End Function
 #End Region
 
+#Region "CalculateSalesAmount"
+    Private Function CalculateSalesAmount() As Decimal
+        Dim decVal As Decimal = 0
+        Dim canConvert As Boolean = Decimal.TryParse(txtDiscount.Text.Trim, decVal)
+        If Not canConvert Then
+            Return Nothing
+        End If
+        Dim Discount As Decimal = decVal
+        canConvert = Decimal.TryParse(txtTotalAmount.Text.Trim, decVal)
+        If Not canConvert Then
+            Return Nothing
+        End If
+        Dim TotalAmount As Decimal = decVal
+        Dim SalesAmount As Decimal = TotalAmount - Discount
+        Return SalesAmount
+    End Function
+#End Region
+#End Region
 #Region "☆ SQL"
 #Region "InsertSQL"
     Private Function InsertSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("INSERT INTO [WarehouseMaster]                               ")
-        sb.AppendLine("            ( [WareCode],[Type],[WareDate],[EmpCode],[EmpName],[CusCode],[CusName],[Status],[WareTitle],[Description],[TotalAmount],[Discount],[Comments],[UpdateCount],[Retired],[RetiredDate],[CreateDate],[CreateTime],[CreateUser],[UpdateDate],[UpdateTime],[UpdateUser]) ")
-        sb.AppendLine("     VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)                                          ")
+        sb.AppendLine("            ( [WareCode],[Type],[WareDate],[EmpCode],[EmpName],[CusCode],[CusName],[Status],[WareTitle],[Description],[TotalAmount],[Discount],[SalesAmount],[PaymentType],[FinishFlag],[PaymentDate],[FinishDate],[Comments],[UpdateCount],[Retired],[RetiredDate],[CreateDate],[CreateTime],[CreateUser],[UpdateDate],[UpdateTime],[UpdateUser]) ")
+        sb.AppendLine("     VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)                                          ")
         Return sb.ToString()
     End Function
 #End Region
@@ -618,7 +664,7 @@ Public Class Warehouse
     Private Function UpdateSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("update [WarehouseMaster]                               ")
-        sb.AppendLine("   set [Type] = ?,[WareDate] = ?,[EmpCode] = ?,[EmpName] = ?,[CusCode] = ?,[CusName] = ?,[Status] = ?,[WareTitle] = ?,[Description] = ?,[TotalAmount] = ?,[Discount] = ?,[Comments] = ?,[UpdateCount] = ?,[Retired] = ?,[RetiredDate] = ?,[UpdateDate] = ?,[UpdateTime] = ?,[UpdateUser] = ? ")
+        sb.AppendLine("   set [Type] = ?,[WareDate] = ?,[EmpCode] = ?,[EmpName] = ?,[CusCode] = ?,[CusName] = ?,[Status] = ?,[WareTitle] = ?,[Description] = ?,[TotalAmount] = ?,[Discount] = ?,[SalesAmount] = ?,[PaymentType] = ?,[FinishFlag] = ?,[PaymentDate] = ?,[FinishDate] = ?,[Comments] = ?,[UpdateCount] = ?,[Retired] = ?,[RetiredDate] = ?,[UpdateDate] = ?,[UpdateTime] = ?,[UpdateUser] = ? ")
         sb.AppendLine("     where [WareCode] = ?")
         Return sb.ToString()
     End Function
@@ -637,7 +683,6 @@ Public Class Warehouse
 #End Region
 
 #Region "EVENT"
-
 #Region "searchWareHouseSearchResult"
     Private Sub searchWareHouseSearchResult(sender As Object, e As SearchDataArgs)
         LoadData(e.Code)
@@ -669,7 +714,6 @@ Public Class Warehouse
         End Try
     End Sub
 #End Region
-
 
 #Region "searchCusSearchResult"
     Private Sub searchCusSearchResult(sender As Object, e As SearchDataArgs)
@@ -710,6 +754,7 @@ Public Class Warehouse
             ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
         End Try
     End Sub
+#End Region
 
 #Region "txtCode_LostKeyboardFocus"
     Private Sub txtCode_LostKeyboardFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
@@ -729,7 +774,7 @@ Public Class Warehouse
                     If dr IsNot Nothing Then
                         txtCusName.Text = dr("FirstName").ToString() + " " + dr("LastName").ToString()
                     Else
-                        MessageBox.Show("Mã khách hàng không tồn tại.", Utility.AppCaption)
+                        MessageBox.Show("Mã khách hàng không tồn tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                         txtCusCode.Text = ""
                         txtCusName.Text = ""
                     End If
@@ -745,7 +790,7 @@ Public Class Warehouse
                     If dr IsNot Nothing Then
                         lblEmpName.Content = dr("FirstName").ToString() + " " + dr("LastName").ToString()
                     Else
-                        MessageBox.Show("Mã nhân viên không tồn tại.", Utility.AppCaption)
+                        MessageBox.Show("Mã nhân viên không tồn tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                         txtEmpCode.Text = ""
                         lblEmpName.Content = ""
                     End If
@@ -755,6 +800,9 @@ Public Class Warehouse
             End If
 
             If txtCode.Name.Equals("txtPropCode") Then
+                If Not TypeOf grdWareHouse.SelectedItem Is DataRowView Then
+                    Return
+                End If
                 Dim drv As DataRowView = grdWareHouse.SelectedItem
                 If drv Is Nothing Then
                     Return
@@ -767,7 +815,7 @@ Public Class Warehouse
                     If String.Compare(drv.Row("PropCode").ToString, txtCode.Text.Trim) = 0 Then
                         Return
                     End If
-                 
+
                     Dim dr As DataRow = Check.GetDataByCode("Property", txtCode.Text.Trim)
                     If dr IsNot Nothing Then
                         drv.Row("PropName") = dr("PropName")
@@ -784,8 +832,14 @@ Public Class Warehouse
                         drv.Row("CurrentPrice") = dr("SalesPrice")
                         Dim cellCurrentPrice As DataGridCell = grdWareHouse.GetCell(row, 4)
                         cellCurrentPrice.SetTemplateLabelContent("lblCurrentPrice", dr("SalesPrice"))
+                        Dim amount As Decimal = 0
+                        Dim currentPrice As Decimal = dr("SalesPrice")
+                        Dim quantity As Int16 = drv.Row("Quantity")
+                        amount = currentPrice * quantity
+                        Dim cellAmount As DataGridCell = grdWareHouse.GetCell(row, 6)
+                        cellAmount.SetTemplateLabelContent("lblAmount", amount)
                     Else
-                        MessageBox.Show("Mã mặt hàng không tồn tại.", Utility.AppCaption)
+                        MessageBox.Show("Mã mặt hàng không tồn tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                         txtCode.Text = ""
                         drv.Row("PropName") = ""
                     End If
@@ -798,14 +852,18 @@ Public Class Warehouse
         End Try
     End Sub
 #End Region
+
 #Region "txtCurrentPrice_LostKeyboardFocus"
     Private Sub txtCurrentPrice_LostKeyboardFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
         Try
-            Dim txtCurrentPrice = DirectCast(sender, TextBox)
+            If Not TypeOf grdWareHouse.SelectedItem Is DataRowView Then
+                Return
+            End If
             Dim drv As DataRowView = grdWareHouse.SelectedItem
             If drv Is Nothing Then
                 Return
             End If
+            Dim txtCurrentPrice = DirectCast(sender, TextBox)
             If txtCurrentPrice.Text.Trim.Length > 0 Then
                 Dim row As DataGridRow = Nothing
                 row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
@@ -831,14 +889,18 @@ Public Class Warehouse
         End Try
     End Sub
 #End Region
+
 #Region "txtQuantity_LostKeyboardFocus"
     Private Sub txtQuantity_LostKeyboardFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
         Try
-            Dim txtQuantity = DirectCast(sender, TextBox)
+            If Not TypeOf grdWareHouse.SelectedItem Is DataRowView Then
+                Return
+            End If
             Dim drv As DataRowView = grdWareHouse.SelectedItem
             If drv Is Nothing Then
                 Return
             End If
+            Dim txtQuantity = DirectCast(sender, TextBox)
             If txtQuantity.Text.Trim.Length > 0 Then
                 Dim row As DataGridRow = Nothing
                 row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
@@ -866,6 +928,7 @@ Public Class Warehouse
         End Try
     End Sub
 #End Region
+
 #Region "TextBox_GotFocus"
     Private Sub TextBox_GotFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
         Try
@@ -885,10 +948,13 @@ Public Class Warehouse
         End Try
     End Sub
 #End Region
-#End Region
+
 #Region "grdWareHouse_PreparingCellForEdit"
     Private Sub grdWareHouse_PreparingCellForEdit(sender As Object, e As DataGridPreparingCellForEditEventArgs)
         Try
+            If Not TypeOf grdWareHouse.SelectedItem Is DataRowView Then
+                Return
+            End If
             Dim drv As DataRowView = grdWareHouse.SelectedItem
             If drv Is Nothing Then
                 Return
@@ -896,12 +962,31 @@ Public Class Warehouse
             Dim row As DataGridRow = Nothing
             row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
             Select Case e.Column.DisplayIndex
+                Case 0
+                    Dim cell4 As DataGridCell = grdWareHouse.GetCell(row, 0)
+                    Dim textbox As TextBox = cell4.GetItem(Of TextBox)("txtPropCode")
+                    'textbox.SelectAll()
+                    textbox.CaretIndex = textbox.Text.Length
+                Case 2
+                    Dim cell4 As DataGridCell = grdWareHouse.GetCell(row, 2)
+                    Dim textbox As TextBox = cell4.GetItem(Of TextBox)("txtUnit")
+                    'textbox.SelectAll()
+                    textbox.CaretIndex = textbox.Text.Length
                 Case 4
                     Dim cell4 As DataGridCell = grdWareHouse.GetCell(row, 4)
                     Dim textbox As TextBox = cell4.GetItem(Of TextBox)("txtCurrentPrice")
-                    textbox.SelectAll()
+                    'textbox.SelectAll()
+                    textbox.CaretIndex = textbox.Text.Length
                 Case 5
+                    Dim cell4 As DataGridCell = grdWareHouse.GetCell(row, 5)
+                    Dim textbox As TextBox = cell4.GetItem(Of TextBox)("txtQuantity")
+                    'textbox.SelectAll()
+                    textbox.CaretIndex = textbox.Text.Length
                 Case 6
+                    Dim cell4 As DataGridCell = grdWareHouse.GetCell(row, 6)
+                    Dim textbox As TextBox = cell4.GetItem(Of TextBox)("txtAmount")
+                    'textbox.SelectAll()
+                    textbox.CaretIndex = textbox.Text.Length
                 Case Else
 
             End Select
@@ -909,7 +994,6 @@ Public Class Warehouse
             ErrorLog.SetError(Me, "Đã xảy ra lỗi khi chuẩn bị nhập liệu trên lưới.", ex)
         End Try
     End Sub
-#End Region
 #End Region
 
 #Region "lnkWareCode_Click"
@@ -928,8 +1012,11 @@ Public Class Warehouse
 #Region "txtPropCode_KeyDown"
     Private Sub txtPropCode_KeyDown(sender As Object, e As KeyEventArgs)
         Try
-            If e.Key = Key.OemPlus Then
-                Dim search As New Search(AddressOf SearchPropCode_Result, sender, EnumSearch.SearchProperty)
+            If e.Key = Key.OemPlus AndAlso (Keyboard.IsKeyDown(Key.LeftShift) OrElse Keyboard.IsKeyDown(Key.RightShift)) Then
+                Dim search As New Search()
+                AddHandler search.SearchResult, AddressOf SearchPropCode_Result
+                search.Kind = EnumSearch.SearchProperty
+                search.ShowDialog()
                 e.Handled = True
             End If
 
@@ -938,14 +1025,90 @@ Public Class Warehouse
         End Try
     End Sub
 
-    Private Sub SearchPropCode_Result(SearchDataArgs As SearchDataArgs)
+    Private Sub SearchPropCode_Result(sender As Object, SearchDataArgs As SearchDataArgs)
         If SearchDataArgs Is Nothing Then
             MessageBox.Show("Mã mặt hàng không tồn tại", Me.Title, MessageBoxButton.OK)
         Else
 
+            If Not TypeOf grdWareHouse.SelectedItem Is DataRowView Then
+                Return
+            End If
+            Dim drv As DataRowView = grdWareHouse.SelectedItem
+            If drv Is Nothing Then
+                Return
+            End If
+
+            Dim row As DataGridRow = Nothing
+            row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
+
+            Dim dr As DataRow = Check.GetDataByCode("Property", SearchDataArgs.Code)
+            If dr IsNot Nothing Then
+                drv.Row("PropName") = dr("PropName")
+                Dim cellName As DataGridCell = grdWareHouse.GetCell(row, 1)
+                cellName.SetTemplateLabelContent("lblPropName", dr("PropName"))
+
+                drv.Row("Unit") = dr("Unit")
+                Dim cellUnit As DataGridCell = grdWareHouse.GetCell(row, 2)
+                cellUnit.SetTemplateLabelContent("lblUnit", dr("Unit"))
+
+                drv.Row("UnitPrice") = dr("SalesPrice")
+                Dim cellUnitPrice As DataGridCell = grdWareHouse.GetCell(row, 3)
+                cellUnitPrice.SetTemplateLabelContent("lblUnitPrice", dr("SalesPrice"))
+                drv.Row("CurrentPrice") = dr("SalesPrice")
+                Dim cellCurrentPrice As DataGridCell = grdWareHouse.GetCell(row, 4)
+                cellCurrentPrice.SetTemplateLabelContent("lblCurrentPrice", dr("SalesPrice"))
+                Dim amount As Decimal = 0
+                Dim currentPrice As Decimal = dr("SalesPrice")
+                Dim quantity As Int16 = drv.Row("Quantity")
+                amount = currentPrice * quantity
+                Dim cellAmount As DataGridCell = grdWareHouse.GetCell(row, 6)
+                cellAmount.SetTemplateLabelContent("lblAmount", amount)
+            Else
+                MessageBox.Show("Mã mặt hàng không tồn tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+            End If
+
         End If
 
     End Sub
+#End Region
+
+#Region "txtDiscount_LostKeyboardFocus"
+    Private Sub txtDiscount_LostKeyboardFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
+        Try
+            txtSalesAmount.Text = CalculateSalesAmount()
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô chiết khấu.", ex)
+        End Try
+    End Sub
+#End Region
+
+#Region "grdWareHouse_RowEditEnding"
+    Private Sub grdWareHouse_RowEditEnding(sender As Object, e As DataGridRowEditEndingEventArgs)
+        Try
+            Dim tu = CalculateTotal()
+            txtSumaryQuantity.Text = tu.Item1
+            txtTotalAmount.Text = tu.Item2
+            txtSalesAmount.Text = CalculateSalesAmount()
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi kết thúc nhập liệu trên dòng.", ex)
+        End Try
+    End Sub
+#End Region
+
+#Region "txtWareDate_LostKeyboardFocus"
+    Private Sub txtWareDate_LostKeyboardFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
+        Try
+            If rbPaymentCash.IsChecked Then
+                txtPaymentDate.Text = txtWareDate.Text
+            Else If rbPaymentShipCode.IsChecked Then
+                txtPaymentDate.Text = txtWareDate.Text
+            End If
+
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô ngày xuất.", ex)
+        End Try
+    End Sub
+#End Region
 #End Region
 
 End Class

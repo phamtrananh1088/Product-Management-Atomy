@@ -47,6 +47,10 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -68,8 +72,10 @@
     <Compile Include="CapitalizedNameConverter.vb" />
     <Compile Include="CodeConverter.vb" />
     <Compile Include="CodeValidationRule.vb" />
+    <Compile Include="DateConverter.vb" />
     <Compile Include="EmailConverter.vb" />
     <Compile Include="EmailValidationRule.vb" />
+    <Compile Include="EnumBooleanConverter.vb" />
     <Compile Include="FaxValidationRule.vb" />
     <Compile Include="FocusAttacher.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -90,6 +96,7 @@
     <Compile Include="NameConverter.vb" />
     <Compile Include="NumericValidationRule.vb" />
     <Compile Include="PhoneValidationRule.vb" />
+    <Compile Include="PutCursorAtEndTextBoxBehavior.vb" />
     <Compile Include="RequireRule.vb" />
     <Compile Include="NumericConverter.vb" />
     <Compile Include="SelectAllAttacher.vb" />
@@ -113,6 +120,7 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:i = "http://schemas.microsoft.com/expression/2010/interactivity" 
     xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data"
     xmlns:local="clr-namespace:Anh.Pmt.Atomy"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
@@ -11,6 +12,8 @@
     d:DesignHeight="768" d:DesignWidth="1024"
     Title="Phiếu xuất">
     <Page.Resources>
+        <bindValidation:DateConverter x:Key="dateConverter" />
+        <bindValidation:EnumBooleanConverter x:Key="enumBooleanConverter" />
         <bindValidation:NumericConverter x:Key="numericConverter" />
         <bindValidation:CapitalizedNameConverter x:Key="capitalizedNameConverter" />
         <bindValidation:CodeConverter x:Key="codeConverter" />
@@ -64,7 +67,7 @@
             <ColumnDefinition Width="375*"/>
         </Grid.ColumnDefinitions>
         <local:PageTitle Title="Phiếu xuất" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1024" Grid.ColumnSpan="4" Height="30"/>
-        <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="719" VerticalAlignment="Top" Width="1004" Grid.ColumnSpan="3" Grid.Column="1" Grid.Row="1" />
+        <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="719" VerticalAlignment="Top" Width="1004" Grid.ColumnSpan="3" Grid.Column="1" Margin="0,35,0,0" Grid.RowSpan="2" />
         <Button x:Name="btnUpdate" HorizontalAlignment="Left" Margin="8,8,0,0" VerticalAlignment="Top" Width="68" Background="#FF23D164" Foreground="White" BorderBrush="Blue" Height="30" Grid.Column="1"
 			Click="btnProcess_Click" Grid.Row="1">
             <StackPanel Orientation="Horizontal" Width="41">
@@ -73,13 +76,71 @@
             </StackPanel>
         </Button>
         <local:ProcessSelection x:Name="ProcessSelection" Grid.Column="2" HorizontalAlignment="Left" Margin="0,8,0,0" VerticalAlignment="Top" Height="30" Width="244" ValueChange="ProcessSelection_ValueChange" Grid.Row="1"/>
+        <Label Content="(*)" HorizontalAlignment="Left" Margin="22,45,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Column="3" Grid.Row="1"/>
+        <Label x:Name="lblWareCode" HorizontalAlignment="Left" Margin="37,45,0,0" VerticalAlignment="Top" Grid.Column="3" Height="26" Width="61" Grid.Row="1">
+            <Hyperlink x:Name="lnkWareCode" Click="lnkWareCode_Click">Số phiếu:</Hyperlink>
+        </Label>
+        <TextBox x:Name="txtWareCode" HorizontalAlignment="Left" Height="23" Margin="104,45,0,0" VerticalAlignment="Top" MaxLength="8" Width="68" Grid.Column="3"
+                 LostFocus="txtWareCode_LostFocus"
+                 Style="{StaticResource TextBoxInError}" Grid.Row="1">
+            <i:Interaction.Behaviors>
+                <bindValidation:PutCursorAtEndTextBoxBehavior/>
+            </i:Interaction.Behaviors>
+            <TextBox.Text>
+                <Binding Path ="WareCode" Converter="{StaticResource codeConverter}"
+                         NotifyOnTargetUpdated="True" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
+                        <bindValidation:CodeValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+        <Label x:Name="lblWareCodeHint" Content="" HorizontalAlignment="Left" Margin="174,45,0,0" VerticalAlignment="Top" Grid.Column="3" Width="170" Foreground="Gray" Grid.Row="1" Height="26"/>
+        <Label Content="(*)" HorizontalAlignment="Left" Margin="14,73,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Column="3" Grid.Row="1"/>
+        <Label x:Name="lblWareDate" Content="Ngày xuất:" HorizontalAlignment="Left" Margin="29,73,0,0" VerticalAlignment="Top" Grid.Column="3" Height="26" Width="67" Grid.Row="1"/>
+        <TextBox x:Name="txtWareDate" HorizontalAlignment="Left" Height="23" Margin="104,73,0,0" VerticalAlignment="Top" MaxLength="10" Width="80" Grid.Column="3"
+                 LostKeyboardFocus="txtWareDate_LostKeyboardFocus" Style="{StaticResource TextBoxInError}" Grid.Row="1">
+            <i:Interaction.Behaviors>
+                <bindValidation:PutCursorAtEndTextBoxBehavior/>
+            </i:Interaction.Behaviors>
+            <TextBox.Text>
+                <Binding Path ="WareDate" Converter="{StaticResource dateConverter}" NotifyOnTargetUpdated="True">
+                    <Binding.ValidationRules>
+                        <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+        <Label Content="Loại thanh toán:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="26" Grid.Column="3" Width="102" Margin="0,101,0,0" Grid.Row="1"/>
+        <Border CornerRadius="3,3,3,3" BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="24" Margin="104,101,0,0" VerticalAlignment="Top" Grid.Column="3" Width="80" Grid.Row="1"/>
+        <RadioButton x:Name="rbPaymentCash" GroupName="PaymentSelection" Content=" Tiền mặt" Foreground="Blue" HorizontalAlignment="Left" Margin="108,105,0,0" VerticalAlignment="Top" Grid.Column="3" IsChecked="{Binding PaymentType, Converter={StaticResource enumBooleanConverter}, ConverterParameter={x:Static local:EnumPaymentType.Cash}}" Grid.Row="1" Width="71"/>
+        <Border CornerRadius="3,3,3,3" BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="24" Margin="187,101,0,0" VerticalAlignment="Top" Grid.Column="3" Width="84" Grid.Row="1"/>
+        <RadioButton x:Name="rbPaymentShipCode" GroupName="PaymentSelection" Content=" Ship Code" Foreground="Orange" HorizontalAlignment="Left" Margin="191,105,0,0" VerticalAlignment="Top" Grid.Column="3" IsChecked="{Binding PaymentType, Converter={StaticResource enumBooleanConverter}, ConverterParameter={x:Static local:EnumPaymentType.ShipCode}}" Grid.Row="1" Width="76"/>
+        <Label x:Name="lblPaymentDate" Content="Ngày thanh toán:" HorizontalAlignment="Left" Margin="0,129,0,0" VerticalAlignment="Top" Grid.Column="3" Height="26" Width="102" Grid.Row="1"/>
+        <TextBox x:Name="txtPaymentDate" HorizontalAlignment="Left" Height="23" Margin="104,129,0,0" VerticalAlignment="Top" MaxLength="10" Width="80" Grid.Column="3"
+                 Style="{StaticResource TextBoxInError}" Grid.Row="1">
+            <i:Interaction.Behaviors>
+                <bindValidation:PutCursorAtEndTextBoxBehavior/>
+            </i:Interaction.Behaviors>
+            <TextBox.Text>
+                <Binding Path ="PaymentDate" Converter="{StaticResource dateConverter}" NotifyOnTargetUpdated="True">
+                    <Binding.ValidationRules>
+                        <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
         <Label Content="(*)" HorizontalAlignment="Left" Margin="8,45,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Row="1" Grid.Column="1"/>
         <Label x:Name="lblEmpCode" HorizontalAlignment="Left" Margin="22,45,0,0" VerticalAlignment="Top" Height="26" Width="84" Grid.Row="1" Grid.Column="1">
             <Hyperlink x:Name="lnkEmpCode" Click="lnkEmpCode_Click">Mã nhân viên:</Hyperlink>
         </Label>
         <TextBox x:Name="txtEmpCode" HorizontalAlignment="Left" Height="23" Margin="0,45,0,0" VerticalAlignment="Top" MaxLength="8" Width="68" Grid.Column="2"
-                 LostKeyboardFocus="txtCode_LostKeyboardFocus"
+                 CaretIndex="8" LostKeyboardFocus="txtCode_LostKeyboardFocus"
                  Style="{StaticResource TextBoxInError}" Grid.Row="1">
+            <i:Interaction.Behaviors>
+                <bindValidation:PutCursorAtEndTextBoxBehavior/>
+            </i:Interaction.Behaviors>
             <TextBox.Text>
                 <Binding Path ="EmpCode" Converter="{StaticResource codeConverter}" 
                          NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged">
@@ -98,6 +159,9 @@
         <TextBox x:Name="txtCusCode" HorizontalAlignment="Left" Height="23" Margin="0,73,0,0" VerticalAlignment="Top" MaxLength="8" Width="68" Grid.Column="2"
                  LostKeyboardFocus="txtCode_LostKeyboardFocus"
                  Style="{StaticResource TextBoxInError}" Grid.Row="1">
+            <i:Interaction.Behaviors>
+                <bindValidation:PutCursorAtEndTextBoxBehavior/>
+            </i:Interaction.Behaviors>
             <TextBox.Text>
                 <Binding Path ="CusCode" Converter="{StaticResource codeConverter}"
                         NotifyOnTargetUpdated="True" UpdateSourceTrigger="PropertyChanged">
@@ -112,48 +176,25 @@
         <Label x:Name="lblCusName" Content="Tên khách hàng:" HorizontalAlignment="Left" Margin="82,73,0,0" VerticalAlignment="Top" Grid.Column="2" Height="26" Width="97" Grid.Row="1"/>
         <TextBox x:Name="txtCusName" HorizontalAlignment="Left" Height="23" Margin="179,73,0,0" VerticalAlignment="Top" MaxLength="42" Width="272" Grid.Column="2"                 
                  Style="{StaticResource TextBoxInError}" Grid.Row="1">
+            <i:Interaction.Behaviors>
+                <bindValidation:PutCursorAtEndTextBoxBehavior/>
+            </i:Interaction.Behaviors>
             <TextBox.Text>
-                <Binding Path ="CusName" UpdateSourceTrigger="PropertyChanged" NotifyOnTargetUpdated="True">
+                <Binding Path ="CusName" Converter="{StaticResource capitalizedNameConverter}" NotifyOnTargetUpdated="True">
                     <Binding.ValidationRules>
                         <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="22,45,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Column="3" Grid.Row="1"/>
-        <Label x:Name="lblWareCode" HorizontalAlignment="Left" Margin="37,45,0,0" VerticalAlignment="Top" Grid.Column="3" Height="26" Width="61" Grid.Row="1">
-            <Hyperlink x:Name="lnkWareCode" Click="lnkWareCode_Click">Số phiếu:</Hyperlink>
-        </Label>
-        <TextBox x:Name="txtWareCode" HorizontalAlignment="Left" Height="23" Margin="98,45,0,0" VerticalAlignment="Top" MaxLength="8" Width="68" Grid.Column="3"
-                 LostFocus="txtWareCode_LostFocus"
-                 Style="{StaticResource TextBoxInError}" Grid.Row="1">
-            <TextBox.Text>
-                <Binding Path ="WareCode" Converter="{StaticResource codeConverter}"
-                         NotifyOnTargetUpdated="True" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
-                        <bindValidation:CodeValidationRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-        <Label x:Name="lblWareCodeHint" Content="" HorizontalAlignment="Left" Margin="166,45,0,0" VerticalAlignment="Top" Grid.Column="3" Width="157" Foreground="Gray" Grid.Row="1" Height="26"/>
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="14,73,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Column="3" Grid.Row="1"/>
-        <Label x:Name="lblWareDate" Content="Ngày xuất:" HorizontalAlignment="Left" Margin="29,73,0,0" VerticalAlignment="Top" Grid.Column="3" Height="26" Width="67" Grid.Row="1"/>
-        <TextBox x:Name="txtWareDate" HorizontalAlignment="Left" Height="23" Margin="98,73,0,0" VerticalAlignment="Top" MaxLength="10" Width="80" Grid.Column="3"
-                 Style="{StaticResource TextBoxInError}" Grid.Row="1">
-            <TextBox.Text>
-                <Binding Path ="WareDate" NotifyOnTargetUpdated="True" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+
         <Label Content="(*)" HorizontalAlignment="Left" Margin="40,101,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Column="1" Grid.Row="1" RenderTransformOrigin="-28.818,2.769"/>
         <Label x:Name="lblWareTitle" Content="Tiêu đề:" HorizontalAlignment="Left" Margin="54,101,0,0" VerticalAlignment="Top" Height="26" Width="53" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
         <TextBox x:Name="txtWareTitle" HorizontalAlignment="Left" Height="23" Margin="0,101,0,0" VerticalAlignment="Top" MaxLength="80" Width="500" Grid.Column="2" Grid.Row="1"
                  Style="{StaticResource TextBoxInError}">
+            <i:Interaction.Behaviors>
+                <bindValidation:PutCursorAtEndTextBoxBehavior/>
+            </i:Interaction.Behaviors>
             <TextBox.Text>
                 <Binding Path ="WareTitle" UpdateSourceTrigger="PropertyChanged" NotifyOnTargetUpdated="True">
                     <Binding.ValidationRules>
@@ -165,25 +206,15 @@
         <Label x:Name="lblDescription" Content="Diễn giải:" HorizontalAlignment="Left" Margin="48,129,0,0" VerticalAlignment="Top" Height="26" Width="59" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
         <TextBox x:Name="txtDescription" HorizontalAlignment="Left" Height="51" Margin="0,129,0,0" Text="{Binding Description}" VerticalAlignment="Top" 
                  ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextWrapping="Wrap"
-                 MaxLength="1000" Width="500" Grid.Column="2" Grid.Row="1"/>
-
-        <Label x:Name="lblTotalAmount" Content="Tổng tiền hàng:" HorizontalAlignment="Left" Margin="3,100,0,0" VerticalAlignment="Top" Height="26" Width="93" Grid.Column="3" Grid.Row="1"/>
-        <TextBox x:Name="txtTotalAmount" HorizontalAlignment="Left" Height="23" Margin="98,101,0,0" Text="{Binding TotalAmount}" VerticalAlignment="Top" MaxLength="15" Width="110" IsEnabled="False" Grid.Column="3" Grid.Row="1"/>
-        <Label Content="VND" HorizontalAlignment="Left" Margin="208,101,0,0" VerticalAlignment="Top" Height="26" Width="38" Grid.Column="3" Grid.Row="1"/>
-        <Label Content="Chiết khấu:" HorizontalAlignment="Left" Margin="27,129,0,0" VerticalAlignment="Top" Height="26" Width="72" Grid.Column="3" Grid.Row="1"/>
-        <TextBox x:Name="txtDiscount" HorizontalAlignment="Left" Height="23" Margin="98,129,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="3"
-                 bindValidation:SelectAllAttacher.SelectAllTextOnFocus="True" 
-                 Style="{StaticResource TextBoxInError}" Grid.Row="1">
-            <TextBox.Text>
-                <Binding Path="Discount" Converter="{StaticResource numericConverter}">
-                    <Binding.ValidationRules>
-                        <bindValidation:NumericValidationRule TypeName="Decimal" ValidatesOnTargetUpdated="True"/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
+                 MaxLength="1000" Width="500" Grid.Column="2" Grid.Row="1">
+            <i:Interaction.Behaviors>
+                <bindValidation:PutCursorAtEndTextBoxBehavior/>
+            </i:Interaction.Behaviors>
         </TextBox>
-        <DataGrid x:Name="grdWareHouse" HorizontalAlignment="Left" Height="280" Margin="0,198,0,0" VerticalAlignment="Top" Width="912" Grid.ColumnSpan="3" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1"
-               PreparingCellForEdit="grdWareHouse_PreparingCellForEdit" CellEditEnding="grdWareHouse_CellEditEnding">
+        <Label Content="Đơn vị tính: đồng Việt Nam (VND)" HorizontalAlignment="Left" Margin="98,188,0,0" VerticalAlignment="Top" Height="26" Width="198" Grid.Column="3" Grid.Row="1" RenderTransformOrigin="0.605,1.885"/>
+        <DataGrid x:Name="grdWareHouse" HorizontalAlignment="Left" Height="280" Margin="8,214,0,0" VerticalAlignment="Top" Width="936" Grid.ColumnSpan="3" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1"
+              CanUserAddRows="True" CanUserDeleteRows="True" CanUserReorderColumns="True" CanUserResizeColumns="False"
+              RowEditEnding="grdWareHouse_RowEditEnding" PreparingCellForEdit="grdWareHouse_PreparingCellForEdit" CellEditEnding="grdWareHouse_CellEditEnding">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Mã mặt hàng" Width="90" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -208,7 +239,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Tên mặt hàng" Width="auto" MinWidth="300" HeaderStyle="{StaticResource ResourceKey=chCenter}">
+                <DataGridTemplateColumn Header="Tên mặt hàng" Width="320" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label x:Name="lblPropName" Content="{Binding PropName}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="26"/>
@@ -321,8 +352,30 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Label x:Name="lblComment" Content="Chú thích:" HorizontalAlignment="Left" Margin="44,498,0,0" VerticalAlignment="Top" Height="26" Width="63" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtComment" HorizontalAlignment="Left" Height="51" Margin="0,498,0,0" Text="{Binding Comments}" VerticalAlignment="Top" 
+        <Border BorderBrush="#FF688CAF" Background="#FFF0F0F0" BorderThickness="1 0 1 1" HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="936" Grid.ColumnSpan="3" Grid.Row="1" Margin="8,494,0,0" Grid.Column="1" />
+        <Label Content="TỔNG CỘNG:" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="8,494,0,0" VerticalAlignment="Top" Height="26" Width="619" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtSumarySalesPrice" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Height="23" Margin="518,494,0,0" VerticalAlignment="Top" MaxLength="15" Width="100" IsReadOnly="True" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtSumaryQuantity" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Height="23" Margin="84,494,0,0" VerticalAlignment="Top" MaxLength="15" Width="80" IsReadOnly="True" Grid.Column="3" Grid.Row="1"/>
+        <TextBox x:Name="txtTotalAmount" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Height="23" Margin="164,494,0,0" Text="{Binding TotalAmount}" VerticalAlignment="Top" MaxLength="15" Width="120" IsReadOnly="True" Grid.Column="3" Grid.Row="1"/>
+        <Label Content="Chiết khấu:" HorizontalAlignment="Left" Margin="89,522,0,0" VerticalAlignment="Top" Height="26" Width="72" Grid.Column="3" Grid.Row="1"/>
+        <TextBox x:Name="txtDiscount" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Height="23" Margin="164,522,0,0" VerticalAlignment="Top" MaxLength="15" Width="120" Grid.Column="3"
+                 LostKeyboardFocus="txtDiscount_LostKeyboardFocus" Style="{StaticResource TextBoxInError}" Grid.Row="1">
+            <i:Interaction.Behaviors>
+                <bindValidation:PutCursorAtEndTextBoxBehavior/>
+            </i:Interaction.Behaviors>
+            <TextBox.Text>
+                <Binding Path="Discount" Converter="{StaticResource numericConverter}">
+                    <Binding.ValidationRules>
+                        <bindValidation:NumericValidationRule TypeName="Decimal" ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+        <Label Content="Thanh toán:" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="89,550,0,0" VerticalAlignment="Top" Height="26" Width="72" Grid.Column="3" Grid.Row="1"/>
+        <TextBox x:Name="txtSalesAmount" IsReadOnly="True" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Height="23" Margin="164,550,0,0" VerticalAlignment="Top" MaxLength="15" Width="120" Grid.Column="3"
+                 Text="{Binding SalesAmount}" Style="{StaticResource TextBoxInError}" Grid.Row="1"/>
+        <Label x:Name="lblComment" Content="Chú thích:" HorizontalAlignment="Left" Margin="44,568,0,0" VerticalAlignment="Top" Height="26" Width="63" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txtComment" HorizontalAlignment="Left" Height="51" Margin="0,568,0,0" Text="{Binding Comments}" VerticalAlignment="Top" 
                  ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextWrapping="Wrap"
                  MaxLength="1000" Width="620" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2"/>
     </Grid>

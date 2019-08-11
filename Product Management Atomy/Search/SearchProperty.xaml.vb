@@ -105,7 +105,7 @@ Class SearchProperty
 
             Dim read As OleDbDataReader = cmd.ExecuteReader()
             If read.Read() Then
-                res = New SearchDataProperty() With {.Code = read("[PropCode]").ToString, .Name = read("[PropName]").ToString()}
+                res = New SearchDataProperty() With {.Code = read("PropCode").ToString, .Name = read("PropName").ToString()}
             End If
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã có lỗi khi tìm kiếm mặt hàng.", ex)
