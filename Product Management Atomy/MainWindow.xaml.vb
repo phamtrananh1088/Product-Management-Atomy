@@ -53,12 +53,12 @@ Class MainWindow
                 pop.Title = p.Title
                 pop.ShowDialog()
             Case "WarehouseIn"
-                Dim p As New Warehouse
+                Dim p As New Warehouse(0)
                 pop.Content = p
                 pop.Title = p.Title
                 pop.ShowDialog()
             Case "Warehouse"
-                Dim p As New Warehouse
+                Dim p As New Warehouse(1)
                 pop.Content = p
                 pop.Title = p.Title
                 pop.ShowDialog()

@@ -123,6 +123,7 @@
     <Compile Include="Home.xaml.vb">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PrintWarehouseExcel.vb" />
     <Compile Include="Utility\ModuleEnum.vb" />
     <Compile Include="Order.xaml.vb">
       <DependentUpon>Order.xaml</DependentUpon>
@@ -288,7 +289,9 @@
     <None Include="AtomyDataSet.xss">
       <DependentUpon>AtomyDataSet.xsd</DependentUpon>
     </None>
-    <None Include="Excel\Template\OrderA5_1.xlsx" />
+    <Content Include="Excel\Template\OrderA5_1.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -297,7 +300,17 @@
     <AppDesigner Include="My Project\" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
       <Visible>False</Visible>

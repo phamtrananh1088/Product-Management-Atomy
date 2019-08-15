@@ -1,8 +1,9 @@
 ﻿Imports System.Data.OleDb
+Imports System.Data
 
 Class SearchWarehouse
     Implements ISearch
-
+    Public WareType As Int16 = 0
     Private _search As Search
     Private AtomyDataSet As AtomyDataSet
     Protected Sub New()
@@ -35,6 +36,14 @@ Class SearchWarehouse
             adapt.SelectCommand = New OleDbCommand()
             adapt.SelectCommand.Connection = dbConn.Conn
             adapt.SelectCommand.Parameters.Add("@WareCode", OleDbType.VarChar).Value = txtWareCode.Text.Trim + "%"
+            If rbWareTypeIn.IsChecked Then
+                sSQL = sSQL + " and [Type] = ?"
+                adapt.SelectCommand.Parameters.Add("@Type", OleDbType.SmallInt).Value = 0
+            ElseIf rbWareTypeOut.IsChecked Then
+                    sSQL = sSQL + " and [Type] = ?"
+                    adapt.SelectCommand.Parameters.Add("@Type", OleDbType.SmallInt).Value = 1
+            End If
+
             If txtWareTitle.Text.Trim.Length > 0 Then
                 sSQL = sSQL + " and [WareTitle] like ?"
                 adapt.SelectCommand.Parameters.Add("@WareTitle", OleDbType.VarChar).Value = "%" + txtWareTitle.Text.Trim + "%"
@@ -93,7 +102,8 @@ Class SearchWarehouse
 
     Private Sub rowCode_Click(sender As Object, e As RoutedEventArgs)
         Dim btn As Button = DirectCast(sender, Button)
-        Dim data As New SearchDataWarehouse() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString}
+        Dim drv As DataRowView = grdData.SelectedItem
+        Dim data As New SearchDataWarehouse() With {.Code = btn.Content.ToString, .Name = btn.Tag.ToString, .WareType = drv.Row("Type")}
         _search.ResultF(data)
     End Sub
 
@@ -107,7 +117,7 @@ Class SearchWarehouse
             cmd.Parameters.Add("@WareCode", OleDbType.VarChar).Value = Keycode
             Dim read As OleDbDataReader = cmd.ExecuteReader()
             If read.Read() Then
-                res = New SearchDataWarehouse() With {.Code = read("[CusCode]").ToString, .Name = read("[FullName]").ToString()}
+                res = New SearchDataWarehouse() With {.Code = read("CusCode").ToString, .Name = read("FullName").ToString(), .WareType = read("Type")}
             End If
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã có lỗi khi tìm kiếm khách hàng.", ex)
@@ -119,4 +129,5 @@ Class SearchWarehouse
 End Class
 Public Class SearchDataWarehouse
     Inherits SearchDataArgs
+    Public WareType As Int16
 End Class

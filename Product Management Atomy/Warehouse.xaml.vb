@@ -2,17 +2,20 @@
 Imports System.Data.OleDb
 Imports System.Text
 Imports System.Windows.Controls.Primitives
+Imports BindValidation
+Imports System.IO
 
 Public Class Warehouse
 #Region "FIELD"
     Private AtomyDataSet As AtomyDataSet
     Private Mode As DataRowState
+    Private WareType As Int16 = 0
 #End Region
 
 #Region "CONSTRUCTOR"
-    Public Sub New()
+    Public Sub New(wareType As Int16)
         AtomyDataSet = New AtomyDataSet()
-        Mode = DataRowState.Added
+        Me.WareType = wareType
         ' This call is required by the designer.
         InitializeComponent()
         InitialValue()
@@ -23,6 +26,56 @@ Public Class Warehouse
 
 #Region "InitialControl"
     Private Sub InitialValue()
+        Select Case Me.WareType
+            Case 0
+                pgTitle.Title = "Phiếu nhập"
+                Me.Title = "Phiếu nhập"
+                lblWareDate.Content = "Ngày nhập:"
+                grdWareHouse.Columns(4).Header = "Giá nhập"
+                lblPayment.Visibility = Windows.Visibility.Hidden
+                borderPaymentCash.Visibility = Windows.Visibility.Hidden
+                rbPaymentCash.Visibility = Windows.Visibility.Hidden
+                borderPaymentShipCode.Visibility = Windows.Visibility.Hidden
+                rbPaymentShipCode.Visibility = Windows.Visibility.Hidden
+                lblPaymentDate.Visibility = Windows.Visibility.Hidden
+                txtPaymentDate.Visibility = Windows.Visibility.Hidden
+
+                lblMarkCusCode.Visibility = Windows.Visibility.Hidden
+                lblCusCode.Visibility = Windows.Visibility.Hidden
+                txtCusCode.Visibility = Windows.Visibility.Hidden
+                lblCusName.Visibility = Windows.Visibility.Hidden
+                lblMarkEmpCode.Visibility = Windows.Visibility.Hidden
+                lblEmpCode.Visibility = Windows.Visibility.Hidden
+                txtEmpCode.Visibility = Windows.Visibility.Hidden
+                lblEmpName.Visibility = Windows.Visibility.Hidden
+                lblMarkCusName.Visibility = Windows.Visibility.Hidden
+                lblCusName.Visibility = Windows.Visibility.Hidden
+                txtCusName.Visibility = Windows.Visibility.Hidden
+
+            Case 1
+                pgTitle.Title = "Phiếu xuất"
+                Me.Title = "Phiếu xuất"
+                lblWareDate.Content = "Ngày xuất:"
+                grdWareHouse.Columns(4).Header = "Giá bán"
+                lblPayment.Visibility = Windows.Visibility.Visible
+                borderPaymentCash.Visibility = Windows.Visibility.Visible
+                rbPaymentCash.Visibility = Windows.Visibility.Visible
+                borderPaymentShipCode.Visibility = Windows.Visibility.Visible
+                rbPaymentShipCode.Visibility = Windows.Visibility.Visible
+                lblPaymentDate.Visibility = Windows.Visibility.Visible
+                txtPaymentDate.Visibility = Windows.Visibility.Visible
+                lblMarkCusCode.Visibility = Windows.Visibility.Visible
+                lblCusCode.Visibility = Windows.Visibility.Visible
+                txtCusCode.Visibility = Windows.Visibility.Visible
+                lblCusName.Visibility = Windows.Visibility.Visible
+                lblMarkEmpCode.Visibility = Windows.Visibility.Visible
+                lblEmpCode.Visibility = Windows.Visibility.Visible
+                txtEmpCode.Visibility = Windows.Visibility.Visible
+                lblEmpName.Visibility = Windows.Visibility.Visible
+                lblMarkCusName.Visibility = Windows.Visibility.Visible
+                lblCusName.Visibility = Windows.Visibility.Visible
+                txtCusName.Visibility = Windows.Visibility.Visible
+        End Select
         txtEmpCode.Text = ""
         lblEmpName.Content = ""
         txtCusCode.Text = ""
@@ -55,11 +108,20 @@ Public Class Warehouse
                 sSQL = "select * from [Warehouse] where [WareCode] = ?"
                 adapt.SelectCommand.CommandText = sSQL
                 adapt.Fill(AtomyDataSet, "Warehouse")
+                Dim tu = CalculateTotal()
+                txtSumaryQuantity.Text = tu.Item1.ToString("#,##0")
+                txtTotalAmount.Text = tu.Item2.ToString("#,##0")
                 grdWareHouse.ItemsSource = AtomyDataSet.Warehouse.DefaultView
+                If Me.WareType = 1 Then
+                    btnPrint.Visibility = Windows.Visibility.Visible
+                Else
+                    btnPrint.Visibility = Windows.Visibility.Hidden
+                End If
             Else
-                MessageBox.Show("Phiếu xuất [" + WareCode + "] không tồn tại hoặc đã bị xóa.")
+                MessageBox.Show("Phiếu " + If(Me.WareType = 0, "nhập", "xuất") + " [" + WareCode + "] không tồn tại hoặc đã bị xóa.")
                 InitialValue()
                 CtrEnable()
+                btnPrint.Visibility = Windows.Visibility.Hidden
             End If
 
         Catch ex As Exception
@@ -107,10 +169,10 @@ Public Class Warehouse
     End Sub
 #End Region
 
-
 #Region "ProcessSelection_ValueChange"
     Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
         If ProcessSelection.Mode = DataRowState.Added Then
+            btnPrint.Visibility = Windows.Visibility.Hidden
             grdWareHouse.ItemsSource = Nothing
             AtomyDataSet.WarehouseMaster.Clear()
             AtomyDataSet.Warehouse.Clear()
@@ -124,11 +186,13 @@ Public Class Warehouse
             CtrEnable()
             HelpCreateWareCode()
         ElseIf ProcessSelection.Mode = DataRowState.Modified Then
+            btnPrint.Visibility = Windows.Visibility.Hidden
             grdWareHouse.ItemsSource = Nothing
             Me.Mode = DataRowState.Modified
             CtrEnable()
             HelpGetLastWareCode()
         ElseIf ProcessSelection.Mode = DataRowState.Deleted Then
+            btnPrint.Visibility = Windows.Visibility.Hidden
             grdWareHouse.ItemsSource = Nothing
             Me.Mode = DataRowState.Deleted
             CtrEnable()
@@ -150,7 +214,7 @@ Public Class Warehouse
                         MessageBox.Show("Cập nhật thành công.", Me.Title, MessageBoxButton.OK)
                         lblWareCodeHint.Content = ""
                         ProcessSelection.Mode = DataRowState.Modified
-                        LoadData(txtCusCode.Text.Trim)
+                        LoadData(txtWareCode.Text.Trim)
                     Else
                         MessageBox.Show("Cập nhật không thành công.", Me.Title, MessageBoxButton.OK)
                     End If
@@ -169,7 +233,7 @@ Public Class Warehouse
                     If Not ValidateData(EnumAction.Delete) Then
                         Return
                     End If
-                    Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
+                    Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.Yes)
                     If confirm Then
                         If Delete() Then
                             MessageBox.Show("Xóa thành công.", Me.Title, MessageBoxButton.OK)
@@ -191,59 +255,28 @@ Public Class Warehouse
         Dim valid As Boolean = True
         Select Case action
             Case EnumAction.Insert
-                If Validation.GetHasError(txtEmpCode) Then
-                    MessageBox.Show("Vui lòng nhập mã nhân viên", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
-                    txtEmpCode.Focus()
-                    Return False
-                End If
-                If Validation.GetHasError(txtCusCode) Then
-                    MessageBox.Show("Vui lòng nhập mã khách hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
-                    txtCusCode.Focus()
-                    Return False
-                End If
-                If Validation.GetHasError(txtCusName) Then
-                    MessageBox.Show("Vui lòng nhập tên khách hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
-                    txtCusName.Focus()
-                    Return False
-                End If
-                If Validation.GetHasError(txtWareCode) Then
-                    MessageBox.Show("Vui lòng nhập số phiếu", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
-                    txtWareCode.Focus()
-                    Return False
-                End If
                 If Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
-                    MessageBox.Show("Mã phiếu xuất đã tồn tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBox.Show("Mã phiếu " + If(Me.WareType = 0, "nhập", "xuất") + " đã tồn tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtWareCode.Focus()
                     HelpCreateWareCode()
                     Return False
                 End If
                 If Validation.GetHasError(txtWareDate) Then
-                    MessageBox.Show("Vui lòng nhập ngày xuất", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBox.Show("Vui lòng nhập ngày " + If(Me.WareType = 0, "nhập", "xuất"), Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtWareDate.Focus()
                     Return False
                 End If
-                If Validation.GetHasError(txtWareTitle) Then
-                    MessageBox.Show("Vui lòng nhập tiêu đề", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
-                    txtWareTitle.Focus()
-                    Return False
-                End If
-                If Validation.GetHasError(grdWareHouse) Then
-                    MessageBox.Show("Vui lòng nhập chi tiết mặt hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
-                    grdWareHouse.Focus()
-                    Return False
-                End If
-            Case EnumAction.Update
-                If Validation.GetHasError(txtEmpCode) Then
+                If Me.WareType = 1 AndAlso Validation.GetHasError(txtEmpCode) Then
                     MessageBox.Show("Vui lòng nhập mã nhân viên", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtEmpCode.Focus()
                     Return False
                 End If
-                If Validation.GetHasError(txtCusCode) Then
+                If Me.WareType = 1 AndAlso Validation.GetHasError(txtCusCode) Then
                     MessageBox.Show("Vui lòng nhập mã khách hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtCusCode.Focus()
                     Return False
                 End If
-                If Validation.GetHasError(txtCusName) Then
+                If Me.WareType = 1 AndAlso Validation.GetHasError(txtCusName) Then
                     MessageBox.Show("Vui lòng nhập tên khách hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtCusName.Focus()
                     Return False
@@ -253,30 +286,73 @@ Public Class Warehouse
                     txtWareCode.Focus()
                     Return False
                 End If
+                If Validation.GetHasError(txtWareTitle) Then
+                    MessageBox.Show("Vui lòng nhập tiêu đề.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareTitle.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(grdWareHouse) Then
+                    MessageBox.Show("Vui lòng nhập chi tiết mặt hàng.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    grdWareHouse.Focus()
+                    Return False
+                End If
+            Case EnumAction.Update
                 If Not Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
-                    MessageBox.Show("Mã phiếu xuất chưa được đăng ký hoặc đã bị xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBox.Show("Mã phiếu " + If(Me.WareType = 0, "nhập", "xuất") + " chưa được đăng ký hoặc đã bị xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtWareCode.Focus()
                     HelpGetLastWareCode()
                     Return False
                 End If
                 If Validation.GetHasError(txtWareDate) Then
-                    MessageBox.Show("Vui lòng nhập ngày xuất", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBox.Show("Vui lòng nhập ngày " + If(Me.WareType = 0, "nhập", "xuất"), Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtWareDate.Focus()
                     Return False
                 End If
+                If Me.WareType = 1 AndAlso Validation.GetHasError(txtEmpCode) Then
+                    MessageBox.Show("Vui lòng nhập mã nhân viên.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtEmpCode.Focus()
+                    Return False
+                End If
+                If Me.WareType = 1 AndAlso Validation.GetHasError(txtCusCode) Then
+                    MessageBox.Show("Vui lòng nhập mã khách hàng.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtCusCode.Focus()
+                    Return False
+                End If
+                If Me.WareType = 1 AndAlso txtCusName.Text.Trim.Length = 0 Then
+                    MessageBox.Show("Vui lòng nhập tên khách hàng.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtCusName.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtWareCode) Then
+                    MessageBox.Show("Vui lòng nhập số phiếu.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtWareCode.Focus()
+                    Return False
+                End If
+
                 If Validation.GetHasError(txtWareTitle) Then
-                    MessageBox.Show("Vui lòng nhập tiêu đề", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBox.Show("Vui lòng nhập tiêu đề.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtWareTitle.Focus()
                     Return False
                 End If
                 If Validation.GetHasError(grdWareHouse) Then
-                    MessageBox.Show("Vui lòng nhập chi tiết mặt hàng", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBox.Show("Vui lòng nhập chi tiết mặt hàng.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     grdWareHouse.Focus()
                     Return False
                 End If
+                If Me.WareType = 1 AndAlso txtPaymentDate.Text < txtWareDate.Text Then
+                    MessageBox.Show("Ngày thanh toán không được nhỏ hơn ngày xuất.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPaymentDate.Focus()
+                    Return False
+                End If
+                If Me.WareType = 1 AndAlso txtPaymentDate.Text = txtWareDate.Text AndAlso rbPaymentShipCode.IsChecked Then
+                    MessageBox.Show("Phương thức thanh toán ship code thì ngày thanh toán phải sau ngày xuất ít nhất 1 ngày.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPaymentDate.Focus()
+                    Return False
+                End If
+
             Case EnumAction.Delete
                 If Not Check.IsExisted("Warehouse", txtWareCode.Text.Trim) Then
-                    MessageBox.Show("Mã phiếu xuất chưa được đăng ký hoặc đã bị xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBox.Show("Mã phiếu " + If(Me.WareType = 0, "nhập", "xuất") + " chưa được đăng ký hoặc đã bị xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                     txtWareCode.Focus()
                     HelpGetLastWareCode()
                     Return False
@@ -298,7 +374,7 @@ Public Class Warehouse
             Using cmd As New OleDbCommand(sSQL, dbConn.Conn)
                 cmd.Transaction = dbConn.Tran
                 Dim row As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
-                row.Type = 1 'bán hàng
+                row.Type = Me.WareType '0:mua hàng, 1: bán hàng
                 Dim now As Date = Date.Now
                 row.CreateDate = now.ToString("yyyy/MM/dd")
                 row.CreateTime = now.ToString("HH:mm:ss")
@@ -320,7 +396,7 @@ Public Class Warehouse
                 cmd.Parameters.Add("@11", OleDbType.Currency).Value = row.TotalAmount
                 cmd.Parameters.Add("@12", OleDbType.Currency).Value = row.Discount
                 cmd.Parameters.Add("@13", OleDbType.Currency).Value = row.SalesAmount
-                cmd.Parameters.Add("@14", OleDbType.SmallInt).Value = row.PaymentType
+                cmd.Parameters.Add("@14", OleDbType.SmallInt).Value = If(rbPaymentCash.IsChecked, CShort(EnumPaymentType.Cash), If(rbPaymentShipCode.IsChecked, CShort(EnumPaymentType.ShipCode), 0))
                 cmd.Parameters.Add("@15", OleDbType.SmallInt).Value = row.FinishFlag
                 cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.PaymentDate
                 cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.FinishDate
@@ -389,7 +465,7 @@ Public Class Warehouse
         Catch ex As Exception
             res = -1
             dbConn.RollbackTran()
-            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi cập nhật phiếu xuất.", ex)
+            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi cập nhật phiếu " + If(Me.WareType = 0, "nhập", "xuất") + ".", ex)
         Finally
             dbConn.DisposeTran()
             dbConn.Close()
@@ -408,8 +484,10 @@ Public Class Warehouse
             dbConn.BeginTran()
             Dim sSQL As String = UpdateSQL()
             Using cmd As New OleDbCommand(sSQL, dbConn.Conn)
+                Dim tu = CalculateTotal()
                 cmd.Transaction = dbConn.Tran
                 Dim row As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
+                row.TotalAmount = tu.Item2
                 Dim now As Date = Date.Now
                 row.UpdateDate = now.ToString("yyyy/MM/dd")
                 row.UpdateTime = now.ToString("HH:mm:ss")
@@ -427,7 +505,7 @@ Public Class Warehouse
                 cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.TotalAmount
                 cmd.Parameters.Add("@11", OleDbType.Currency).Value = row.Discount
                 cmd.Parameters.Add("@12", OleDbType.Currency).Value = row.SalesAmount
-                cmd.Parameters.Add("@13", OleDbType.SmallInt).Value = row.PaymentType
+                cmd.Parameters.Add("@13", OleDbType.SmallInt).Value = If(rbPaymentCash.IsChecked, CShort(EnumPaymentType.Cash), If(rbPaymentShipCode.IsChecked, CShort(EnumPaymentType.ShipCode), 0))
                 cmd.Parameters.Add("@14", OleDbType.SmallInt).Value = row.FinishFlag
                 cmd.Parameters.Add("@15", OleDbType.VarChar).Value = row.PaymentDate
                 cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.FinishDate
@@ -541,7 +619,7 @@ Public Class Warehouse
         Catch ex As Exception
             res = -1
             dbConn.RollbackTran()
-            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi cập nhật phiếu xuất.", ex)
+            ErrorLog.SetError(Me, "Đã sảy ra lỗi khi cập nhật phiếu " + If(Me.WareType = 0, "nhập", "xuất") + ".", ex)
         Finally
             dbConn.DisposeTran()
             dbConn.Close()
@@ -598,9 +676,11 @@ Public Class Warehouse
         Dim T1 As Short = 0
         Dim T2 As Decimal = 0
 
-        For Each rv As DataRowView In grdWareHouse.Items
-            T1 += rv.Row("Quantity")
-            T2 += rv.Row("Amount")
+        For Each row As DataRow In AtomyDataSet.Warehouse.Rows
+            If row.RowState = DataRowState.Added OrElse row.RowState = DataRowState.Unchanged OrElse row.RowState = DataRowState.Modified Then
+                T1 += row("Quantity")
+                T2 += row("Amount")
+            End If
         Next
         Return New Tuple(Of Short, Decimal)(T1, T2)
     End Function
@@ -624,6 +704,7 @@ Public Class Warehouse
     End Function
 #End Region
 #End Region
+
 #Region "☆ SQL"
 #Region "InsertSQL"
     Private Function InsertSQL() As String
@@ -685,6 +766,23 @@ Public Class Warehouse
 #Region "EVENT"
 #Region "searchWareHouseSearchResult"
     Private Sub searchWareHouseSearchResult(sender As Object, e As SearchDataArgs)
+        Dim eW As SearchDataWarehouse = DirectCast(e, SearchDataWarehouse)
+        If Me.WareType = 0 AndAlso eW.WareType = 1 Then
+            If MessageBox.Show("Bạn đã chọn một phiếu xuất. Bạn có muốn chuyển sang phiếu xuất không?", Me.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.Yes Then
+                Me.WareType = 1
+                InitialValue()
+            Else
+                Return
+            End If
+        End If
+        If Me.WareType = 1 AndAlso eW.WareType = 0 Then
+            If MessageBox.Show("Bạn đã chọn một phiếu nhập. Bạn có muốn chuyển sang phiếu nhập không?", Me.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.Yes Then
+                Me.WareType = 1
+                InitialValue()
+            Else
+                Return
+            End If
+        End If
         LoadData(e.Code)
     End Sub
 #End Region
@@ -820,24 +918,25 @@ Public Class Warehouse
                     If dr IsNot Nothing Then
                         drv.Row("PropName") = dr("PropName")
                         Dim cellName As DataGridCell = grdWareHouse.GetCell(row, 1)
-                        cellName.SetTemplateLabelContent("lblPropName", dr("PropName"))
+                        cellName.SetTemplateTexBlockContent("lblPropName", dr("PropName"))
 
                         drv.Row("Unit") = dr("Unit")
                         Dim cellUnit As DataGridCell = grdWareHouse.GetCell(row, 2)
-                        cellUnit.SetTemplateLabelContent("lblUnit", dr("Unit"))
+                        cellUnit.SetTemplateTexBlockContent("lblUnit", dr("Unit"))
 
-                        drv.Row("UnitPrice") = dr("SalesPrice")
+                        drv.Row("UnitPrice") = If(Me.WareType = 0, dr("PurchasePrice"), dr("SalesPrice"))
                         Dim cellUnitPrice As DataGridCell = grdWareHouse.GetCell(row, 3)
-                        cellUnitPrice.SetTemplateLabelContent("lblUnitPrice", dr("SalesPrice"))
-                        drv.Row("CurrentPrice") = dr("SalesPrice")
+                        cellUnitPrice.SetTemplateTexBlockContent("lblUnitPrice", If(Me.WareType = 0, dr("PurchasePrice"), dr("SalesPrice")))
+                        drv.Row("CurrentPrice") = If(Me.WareType = 0, dr("PurchasePrice"), dr("SalesPrice"))
                         Dim cellCurrentPrice As DataGridCell = grdWareHouse.GetCell(row, 4)
-                        cellCurrentPrice.SetTemplateLabelContent("lblCurrentPrice", dr("SalesPrice"))
+                        cellCurrentPrice.SetTemplateTexBlockContent("lblCurrentPrice", If(Me.WareType = 0, dr("PurchasePrice"), dr("SalesPrice")))
                         Dim amount As Decimal = 0
-                        Dim currentPrice As Decimal = dr("SalesPrice")
+                        Dim currentPrice As Decimal = If(Me.WareType = 0, dr("PurchasePrice"), dr("SalesPrice"))
                         Dim quantity As Int16 = drv.Row("Quantity")
                         amount = currentPrice * quantity
+                        drv.Row("Amount") = amount
                         Dim cellAmount As DataGridCell = grdWareHouse.GetCell(row, 6)
-                        cellAmount.SetTemplateLabelContent("lblAmount", amount)
+                        cellAmount.SetTemplateTexBlockContent("lblAmount", amount)
                     Else
                         MessageBox.Show("Mã mặt hàng không tồn tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
                         txtCode.Text = ""
@@ -882,7 +981,7 @@ Public Class Warehouse
                 Dim quantity As Int16 = drv.Row("Quantity")
                 amount = currentPrice * quantity
                 Dim cellAmount As DataGridCell = grdWareHouse.GetCell(row, 6)
-                cellAmount.SetTemplateLabelContent("lblAmount", amount)
+                cellAmount.SetTemplateTexBlockContent("lblAmount", amount.ToString("N0"))
             End If
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô giá bán.", ex)
@@ -921,7 +1020,7 @@ Public Class Warehouse
                 amount = currentPrice * quantity
                 drv.Row("Amount") = amount
                 Dim cellAmount As DataGridCell = grdWareHouse.GetCell(row, 6)
-                cellAmount.SetTemplateLabelContent("lblAmount", amount)
+                cellAmount.SetTemplateTexBlockContent("lblAmount", amount.ToString("N0"))
             End If
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô số lượng.", ex)
@@ -942,6 +1041,40 @@ Public Class Warehouse
 #Region "grdWareHouse_CellEditEnding"
     Private Sub grdWareHouse_CellEditEnding(sender As Object, e As DataGridCellEditEndingEventArgs)
         Try
+            If Not TypeOf grdWareHouse.SelectedItem Is DataRowView Then
+                Return
+            End If
+            Dim drv As DataRowView = grdWareHouse.SelectedItem
+            If drv Is Nothing Then
+                Return
+            End If
+            Dim row As DataGridRow = Nothing
+            row = grdWareHouse.GetRow(grdWareHouse.SelectedIndex)
+            Select Case e.Column.DisplayIndex
+                Case 5
+                    Dim cell4 As DataGridCell = grdWareHouse.GetCell(row, 5)
+                    Dim textbox As TextBox = cell4.GetItem(Of TextBox)("txtQuantity")
+                    Dim intVal As Int16 = 0
+                    Dim intSum As Int16 = 0
+                    Int16.TryParse(txtSumaryQuantity.Text, intSum)
+                    If Int16.TryParse(textbox.Text, intVal) Then
+                        intSum = intSum - drv.Row("Quantity") + intVal
+                        txtSumaryQuantity.Text = intSum.ToString("#,##0")
+                    End If
+
+                Case 6
+                    Dim cell4 As DataGridCell = grdWareHouse.GetCell(row, 6)
+                    Dim textbox As TextBox = cell4.GetItem(Of TextBox)("txtAmount")
+                    Dim decVal As Decimal = 0
+                    Dim decSum As Decimal = 0
+                    Decimal.TryParse(txtTotalAmount.Text, decSum)
+                    If Decimal.TryParse(textbox.Text, decVal) Then
+                        decSum = decSum - drv.Row("Amount") + decVal
+                        txtTotalAmount.Text = decSum.ToString("#,##0")
+                    End If
+                Case Else
+
+            End Select
 
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhập liệu trên lưới.", ex)
@@ -1001,10 +1134,10 @@ Public Class Warehouse
         Try
             Dim search As New Search()
             AddHandler search.SearchResult, AddressOf searchWareHouseSearchResult
-            search.Kind = EnumSearch.SearchWareHouse
+            search.Kind = If(Me.WareType = 0, EnumSearch.SearchWareHouseIn, EnumSearch.SearchWareHouse)
             search.ShowDialog()
         Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã phiếu xuất.", ex)
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã phiếu " + If(Me.WareType = 0, "nhập", "xuất") + ".", ex)
         End Try
     End Sub
 #End Region
@@ -1043,26 +1176,31 @@ Public Class Warehouse
 
             Dim dr As DataRow = Check.GetDataByCode("Property", SearchDataArgs.Code)
             If dr IsNot Nothing Then
+                drv.Row("PropCode") = dr("PropCode")
+                Dim cellPropCode As DataGridCell = grdWareHouse.GetCell(row, 0)
+                cellPropCode.SetTemplateTexContent("txtPropCode", dr("PropCode"))
+
                 drv.Row("PropName") = dr("PropName")
                 Dim cellName As DataGridCell = grdWareHouse.GetCell(row, 1)
-                cellName.SetTemplateLabelContent("lblPropName", dr("PropName"))
+                cellName.SetTemplateTexBlockContent("lblPropName", dr("PropName"))
 
                 drv.Row("Unit") = dr("Unit")
                 Dim cellUnit As DataGridCell = grdWareHouse.GetCell(row, 2)
-                cellUnit.SetTemplateLabelContent("lblUnit", dr("Unit"))
+                cellUnit.SetTemplateTexBlockContent("lblUnit", dr("Unit"))
 
                 drv.Row("UnitPrice") = dr("SalesPrice")
                 Dim cellUnitPrice As DataGridCell = grdWareHouse.GetCell(row, 3)
-                cellUnitPrice.SetTemplateLabelContent("lblUnitPrice", dr("SalesPrice"))
+                cellUnitPrice.SetTemplateTexBlockContent("lblUnitPrice", dr("SalesPrice"))
                 drv.Row("CurrentPrice") = dr("SalesPrice")
                 Dim cellCurrentPrice As DataGridCell = grdWareHouse.GetCell(row, 4)
-                cellCurrentPrice.SetTemplateLabelContent("lblCurrentPrice", dr("SalesPrice"))
+                cellCurrentPrice.SetTemplateTexBlockContent("lblCurrentPrice", dr("SalesPrice"))
                 Dim amount As Decimal = 0
                 Dim currentPrice As Decimal = dr("SalesPrice")
                 Dim quantity As Int16 = drv.Row("Quantity")
                 amount = currentPrice * quantity
+                drv.Row("Amount") = amount
                 Dim cellAmount As DataGridCell = grdWareHouse.GetCell(row, 6)
-                cellAmount.SetTemplateLabelContent("lblAmount", amount)
+                cellAmount.SetTemplateTexBlockContent("lblAmount", amount)
             Else
                 MessageBox.Show("Mã mặt hàng không tồn tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
             End If
@@ -1085,10 +1223,11 @@ Public Class Warehouse
 #Region "grdWareHouse_RowEditEnding"
     Private Sub grdWareHouse_RowEditEnding(sender As Object, e As DataGridRowEditEndingEventArgs)
         Try
-            Dim tu = CalculateTotal()
-            txtSumaryQuantity.Text = tu.Item1
-            txtTotalAmount.Text = tu.Item2
-            txtSalesAmount.Text = CalculateSalesAmount()
+            'grdWareHouse.CommitEdit(DataGridEditingUnit.Row, True)
+            'Dim tu = CalculateTotal()
+            'txtSumaryQuantity.Text = tu.Item1
+            'txtTotalAmount.Text = tu.Item2
+            'txtSalesAmount.Text = CalculateSalesAmount()
         Catch ex As Exception
             ErrorLog.SetError(Me, "Đã xảy ra lỗi khi kết thúc nhập liệu trên dòng.", ex)
         End Try
@@ -1099,13 +1238,51 @@ Public Class Warehouse
     Private Sub txtWareDate_LostKeyboardFocus(sender As Object, e As KeyboardFocusChangedEventArgs)
         Try
             If rbPaymentCash.IsChecked Then
-                txtPaymentDate.Text = txtWareDate.Text
-            Else If rbPaymentShipCode.IsChecked Then
-                txtPaymentDate.Text = txtWareDate.Text
+                If String.Compare(txtWareDate.Text, Me.AtomyDataSet.WarehouseMaster.Rows(0)("WareDate").ToString) <> 0 Then
+                    Dim dc As New DateConverter()
+                    txtPaymentDate.Text = dc.ConvertBack(txtWareDate.Text, GetType(String), Nothing, System.Threading.Thread.CurrentThread.CurrentCulture)
+                End If
+            ElseIf rbPaymentShipCode.IsChecked Then
+                If String.Compare(txtWareDate.Text, Me.AtomyDataSet.WarehouseMaster.Rows(0)("WareDate").ToString) <> 0 Then
+                    Dim dc As New DateConverter()
+                    txtPaymentDate.Text = dc.ConvertBack(txtWareDate.Text, GetType(String), Nothing, System.Threading.Thread.CurrentThread.CurrentCulture)
+                End If
             End If
 
         Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô ngày xuất.", ex)
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô ngày " + If(Me.WareType = 0, "nhập", "xuất") + ".", ex)
+        End Try
+    End Sub
+#End Region
+
+#Region "btnPrint_Click"
+    Private Sub btnPrint_Click(sender As Object, e As RoutedEventArgs)
+        Try
+            Dim appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+            Dim applicationFolder = Path.Combine(appData, "Product Management Atomy")
+            Dim dirI As DirectoryInfo = Nothing
+            If Not Directory.Exists(applicationFolder) Then
+                MessageBox.Show("Đây là lần in đầu tiên, phần mềm sẽ tự động tạo thư mục riêng và tạo shortcut [Product Management Atomy] trên desktop.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Information)
+                dirI = Directory.CreateDirectory(applicationFolder)
+                PrintWarehouseExcel.CreateShortCut()
+            Else
+                dirI = New DirectoryInfo(applicationFolder)
+            End If
+            Dim fileName As String = "PXK" + txtWareCode.Text.Trim + " " + DateTime.Now.ToString("yyyyMMdd") + ".xlsx"
+            Dim print As New PrintWarehouseExcel()
+            Dim filePath As String = Path.Combine(dirI.FullName, fileName)
+            Dim res As Boolean = print.Print(txtWareCode.Text.Trim, filePath)
+            If res Then
+                Dim confirm As Boolean = (MessageBox.Show("Xuất in thành công ra file excel [" + fileName + "], bạn có muốn mở file không?", Me.Title, MessageBoxButton.YesNo) = MessageBoxResult.Yes)
+                If confirm Then
+                    Process.Start(filePath)
+                End If
+            Else
+                MessageBox.Show("Xuất in lỗi.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+            End If
+
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn nút In.", ex)
         End Try
     End Sub
 #End Region

@@ -21,6 +21,12 @@
                     Me.Title = page.Title
                 Case EnumSearch.SearchWareHouse
                     Dim page As SearchWarehouse = New SearchWarehouse(Me)
+                    page.WareType = 1
+                    Me.Content = page
+                    Me.Title = page.Title
+                Case EnumSearch.SearchWareHouseIn
+                    Dim page As SearchWarehouse = New SearchWarehouse(Me)
+                    page.WareType = 0
                     Me.Content = page
                     Me.Title = page.Title
             End Select
@@ -68,7 +74,7 @@
                 Dim page As SearchCustomer = New SearchCustomer(caller.Text.Trim())
                 Dim res As SearchDataArgs = page.SearchByKey()
                 _callback(res)
-            Case EnumSearch.SearchWareHouse
+            Case EnumSearch.SearchWareHouse, EnumSearch.SearchWareHouseIn
                 Dim page As SearchWarehouse = New SearchWarehouse(caller.Text.Trim())
                 Dim res As SearchDataArgs = page.SearchByKey()
                 _callback(res)
@@ -82,6 +88,7 @@ Public Enum EnumSearch
     SearchEmployee = 2
     SearchCustomer = 3
     SearchWareHouse = 4
+    SearchWareHouseIn = 5
 
 End Enum
 

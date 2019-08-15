@@ -185,4 +185,21 @@ Module DataGridCellExtensions
         Dim itemName As Label = cell.GetItem(Of Label)(name)
         itemName.Content = value
     End Sub
+    ''' <summary>
+    ''' Get Control template
+    ''' </summary>
+    <Extension()>
+    Sub SetTemplateTexBlockContent(ByVal cell As DataGridCell, ByVal name As String, value As Object)
+        Dim itemName As TextBlock = cell.GetItem(Of TextBlock)(name)
+        itemName.Text = value
+    End Sub
+
+    ''' <summary>
+    ''' Get Control template
+    ''' </summary>
+    <Extension()>
+    Sub SetTemplateTexContent(ByVal cell As DataGridCell, ByVal name As String, value As Object)
+        Dim itemName As TextBox = cell.GetItem(Of TextBox)(name)
+        itemName.Text = value
+    End Sub
 End Module
