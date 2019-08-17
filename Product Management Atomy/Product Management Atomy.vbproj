@@ -77,8 +77,8 @@
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.OleDb">
-      <HintPath>Lib\System.Data.OleDb.dll</HintPath>
+    <Reference Include="System.Data.SqlClient">
+      <HintPath>Lib\System.Data.SqlClient.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -91,6 +91,10 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="unvell.ReoGrid, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\unvell.ReoGridWPF.dll.2.1.0.0\lib\20\unvell.ReoGrid.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -105,14 +109,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AtomyDataSet.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="AtomyDataSet.vb">
-      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Customer.xaml.vb">
       <DependentUpon>Customer.xaml</DependentUpon>
     </Compile>
@@ -123,7 +119,15 @@
     <Compile Include="Home.xaml.vb">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PMS_ATOMYDataSet.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PMS_ATOMYDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="PrintWarehouseExcel.vb" />
+    <Compile Include="Report\OrderA5_1.xaml.vb">
+      <DependentUpon>OrderA5_1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utility\ModuleEnum.vb" />
     <Compile Include="Order.xaml.vb">
       <DependentUpon>Order.xaml</DependentUpon>
@@ -203,6 +207,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Report\OrderA5_1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Search\Search.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -278,17 +286,6 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="AtomyDataSet.xsc">
-      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="AtomyDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>AtomyDataSet.Designer.vb</LastGenOutput>
-    </None>
-    <None Include="AtomyDataSet.xss">
-      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
-    </None>
     <Content Include="Excel\Template\OrderA5_1.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -299,6 +296,17 @@
     </None>
     <AppDesigner Include="My Project\" />
     <None Include="packages.config" />
+    <None Include="PMS_ATOMYDataSet.xsc">
+      <DependentUpon>PMS_ATOMYDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="PMS_ATOMYDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>PMS_ATOMYDataSet.Designer.vb</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="PMS_ATOMYDataSet.xss">
+      <DependentUpon>PMS_ATOMYDataSet.xsd</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
@@ -355,13 +363,11 @@
     <Resource Include="icon\1x\outline_close_black_18dp.png" />
     <Resource Include="icon\2x\outline_close_black_18dp.png" />
     <Content Include="Lib\SpreadsheetGear.dll" />
-    <Content Include="Lib\System.Data.OleDb.dll" />
     <Content Include="Lib\WPFTextBoxAutoComplete\Caliburn.Micro.dll" />
     <Content Include="Lib\WPFTextBoxAutoComplete\Caliburn.Micro.Platform.Core.dll" />
     <Content Include="Lib\WPFTextBoxAutoComplete\Caliburn.Micro.Platform.dll" />
     <Content Include="Lib\WPFTextBoxAutoComplete\System.Windows.Interactivity.dll" />
     <Content Include="Lib\WPFTextBoxAutoComplete\WPFTextBoxAutoComplete.dll" />
-    <Resource Include="Lib\System.Data.OleDb.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BindValidation\BindValidation.vbproj">
@@ -369,5 +375,6 @@
       <Name>BindValidation</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

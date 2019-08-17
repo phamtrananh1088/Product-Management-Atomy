@@ -1,5 +1,5 @@
 ﻿Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Text
 Imports System.Windows.Controls.Primitives
 Imports BindValidation
@@ -7,14 +7,14 @@ Imports System.IO
 
 Public Class Warehouse
 #Region "FIELD"
-    Private AtomyDataSet As AtomyDataSet
+    Private AtomyDataSet As PMS_ATOMYDataSet
     Private Mode As DataRowState
     Private WareType As Int16 = 0
 #End Region
 
 #Region "CONSTRUCTOR"
     Public Sub New(wareType As Int16)
-        AtomyDataSet = New AtomyDataSet()
+        AtomyDataSet = New PMS_ATOMYDataSet()
         Me.WareType = wareType
         ' This call is required by the designer.
         InitializeComponent()
@@ -96,16 +96,17 @@ Public Class Warehouse
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select * from [WarehouseMaster] where [WareCode] = ?"
-            Dim adapt As New OleDbDataAdapter(sSQL, dbConn.Conn)
-            adapt.SelectCommand.Parameters.Add("@WareCode", OleDbType.VarChar).Value = WareCode
+            Dim sSQL As String = "select * from [WarehouseMaster] where [WareCode] = @WareCode and [Type] = @Type"
+            Dim adapt As New SqlDataAdapter(sSQL, dbConn.Conn)
+            adapt.SelectCommand.Parameters.AddWithValue("@WareCode", WareCode)
+            adapt.SelectCommand.Parameters.AddWithValue("@WareType", Me.WareType)
             AtomyDataSet.WarehouseMaster.Clear()
             AtomyDataSet.Warehouse.Clear()
 
 
             If adapt.Fill(AtomyDataSet, "WarehouseMaster") > 0 Then
                 Me.DataContext = AtomyDataSet.WarehouseMaster.Rows(0)
-                sSQL = "select * from [Warehouse] where [WareCode] = ?"
+                sSQL = "select * from [Warehouse] where [WareCode] = @WareCode"
                 adapt.SelectCommand.CommandText = sSQL
                 adapt.Fill(AtomyDataSet, "Warehouse")
                 Dim tu = CalculateTotal()
@@ -176,9 +177,9 @@ Public Class Warehouse
             grdWareHouse.ItemsSource = Nothing
             AtomyDataSet.WarehouseMaster.Clear()
             AtomyDataSet.Warehouse.Clear()
-            Dim newRow As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.NewWarehouseMasterRow()
+            Dim newRow As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.NewWarehouseMasterRow()
             AtomyDataSet.WarehouseMaster.Rows.Add(newRow)
-            'Dim newRowD As AtomyDataSet.WarehouseRow = AtomyDataSet.Warehouse.NewWarehouseRow()
+            'Dim newRowD As PMS_ATOMYDataSet.WarehouseRow = AtomyDataSet.Warehouse.NewWarehouseRow()
             'AtomyDataSet.Warehouse.Rows.Add(newRowD)
             Me.DataContext = AtomyDataSet.WarehouseMaster.Rows(0)
             grdWareHouse.ItemsSource = AtomyDataSet.Warehouse.DefaultView
@@ -371,9 +372,9 @@ Public Class Warehouse
             dbConn.Open()
             dbConn.BeginTran()
             Dim sSQL As String = InsertSQL()
-            Using cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                 cmd.Transaction = dbConn.Tran
-                Dim row As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
+                Dim row As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
                 row.Type = Me.WareType '0:mua hàng, 1: bán hàng
                 Dim now As Date = Date.Now
                 row.CreateDate = now.ToString("yyyy/MM/dd")
@@ -383,43 +384,43 @@ Public Class Warehouse
                 row.UpdateTime = now.ToString("HH:mm:ss")
                 row.UpdateUser = Utility.LoginUserCode
 
-                cmd.Parameters.Add("@1", OleDbType.VarChar).Value = row.WareCode
-                cmd.Parameters.Add("@2", OleDbType.SmallInt).Value = row.Type
-                cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.WareDate
-                cmd.Parameters.Add("@4", OleDbType.VarChar).Value = row.EmpCode
-                cmd.Parameters.Add("@5", OleDbType.VarChar).Value = row.EmpName
-                cmd.Parameters.Add("@6", OleDbType.VarChar).Value = row.CusCode
-                cmd.Parameters.Add("@7", OleDbType.VarChar).Value = row.CusName
-                cmd.Parameters.Add("@8", OleDbType.SmallInt).Value = row.Status
-                cmd.Parameters.Add("@9", OleDbType.VarChar).Value = row.WareTitle
-                cmd.Parameters.Add("@10", OleDbType.VarChar).Value = row.Description
-                cmd.Parameters.Add("@11", OleDbType.Currency).Value = row.TotalAmount
-                cmd.Parameters.Add("@12", OleDbType.Currency).Value = row.Discount
-                cmd.Parameters.Add("@13", OleDbType.Currency).Value = row.SalesAmount
-                cmd.Parameters.Add("@14", OleDbType.SmallInt).Value = If(rbPaymentCash.IsChecked, CShort(EnumPaymentType.Cash), If(rbPaymentShipCode.IsChecked, CShort(EnumPaymentType.ShipCode), 0))
-                cmd.Parameters.Add("@15", OleDbType.SmallInt).Value = row.FinishFlag
-                cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.PaymentDate
-                cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.FinishDate
-                cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.Comments
-                cmd.Parameters.Add("@19", OleDbType.SmallInt).Value = row.UpdateCount
-                cmd.Parameters.Add("@20", OleDbType.Boolean).Value = row.Retired
-                cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.RetiredDate
-                cmd.Parameters.Add("@22", OleDbType.VarChar).Value = row.CreateDate
-                cmd.Parameters.Add("@23", OleDbType.VarChar).Value = row.CreateTime
-                cmd.Parameters.Add("@24", OleDbType.VarChar).Value = row.CreateUser
-                cmd.Parameters.Add("@25", OleDbType.VarChar).Value = row.UpdateDate
-                cmd.Parameters.Add("@26", OleDbType.VarChar).Value = row.UpdateTime
-                cmd.Parameters.Add("@27", OleDbType.VarChar).Value = row.UpdateUser
+                cmd.Parameters.AddWithValue("@WareCode", row.WareCode)
+                cmd.Parameters.AddWithValue("@Type", row.Type)
+                cmd.Parameters.AddWithValue("@WareDate", row.WareDate)
+                cmd.Parameters.AddWithValue("@EmpCode", row.EmpCode)
+                cmd.Parameters.AddWithValue("@EmpName", row.EmpName)
+                cmd.Parameters.AddWithValue("@CusCode", row.CusCode)
+                cmd.Parameters.AddWithValue("@CusName", row.CusName)
+                cmd.Parameters.AddWithValue("@Status", row.Status)
+                cmd.Parameters.AddWithValue("@WareTitle", row.WareTitle)
+                cmd.Parameters.AddWithValue("@Description", row.Description)
+                cmd.Parameters.AddWithValue("@TotalAmount", row.TotalAmount)
+                cmd.Parameters.AddWithValue("@Discount", row.Discount)
+                cmd.Parameters.AddWithValue("@SalesAmount", row.SalesAmount)
+                cmd.Parameters.AddWithValue("@PaymentType", If(rbPaymentCash.IsChecked, CShort(EnumPaymentType.Cash), If(rbPaymentShipCode.IsChecked, CShort(EnumPaymentType.ShipCode), 0)))
+                cmd.Parameters.AddWithValue("@FinishFlag", row.FinishFlag)
+                cmd.Parameters.AddWithValue("@PaymentDate", row.PaymentDate)
+                cmd.Parameters.AddWithValue("@FinishDate", row.FinishDate)
+                cmd.Parameters.AddWithValue("@Comments", row.Comments)
+                cmd.Parameters.AddWithValue("@UpdateCount", row.UpdateCount)
+                cmd.Parameters.AddWithValue("@Retired", row.Retired)
+                cmd.Parameters.AddWithValue("@RetiredDate", row.RetiredDate)
+                cmd.Parameters.AddWithValue("@CreateDate", row.CreateDate)
+                cmd.Parameters.AddWithValue("@CreateTime", row.CreateTime)
+                cmd.Parameters.AddWithValue("@CreateUser", row.CreateUser)
+                cmd.Parameters.AddWithValue("@UpdateDate", row.UpdateDate)
+                cmd.Parameters.AddWithValue("@UpdateTime", row.UpdateTime)
+                cmd.Parameters.AddWithValue("@UpdateUser", row.UpdateUser)
 
                 res = cmd.ExecuteNonQuery()
 
             End Using
             sSQL = InsertDetailSQL()
             For index = 0 To AtomyDataSet.Warehouse.Rows.Count - 1
-                Using cmd As New OleDbCommand(sSQL, dbConn.Conn)
+                Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                     cmd.Transaction = dbConn.Tran
-                    Dim rowM As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
-                    Dim row As AtomyDataSet.WarehouseRow = AtomyDataSet.Warehouse.Rows(index)
+                    Dim rowM As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
+                    Dim row As PMS_ATOMYDataSet.WarehouseRow = AtomyDataSet.Warehouse.Rows(index)
                     row.Type = rowM.Type
                     row.WareCode = rowM.WareCode
                     row.WareDate = rowM.WareDate
@@ -433,27 +434,27 @@ Public Class Warehouse
                     row.UpdateTime = now.ToString("HH:mm:ss")
                     row.UpdateUser = Utility.LoginUserCode
 
-                    cmd.Parameters.Add("@1", OleDbType.VarChar).Value = row.WareCode
-                    cmd.Parameters.Add("@2", OleDbType.SmallInt).Value = row.Type
-                    cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.WareDate
-                    cmd.Parameters.Add("@4", OleDbType.VarChar).Value = row.PropCode
-                    cmd.Parameters.Add("@5", OleDbType.VarChar).Value = row.PropName
-                    cmd.Parameters.Add("@6", OleDbType.VarChar).Value = row.Category
-                    cmd.Parameters.Add("@7", OleDbType.SmallInt).Value = row.Status
-                    cmd.Parameters.Add("@8", OleDbType.VarChar).Value = row.Description
-                    cmd.Parameters.Add("@9", OleDbType.VarChar).Value = row.Unit
-                    cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.UnitPrice
-                    cmd.Parameters.Add("@11", OleDbType.Currency).Value = row.CurrentPrice
-                    cmd.Parameters.Add("@12", OleDbType.Currency).Value = row.Amount
-                    cmd.Parameters.Add("@13", OleDbType.SmallInt).Value = row.Quantity
-                    cmd.Parameters.Add("@14", OleDbType.VarChar).Value = row.Comments
-                    cmd.Parameters.Add("@15", OleDbType.SmallInt).Value = row.UpdateCount
-                    cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.CreateDate
-                    cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.CreateTime
-                    cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.CreateUser
-                    cmd.Parameters.Add("@19", OleDbType.VarChar).Value = row.UpdateDate
-                    cmd.Parameters.Add("@20", OleDbType.VarChar).Value = row.UpdateTime
-                    cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.UpdateUser
+                    cmd.Parameters.AddWithValue("@WareCode", row.WareCode)
+                    cmd.Parameters.AddWithValue("@Type", row.Type)
+                    cmd.Parameters.AddWithValue("@WareDate", row.WareDate)
+                    cmd.Parameters.AddWithValue("@PropCode", row.PropCode)
+                    cmd.Parameters.AddWithValue("@PropName", row.PropName)
+                    cmd.Parameters.AddWithValue("@Category", row.Category)
+                    cmd.Parameters.AddWithValue("@Status", row.Status)
+                    cmd.Parameters.AddWithValue("@Description", row.Description)
+                    cmd.Parameters.AddWithValue("@Unit", row.Unit)
+                    cmd.Parameters.AddWithValue("@UnitPrice", row.UnitPrice)
+                    cmd.Parameters.AddWithValue("@CurrentPrice", row.CurrentPrice)
+                    cmd.Parameters.AddWithValue("@Amount", row.Amount)
+                    cmd.Parameters.AddWithValue("@Quantity", row.Quantity)
+                    cmd.Parameters.AddWithValue("@Comments", row.Comments)
+                    cmd.Parameters.AddWithValue("@UpdateCount", row.UpdateCount)
+                    cmd.Parameters.AddWithValue("@CreateDate", row.CreateDate)
+                    cmd.Parameters.AddWithValue("@CreateTime", row.CreateTime)
+                    cmd.Parameters.AddWithValue("@CreateUser", row.CreateUser)
+                    cmd.Parameters.AddWithValue("@UpdateDate", row.UpdateDate)
+                    cmd.Parameters.AddWithValue("@UpdateTime", row.UpdateTime)
+                    cmd.Parameters.AddWithValue("@UpdateUser", row.UpdateUser)
 
                     res = cmd.ExecuteNonQuery()
 
@@ -483,40 +484,40 @@ Public Class Warehouse
             dbConn.Open()
             dbConn.BeginTran()
             Dim sSQL As String = UpdateSQL()
-            Using cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                 Dim tu = CalculateTotal()
                 cmd.Transaction = dbConn.Tran
-                Dim row As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
+                Dim row As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
                 row.TotalAmount = tu.Item2
                 Dim now As Date = Date.Now
                 row.UpdateDate = now.ToString("yyyy/MM/dd")
                 row.UpdateTime = now.ToString("HH:mm:ss")
                 row.UpdateUser = Utility.LoginUserCode
 
-                cmd.Parameters.Add("@1", OleDbType.SmallInt).Value = row.Type
-                cmd.Parameters.Add("@2", OleDbType.VarChar).Value = row.WareDate
-                cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.EmpCode
-                cmd.Parameters.Add("@4", OleDbType.VarChar).Value = row.EmpName
-                cmd.Parameters.Add("@5", OleDbType.VarChar).Value = row.CusCode
-                cmd.Parameters.Add("@6", OleDbType.VarChar).Value = row.CusName
-                cmd.Parameters.Add("@7", OleDbType.SmallInt).Value = row.Status
-                cmd.Parameters.Add("@8", OleDbType.VarChar).Value = row.WareTitle
-                cmd.Parameters.Add("@9", OleDbType.VarChar).Value = row.Description
-                cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.TotalAmount
-                cmd.Parameters.Add("@11", OleDbType.Currency).Value = row.Discount
-                cmd.Parameters.Add("@12", OleDbType.Currency).Value = row.SalesAmount
-                cmd.Parameters.Add("@13", OleDbType.SmallInt).Value = If(rbPaymentCash.IsChecked, CShort(EnumPaymentType.Cash), If(rbPaymentShipCode.IsChecked, CShort(EnumPaymentType.ShipCode), 0))
-                cmd.Parameters.Add("@14", OleDbType.SmallInt).Value = row.FinishFlag
-                cmd.Parameters.Add("@15", OleDbType.VarChar).Value = row.PaymentDate
-                cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.FinishDate
-                cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.Comments
-                cmd.Parameters.Add("@18", OleDbType.SmallInt).Value = row.UpdateCount
-                cmd.Parameters.Add("@19", OleDbType.Boolean).Value = row.Retired
-                cmd.Parameters.Add("@20", OleDbType.VarChar).Value = row.RetiredDate
-                cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.UpdateDate
-                cmd.Parameters.Add("@22", OleDbType.VarChar).Value = row.UpdateTime
-                cmd.Parameters.Add("@23", OleDbType.VarChar).Value = row.UpdateUser
-                cmd.Parameters.Add("@24", OleDbType.VarChar).Value = row.WareCode
+                cmd.Parameters.AddWithValue("@Type", row.Type)
+                cmd.Parameters.AddWithValue("@WareDate", row.WareDate)
+                cmd.Parameters.AddWithValue("@EmpCode", row.EmpCode)
+                cmd.Parameters.AddWithValue("@EmpName", row.EmpName)
+                cmd.Parameters.AddWithValue("@CusCode", row.CusCode)
+                cmd.Parameters.AddWithValue("@CusName", row.CusName)
+                cmd.Parameters.AddWithValue("@Status", row.Status)
+                cmd.Parameters.AddWithValue("@WareTitle", row.WareTitle)
+                cmd.Parameters.AddWithValue("@Description", row.Description)
+                cmd.Parameters.AddWithValue("@TotalAmount", row.TotalAmount)
+                cmd.Parameters.AddWithValue("@Discount", row.Discount)
+                cmd.Parameters.AddWithValue("@SalesAmount", row.SalesAmount)
+                cmd.Parameters.AddWithValue("@PaymentType", If(rbPaymentCash.IsChecked, CShort(EnumPaymentType.Cash), If(rbPaymentShipCode.IsChecked, CShort(EnumPaymentType.ShipCode), 0)))
+                cmd.Parameters.AddWithValue("@FinishFlag", row.FinishFlag)
+                cmd.Parameters.AddWithValue("@PaymentDate", row.PaymentDate)
+                cmd.Parameters.AddWithValue("@FinishDate", row.FinishDate)
+                cmd.Parameters.AddWithValue("@Comments", row.Comments)
+                cmd.Parameters.AddWithValue("@UpdateCount", row.UpdateCount)
+                cmd.Parameters.AddWithValue("@Retired", row.Retired)
+                cmd.Parameters.AddWithValue("@RetiredDate", row.RetiredDate)
+                cmd.Parameters.AddWithValue("@UpdateDate", row.UpdateDate)
+                cmd.Parameters.AddWithValue("@UpdateTime", row.UpdateTime)
+                cmd.Parameters.AddWithValue("@UpdateUser", row.UpdateUser)
+                cmd.Parameters.AddWithValue("@WareCode", row.WareCode)
                 res = cmd.ExecuteNonQuery()
 
             End Using
@@ -524,10 +525,10 @@ Public Class Warehouse
             Dim sSQLU = UpdateDetailSQL()
             Dim sSQLD = DeleteDetailSQL()
             For index = 0 To AtomyDataSet.Warehouse.Rows.Count - 1
-                Dim rowM As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
-                Dim row As AtomyDataSet.WarehouseRow = AtomyDataSet.Warehouse.Rows(index)
+                Dim rowM As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
+                Dim row As PMS_ATOMYDataSet.WarehouseRow = AtomyDataSet.Warehouse.Rows(index)
                 If row.RowState = DataRowState.Added Then
-                    Using cmd As New OleDbCommand(sSQLI, dbConn.Conn)
+                    Using cmd As New SqlCommand(sSQLI, dbConn.Conn)
                         cmd.Transaction = dbConn.Tran
                         row.Type = rowM.Type
                         row.WareCode = rowM.WareCode
@@ -542,33 +543,33 @@ Public Class Warehouse
                         row.UpdateTime = now.ToString("HH:mm:ss")
                         row.UpdateUser = Utility.LoginUserCode
 
-                        cmd.Parameters.Add("@1", OleDbType.VarChar).Value = row.WareCode
-                        cmd.Parameters.Add("@2", OleDbType.SmallInt).Value = row.Type
-                        cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.WareDate
-                        cmd.Parameters.Add("@4", OleDbType.VarChar).Value = row.PropCode
-                        cmd.Parameters.Add("@5", OleDbType.VarChar).Value = row.PropName
-                        cmd.Parameters.Add("@6", OleDbType.VarChar).Value = row.Category
-                        cmd.Parameters.Add("@7", OleDbType.SmallInt).Value = row.Status
-                        cmd.Parameters.Add("@8", OleDbType.VarChar).Value = row.Description
-                        cmd.Parameters.Add("@9", OleDbType.VarChar).Value = row.Unit
-                        cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.UnitPrice
-                        cmd.Parameters.Add("@11", OleDbType.Currency).Value = row.CurrentPrice
-                        cmd.Parameters.Add("@12", OleDbType.Currency).Value = row.Amount
-                        cmd.Parameters.Add("@13", OleDbType.SmallInt).Value = row.Quantity
-                        cmd.Parameters.Add("@14", OleDbType.VarChar).Value = row.Comments
-                        cmd.Parameters.Add("@15", OleDbType.SmallInt).Value = row.UpdateCount
-                        cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.CreateDate
-                        cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.CreateTime
-                        cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.CreateUser
-                        cmd.Parameters.Add("@19", OleDbType.VarChar).Value = row.UpdateDate
-                        cmd.Parameters.Add("@20", OleDbType.VarChar).Value = row.UpdateTime
-                        cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.UpdateUser
+                        cmd.Parameters.AddWithValue("@WareCode", row.WareCode)
+                        cmd.Parameters.AddWithValue("@Type", row.Type)
+                        cmd.Parameters.AddWithValue("@WareDate", row.WareDate)
+                        cmd.Parameters.AddWithValue("@PropCode", row.PropCode)
+                        cmd.Parameters.AddWithValue("@PropName", row.PropName)
+                        cmd.Parameters.AddWithValue("@Category", row.Category)
+                        cmd.Parameters.AddWithValue("@Status", row.Status)
+                        cmd.Parameters.AddWithValue("@Description", row.Description)
+                        cmd.Parameters.AddWithValue("@Unit", row.Unit)
+                        cmd.Parameters.AddWithValue("@UnitPrice", row.UnitPrice)
+                        cmd.Parameters.AddWithValue("@CurrentPrice", row.CurrentPrice)
+                        cmd.Parameters.AddWithValue("@Amount", row.Amount)
+                        cmd.Parameters.AddWithValue("@Quantity", row.Quantity)
+                        cmd.Parameters.AddWithValue("@Comments", row.Comments)
+                        cmd.Parameters.AddWithValue("@UpdateCount", row.UpdateCount)
+                        cmd.Parameters.AddWithValue("@CreateDate", row.CreateDate)
+                        cmd.Parameters.AddWithValue("@CreateTime", row.CreateTime)
+                        cmd.Parameters.AddWithValue("@CreateUser", row.CreateUser)
+                        cmd.Parameters.AddWithValue("@UpdateDate", row.UpdateDate)
+                        cmd.Parameters.AddWithValue("@UpdateTime", row.UpdateTime)
+                        cmd.Parameters.AddWithValue("@UpdateUser", row.UpdateUser)
 
                         res = cmd.ExecuteNonQuery()
 
                     End Using
                 ElseIf row.RowState = DataRowState.Modified Then
-                    Using cmd As New OleDbCommand(sSQLU, dbConn.Conn)
+                    Using cmd As New SqlCommand(sSQLU, dbConn.Conn)
                         cmd.Transaction = dbConn.Tran
                         row.Type = rowM.Type
                         row.WareCode = rowM.WareCode
@@ -580,34 +581,34 @@ Public Class Warehouse
                         row.UpdateTime = now.ToString("HH:mm:ss")
                         row.UpdateUser = Utility.LoginUserCode
 
-                        cmd.Parameters.Add("@1", OleDbType.VarChar).Value = row.WareCode
-                        cmd.Parameters.Add("@2", OleDbType.SmallInt).Value = row.Type
-                        cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.WareDate
-                        cmd.Parameters.Add("@4", OleDbType.VarChar).Value = row.PropCode
-                        cmd.Parameters.Add("@5", OleDbType.VarChar).Value = row.PropName
-                        cmd.Parameters.Add("@6", OleDbType.VarChar).Value = row.Category
-                        cmd.Parameters.Add("@7", OleDbType.SmallInt).Value = row.Status
-                        cmd.Parameters.Add("@8", OleDbType.VarChar).Value = row.Description
-                        cmd.Parameters.Add("@9", OleDbType.VarChar).Value = row.Unit
-                        cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.UnitPrice
-                        cmd.Parameters.Add("@11", OleDbType.Currency).Value = row.CurrentPrice
-                        cmd.Parameters.Add("@12", OleDbType.Currency).Value = row.Amount
-                        cmd.Parameters.Add("@13", OleDbType.SmallInt).Value = row.Quantity
-                        cmd.Parameters.Add("@14", OleDbType.VarChar).Value = row.Comments
-                        cmd.Parameters.Add("@15", OleDbType.SmallInt).Value = row.UpdateCount + 1
-                        cmd.Parameters.Add("@19", OleDbType.VarChar).Value = row.UpdateDate
-                        cmd.Parameters.Add("@20", OleDbType.VarChar).Value = row.UpdateTime
-                        cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.UpdateUser
-                        cmd.Parameters.Add("@22", OleDbType.BigInt).Value = row("ID", DataRowVersion.Original)
+                        cmd.Parameters.AddWithValue("@WareCode", row.WareCode)
+                        cmd.Parameters.AddWithValue("@Type", row.Type)
+                        cmd.Parameters.AddWithValue("@WareDate", row.WareDate)
+                        cmd.Parameters.AddWithValue("@PropCode", row.PropCode)
+                        cmd.Parameters.AddWithValue("@PropName", row.PropName)
+                        cmd.Parameters.AddWithValue("@Category", row.Category)
+                        cmd.Parameters.AddWithValue("@Status", row.Status)
+                        cmd.Parameters.AddWithValue("@Description", row.Description)
+                        cmd.Parameters.AddWithValue("@Unit", row.Unit)
+                        cmd.Parameters.AddWithValue("@UnitPrice", row.UnitPrice)
+                        cmd.Parameters.AddWithValue("@CurrentPrice", row.CurrentPrice)
+                        cmd.Parameters.AddWithValue("@Amount", row.Amount)
+                        cmd.Parameters.AddWithValue("@Quantity", row.Quantity)
+                        cmd.Parameters.AddWithValue("@Comments", row.Comments)
+                        cmd.Parameters.AddWithValue("@UpdateCount", row.UpdateCount + 1)
+                        cmd.Parameters.AddWithValue("@UpdateDate", row.UpdateDate)
+                        cmd.Parameters.AddWithValue("@UpdateTime", row.UpdateTime)
+                        cmd.Parameters.AddWithValue("@UpdateUser", row.UpdateUser)
+                        cmd.Parameters.AddWithValue("@ID", row("ID", DataRowVersion.Original))
 
                         res = cmd.ExecuteNonQuery()
 
                     End Using
                 ElseIf row.RowState = DataRowState.Deleted Then
-                    Using cmd As New OleDbCommand(sSQLD, dbConn.Conn)
+                    Using cmd As New SqlCommand(sSQLD, dbConn.Conn)
                         cmd.Transaction = dbConn.Tran
 
-                        cmd.Parameters.Add("@1", OleDbType.BigInt).Value = row("ID", DataRowVersion.Original)
+                        cmd.Parameters.AddWithValue("@ID", row("ID", DataRowVersion.Original))
 
                         res = cmd.ExecuteNonQuery()
 
@@ -637,12 +638,12 @@ Public Class Warehouse
             dbConn.Open()
             dbConn.BeginTran()
             Dim sSQL As String = DeleteSQL()
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
-            cmd.Parameters.Add("@1", OleDbType.Boolean).Value = True
-            cmd.Parameters.Add("@2", OleDbType.VarChar).Value = New Date().ToString("yyyy/MM/dd")
-            cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.PropCode
+            Dim row As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
+            cmd.Parameters.AddWithValue("@Retired", True)
+            cmd.Parameters.AddWithValue("@RetiredDate", New Date().ToString("yyyy/MM/dd"))
+            cmd.Parameters.AddWithValue("@PropCode", row.PropCode)
 
             res = cmd.ExecuteNonQuery()
             dbConn.CommitTran()
@@ -666,7 +667,7 @@ Public Class Warehouse
 
 #Region "HelpCreateCode"
     Private Sub HelpGetLastWareCode()
-        lblWareCodeHint.Content = "Mã gần nhất: " + Utility.HelpGetLastCode("Warehouse")
+        lblWareCodeHint.Content = "Mã gần nhất: " + Utility.HelpGetLastCode("Warehouse", Me.WareType)
     End Sub
 
 #End Region
@@ -711,7 +712,7 @@ Public Class Warehouse
         Dim sb As New StringBuilder()
         sb.AppendLine("INSERT INTO [WarehouseMaster]                               ")
         sb.AppendLine("            ( [WareCode],[Type],[WareDate],[EmpCode],[EmpName],[CusCode],[CusName],[Status],[WareTitle],[Description],[TotalAmount],[Discount],[SalesAmount],[PaymentType],[FinishFlag],[PaymentDate],[FinishDate],[Comments],[UpdateCount],[Retired],[RetiredDate],[CreateDate],[CreateTime],[CreateUser],[UpdateDate],[UpdateTime],[UpdateUser]) ")
-        sb.AppendLine("     VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)                                          ")
+        sb.AppendLine("     VALUES ( @WareCode,@Type,@WareDate,@EmpCode,@EmpName,@CusCode,@CusName,@Status,@WareTitle,@Description,@TotalAmount,@Discount,@SalesAmount,@PaymentType,@FinishFlag,@PaymentDate,@FinishDate,@Comments,@UpdateCount,@Retired,@RetiredDate,@CreateDate,@CreateTime,@CreateUser,@UpdateDate,@UpdateTime,@UpdateUser)")
         Return sb.ToString()
     End Function
 #End Region
@@ -720,23 +721,25 @@ Public Class Warehouse
         Dim sb As New StringBuilder()
         sb.AppendLine("INSERT INTO [Warehouse]                               ")
         sb.AppendLine("            ( [WareCode],[Type],[WareDate],[PropCode],[PropName],[Category],[Status],[Description],[Unit],[UnitPrice],[CurrentPrice],[Amount],[Quantity],[Comments],[UpdateCount],[CreateDate],[CreateTime],[CreateUser],[UpdateDate],[UpdateTime],[UpdateUser]) ")
-        sb.AppendLine("     VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)                                          ")
+        sb.AppendLine("     VALUES ( @WareCode,@Type,@WareDate,@PropCode,@PropName,@Category,@Status,@Description,@Unit,@UnitPrice,@CurrentPrice,@Amount,@Quantity,@Comments,@UpdateCount,@CreateDate,@CreateTime,@CreateUser,@UpdateDate,@UpdateTime,@UpdateUser) ")
         Return sb.ToString()
     End Function
 #End Region
+
 #Region "UpdateDetailSQL"
     Private Function UpdateDetailSQL() As String
         Dim sb As New StringBuilder()
-        sb.AppendLine("Update [Warehouse]                               ")
-        sb.AppendLine("   set [WareCode] = ?,[Type] = ?,[WareDate] = ?,[PropCode] = ?,[PropName] = ?,[Category] = ?,[Status] = ?,[Description] = ?,[Unit] = ?,[UnitPrice] = ?,[CurrentPrice] = ?,[Amount] = ?,[Quantity] = ?,[Comments] = ?,[UpdateCount] = ?,[UpdateDate] = ?,[UpdateTime] = ?,[UpdateUser] = ? ")
-        sb.AppendLine(" where ID = ?                             ")
+        sb.AppendLine("Update [Warehouse]                                                                                                                                                                                                                                                                                                                                                                                                                               ")
+        sb.AppendLine("   set [WareCode] = @WareCode,[Type] = @Type,[WareDate] = @WareDate,[PropCode] = @PropCode,[PropName] = @PropName,[Category] = @Category,[Status] = @Status,[Description] = @Description,[Unit] = @Unit,[UnitPrice] = @UnitPrice,[CurrentPrice] = @CurrentPrice,[Amount] = @Amount,[Quantity] = @Quantity,[Comments] = @Comments,[UpdateCount] = @UpdateCount,[UpdateDate] = @UpdateDate,[UpdateTime] = @UpdateTime,[UpdateUser] = @UpdateUser   ")
+        sb.AppendLine(" where ID = @ID                                                                                                                                                                                                                                                                                                                                                                                                                                  ")
         Return sb.ToString()
     End Function
 #End Region
+
 #Region "DeleteDetailSQL"
     Private Function DeleteDetailSQL() As String
         Dim sb As New StringBuilder()
-        sb.AppendLine("delete from [Warehouse] where ID = ?                             ")
+        sb.AppendLine("delete from [Warehouse] where ID = @ID   ")
         Return sb.ToString()
     End Function
 #End Region
@@ -744,9 +747,9 @@ Public Class Warehouse
 #Region "UpdatePropertySQL"
     Private Function UpdateSQL() As String
         Dim sb As New StringBuilder()
-        sb.AppendLine("update [WarehouseMaster]                               ")
-        sb.AppendLine("   set [Type] = ?,[WareDate] = ?,[EmpCode] = ?,[EmpName] = ?,[CusCode] = ?,[CusName] = ?,[Status] = ?,[WareTitle] = ?,[Description] = ?,[TotalAmount] = ?,[Discount] = ?,[SalesAmount] = ?,[PaymentType] = ?,[FinishFlag] = ?,[PaymentDate] = ?,[FinishDate] = ?,[Comments] = ?,[UpdateCount] = ?,[Retired] = ?,[RetiredDate] = ?,[UpdateDate] = ?,[UpdateTime] = ?,[UpdateUser] = ? ")
-        sb.AppendLine("     where [WareCode] = ?")
+        sb.AppendLine("update [WarehouseMaster]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ")
+        sb.AppendLine("   set [Type] = @Type,[WareDate] = @WareDate,[EmpCode] = @EmpCode,[EmpName] = @EmpName,[CusCode] = @CusCode,[CusName] = @CusName,[Status] = @Status,[WareTitle] = @WareTitle,[Description] = @Description,[TotalAmount] = @TotalAmount,[Discount] = @Discount,[SalesAmount] = @SalesAmount,[PaymentType] = @PaymentType,[FinishFlag] = @FinishFlag,[PaymentDate] = @PaymentDate,[FinishDate] = @FinishDate,[Comments] = @Comments,[UpdateCount] = @UpdateCount,[Retired] = @Retired,[RetiredDate] = @RetiredDate,[UpdateDate] = @UpdateDate,[UpdateTime] = @UpdateTime,[UpdateUser] = @UpdateUser    ")
+        sb.AppendLine("     where [WareCode] = @WareCode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ")
         Return sb.ToString()
     End Function
 #End Region
@@ -754,10 +757,10 @@ Public Class Warehouse
 #Region "DeletePropertySQL"
     Private Function DeleteSQL() As String
         Dim sb As New StringBuilder()
-        sb.AppendLine("UPDATE [Property]                                ")
-        sb.AppendLine("   SET [Retired] = ?                             ")
-        sb.AppendLine("     , [Retired Date] = ?                        ")
-        sb.AppendLine(" WHERE [PropCode] = ?                            ")
+        sb.AppendLine("UPDATE [Property]                                        ")
+        sb.AppendLine("   SET [Retired] = @Retired                              ")
+        sb.AppendLine("     , [RetiredDate] = @RetiredDate                      ")
+        sb.AppendLine(" WHERE [PropCode] = @PropCode                            ")
         Return sb.ToString()
     End Function
 #End Region
@@ -1273,8 +1276,10 @@ Public Class Warehouse
             Dim filePath As String = Path.Combine(dirI.FullName, fileName)
             Dim res As Boolean = print.Print(txtWareCode.Text.Trim, filePath)
             If res Then
-                Dim confirm As Boolean = (MessageBox.Show("Xuất in thành công ra file excel [" + fileName + "], bạn có muốn mở file không?", Me.Title, MessageBoxButton.YesNo) = MessageBoxResult.Yes)
-                If confirm Then
+                'Dim rpt As New OrderA5_1(filePath)
+                'rpt.ShowDialog()
+                MessageBox.Show("Xuất in thành công ra file excel [" + fileName + "].", Me.Title, MessageBoxButton.OK, MessageBoxImage.Information)
+                If My.Settings.AutoOpenExel Then
                     Process.Start(filePath)
                 End If
             Else

@@ -1,22 +1,22 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 Imports System.Data
 
 Public Class DbConnect
-    Private _connString As String = New MySettings().AtomyConnectionString
-    Private _sensitiveData As String = ";Jet OLEDB:Database Password=net123aA@"
-    Private _Conn As OleDbConnection
-    Private _Tran As OleDbTransaction
-    Public Property Conn As OleDbConnection
+    Private _connString As String = New MySettings().PMS_ATOMYConnectionString
+    Private _sensitiveData As String = ";Password=net123aA@;"
+    Private _Conn As SqlConnection
+    Private _Tran As SqlTransaction
+    Public Property Conn As SqlConnection
 
         Get
             Return _Conn
         End Get
-        Set(ByVal value As OleDbConnection)
+        Set(ByVal value As SqlConnection)
             _Conn = value
         End Set
     End Property
 
-    Public ReadOnly Property Tran As OleDbTransaction
+    Public ReadOnly Property Tran As SqlTransaction
         Get
             Return _Tran
         End Get
@@ -35,7 +35,7 @@ Public Class DbConnect
 
     Public Sub Open()
         If _Conn Is Nothing Then
-            _Conn = New OleDbConnection(_connString + _sensitiveData)
+            _Conn = New SqlConnection(_connString + _sensitiveData)
         End If
         If State = ConnectionState.Closed Then
             _Conn.Open()

@@ -1,21 +1,20 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 Imports System.Data
 
 Class SearchWarehouse
     Implements ISearch
     Public WareType As Int16 = 0
     Private _search As Search
-    Private AtomyDataSet As AtomyDataSet
+    Private AtomyDataSet As PMS_ATOMYDataSet
     Protected Sub New()
 
         ' This call is required by the designer.
         InitializeComponent()
-
         ' Add any initialization after the InitializeComponent() call.
 
     End Sub
     Public Sub New(search As Search)
-        AtomyDataSet = New AtomyDataSet()
+        AtomyDataSet = New PMS_ATOMYDataSet()
         _search = search
         ' This call is required by the designer.
         InitializeComponent()
@@ -31,43 +30,43 @@ Class SearchWarehouse
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select [WarehouseMaster].*,[Customer].[MobilePhone] from [WarehouseMaster] left join [Customer] on [WarehouseMaster].[CusCode] = [Customer].[CusCode] where [WareCode] like ?"
-            Dim adapt As New OleDbDataAdapter()
-            adapt.SelectCommand = New OleDbCommand()
+            Dim sSQL As String = "select [WarehouseMaster].*,[Customer].[MobilePhone] from [WarehouseMaster] left join [Customer] on [WarehouseMaster].[CusCode] = [Customer].[CusCode] where [WareCode] like @WareCode"
+            Dim adapt As New SqlDataAdapter()
+            adapt.SelectCommand = New SqlCommand()
             adapt.SelectCommand.Connection = dbConn.Conn
-            adapt.SelectCommand.Parameters.Add("@WareCode", OleDbType.VarChar).Value = txtWareCode.Text.Trim + "%"
+            adapt.SelectCommand.Parameters.AddWithValue("@WareCode", txtWareCode.Text.Trim + "%")
             If rbWareTypeIn.IsChecked Then
-                sSQL = sSQL + " and [Type] = ?"
-                adapt.SelectCommand.Parameters.Add("@Type", OleDbType.SmallInt).Value = 0
+                sSQL = sSQL + " and [Type] = @Type"
+                adapt.SelectCommand.Parameters.AddWithValue("@Type", 0)
             ElseIf rbWareTypeOut.IsChecked Then
-                    sSQL = sSQL + " and [Type] = ?"
-                    adapt.SelectCommand.Parameters.Add("@Type", OleDbType.SmallInt).Value = 1
+                sSQL = sSQL + " and [Type] = @Type"
+                adapt.SelectCommand.Parameters.AddWithValue("@Type", 1)
             End If
 
             If txtWareTitle.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [WareTitle] like ?"
-                adapt.SelectCommand.Parameters.Add("@WareTitle", OleDbType.VarChar).Value = "%" + txtWareTitle.Text.Trim + "%"
+                sSQL = sSQL + " and [WareTitle] like @WareTitle"
+                adapt.SelectCommand.Parameters.AddWithValue("@WareTitle", "%" + txtWareTitle.Text.Trim + "%")
             End If
             If txtWareDateF.Text.Trim.Length > 0 Then
                 If txtWareDateT.Text.Trim.Length > 0 Then
-                    sSQL = sSQL + " and [WareDate] >= ? and [WareDate] <= ?"
-                    adapt.SelectCommand.Parameters.Add("@WareDateF", OleDbType.VarChar).Value = txtWareDateF.Text.Trim
-                    adapt.SelectCommand.Parameters.Add("@WareDateT", OleDbType.VarChar).Value = txtWareDateT.Text.Trim
+                    sSQL = sSQL + " and [WareDate] >= @WareDate and [WareDate] <= @WareDate"
+                    adapt.SelectCommand.Parameters.AddWithValue("@WareDateF", txtWareDateF.Text.Trim)
+                    adapt.SelectCommand.Parameters.AddWithValue("@WareDateT", txtWareDateT.Text.Trim)
                 Else
-                    sSQL = sSQL + " and [WareDate] >= ?"
-                    adapt.SelectCommand.Parameters.Add("@WareDateF", OleDbType.VarChar).Value = txtWareDateF.Text.Trim
+                    sSQL = sSQL + " and [WareDate] >= @WareDate"
+                    adapt.SelectCommand.Parameters.AddWithValue("@WareDateF", txtWareDateF.Text.Trim)
                 End If
             Else
                 If txtWareDateT.Text.Trim.Length > 0 Then
-                    sSQL = sSQL + " and [WareDate] <= ?"
-                    adapt.SelectCommand.Parameters.Add("@WareDateT", OleDbType.VarChar).Value = txtWareDateT.Text.Trim
+                    sSQL = sSQL + " and [WareDate] <= @WareDate"
+                    adapt.SelectCommand.Parameters.AddWithValue("@WareDateT", txtWareDateT.Text.Trim)
                 End If
             End If
             If txtCusSearch.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and ([CusCode] like ? or [CusName] like ? or [MobilePhone] like ?)"
-                adapt.SelectCommand.Parameters.Add("@CusCode", OleDbType.VarChar).Value = ConvertCode(txtCusSearch.Text.Trim) + "%"
-                adapt.SelectCommand.Parameters.Add("@CusName", OleDbType.VarChar).Value = "%" + ConvertCode(txtCusSearch.Text.Trim) + "%"
-                adapt.SelectCommand.Parameters.Add("@MobilePhone", OleDbType.VarChar).Value = "%" + ConvertCode(txtCusSearch.Text.Trim) + "%"
+                sSQL = sSQL + " and ([CusCode] like @CusCode or [CusName] like @CusName or [MobilePhone] like @MobilePhone)"
+                adapt.SelectCommand.Parameters.AddWithValue("@CusCode", ConvertCode(txtCusSearch.Text.Trim) + "%")
+                adapt.SelectCommand.Parameters.AddWithValue("@CusName", "%" + ConvertCode(txtCusSearch.Text.Trim) + "%")
+                adapt.SelectCommand.Parameters.AddWithValue("@MobilePhone", "%" + ConvertCode(txtCusSearch.Text.Trim) + "%")
             End If
 
             sSQL = sSQL + " order by [WarehouseMaster].[retired] desc"
@@ -112,10 +111,10 @@ Class SearchWarehouse
         Dim res As SearchDataWarehouse = Nothing
         Try
             dbConn.Open()
-            Dim sSQL As String = "select [WarehouseMaster].*,[Customer].[MobilePhone] from [WarehouseMaster] left join [Customer] on [WarehouseMaster].[CusCode] = [Customer].[CusCode] where [WareCode] like ?"
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
-            cmd.Parameters.Add("@WareCode", OleDbType.VarChar).Value = Keycode
-            Dim read As OleDbDataReader = cmd.ExecuteReader()
+            Dim sSQL As String = "select [WarehouseMaster].*,[Customer].[MobilePhone] from [WarehouseMaster] left join [Customer] on [WarehouseMaster].[CusCode] = [Customer].[CusCode] where [WareCode] like @WareCode"
+            Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
+            cmd.Parameters.AddWithValue("@WareCode", Keycode)
+            Dim read As SqlDataReader = cmd.ExecuteReader()
             If read.Read() Then
                 res = New SearchDataWarehouse() With {.Code = read("CusCode").ToString, .Name = read("FullName").ToString(), .WareType = read("Type")}
             End If
@@ -126,6 +125,17 @@ Class SearchWarehouse
         End Try
         Return res
     End Function
+
+    Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
+        If Me.WareType = 0 Then
+            rbWareTypeIn.IsChecked = True
+            rbWareTypeOut.IsChecked = False
+        ElseIf Me.WareType = 1 Then
+            rbWareTypeIn.IsChecked = False
+            rbWareTypeOut.IsChecked = True
+        End If
+
+    End Sub
 End Class
 Public Class SearchDataWarehouse
     Inherits SearchDataArgs

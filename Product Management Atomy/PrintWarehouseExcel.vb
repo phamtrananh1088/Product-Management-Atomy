@@ -1,6 +1,6 @@
 ﻿Imports SpreadsheetGear
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Text
 Imports IWshRuntimeLibrary
 Imports System.IO
@@ -16,8 +16,8 @@ Public Class PrintWarehouseExcel
 
         Try
             dbConn.Open()
-            Dim adap As New OleDbDataAdapter(sSQL, dbConn.Conn)
-            adap.SelectCommand.Parameters.Add("@WareCode", OleDbType.VarChar).Value = aWareCode
+            Dim adap As New SqlDataAdapter(sSQL, dbConn.Conn)
+            adap.SelectCommand.Parameters.AddWithValue("@WareCode", aWareCode)
             If adap.Fill(ds) = 0 Then
                 Return False
             End If
@@ -90,9 +90,9 @@ Public Class PrintWarehouseExcel
         sb.AppendLine("     , Warehouse.Quantity                                                                         ")
         sb.AppendLine("     , Warehouse.CurrentPrice                                                                     ")
         sb.AppendLine("     , Warehouse.Amount                                                                           ")
-        sb.AppendLine("  FROM (Warehouse  inner join WarehouseMaster on WarehouseMaster.WareCode = Warehouse.WareCode)   ")
-        sb.AppendLine("   inner join Customer on WarehouseMaster.CusCode = Customer.CusCode                              ")
-        sb.AppendLine("    where WarehouseMaster.WareCode = ? order by Warehouse.ID                                      ")
+        sb.AppendLine("  FROM Warehouse inner join WarehouseMaster on WarehouseMaster.WareCode = Warehouse.WareCode      ")
+        sb.AppendLine(" inner join Customer on WarehouseMaster.CusCode = Customer.CusCode                                ")
+        sb.AppendLine("    where WarehouseMaster.WareCode = @WareCode order by Warehouse.ID                              ")
         Return sb.ToString()
     End Function
 

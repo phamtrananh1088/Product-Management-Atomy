@@ -1,15 +1,15 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 
 Class SearchEmployee
     Implements ISearch
 
     Private _search As Search
-    Private _AtomyDataSet As AtomyDataSet
-    Public Property AtomyDataSet As AtomyDataSet
+    Private _AtomyDataSet As PMS_ATOMYDataSet
+    Public Property AtomyDataSet As PMS_ATOMYDataSet
         Get
             Return _AtomyDataSet
         End Get
-        Set(value As AtomyDataSet)
+        Set(value As PMS_ATOMYDataSet)
 
         End Set
     End Property
@@ -22,7 +22,7 @@ Class SearchEmployee
 
     End Sub
     Public Sub New(search As Search)
-        _AtomyDataSet = New AtomyDataSet()
+        _AtomyDataSet = New PMS_ATOMYDataSet()
         _search = search
         ' This call is required by the designer.
         InitializeComponent()
@@ -38,22 +38,22 @@ Class SearchEmployee
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select *,[FirstName] + ' ' + [LastName] as FullName from [Employee] where [EmpCode] like ?"
-            Dim adapt As New OleDbDataAdapter()
-            adapt.SelectCommand = New OleDbCommand()
+            Dim sSQL As String = "select *,[FirstName] + ' ' + [LastName] as FullName from [Employee] where [EmpCode] like @EmpCode"
+            Dim adapt As New SqlDataAdapter()
+            adapt.SelectCommand = New SqlCommand()
             adapt.SelectCommand.Connection = dbConn.Conn
-            adapt.SelectCommand.Parameters.Add("@EmpCode", OleDbType.VarChar).Value = txtEmpCode.Text.Trim + "%"
+            adapt.SelectCommand.Parameters.AddWithValue("@EmpCode", txtEmpCode.Text.Trim + "%")
             If txtFirstName.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [FirstName] like ?"
-                adapt.SelectCommand.Parameters.Add("@FirstName", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
+                sSQL = sSQL + " and [FirstName] like @FirstName"
+                adapt.SelectCommand.Parameters.AddWithValue("@FirstName", "%" + txtFirstName.Text.Trim + "%")
             End If
             If txtLastName.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [LastName] like ?"
-                adapt.SelectCommand.Parameters.Add("@LastName", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
+                sSQL = sSQL + " and [LastName] like @LastName"
+                adapt.SelectCommand.Parameters.AddWithValue("@LastName", "%" + txtFirstName.Text.Trim + "%")
             End If
             If txtMobilePhone.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [MobilePhone] like ?"
-                adapt.SelectCommand.Parameters.Add("@MobilePhone", OleDbType.VarChar).Value = "%" + txtFirstName.Text.Trim + "%"
+                sSQL = sSQL + " and [MobilePhone] like @MobilePhone"
+                adapt.SelectCommand.Parameters.AddWithValue("@MobilePhone", "%" + txtFirstName.Text.Trim + "%")
             End If
             sSQL = sSQL + " order by [LastName],[FirstName]"
             adapt.SelectCommand.CommandText = sSQL
@@ -88,10 +88,10 @@ Class SearchEmployee
         Dim res As SearchDataEmployee = Nothing
         Try
             dbConn.Open()
-            Dim sSQL As String = "select *,[FirstName] + ' ' + [LastName] as FullName from [Employee] where [EmpCode] = ?"
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
-            cmd.Parameters.Add("@EmpCode", OleDbType.VarChar).Value = Keycode
-            Dim read As OleDbDataReader = cmd.ExecuteReader()
+            Dim sSQL As String = "select *,[FirstName] + ' ' + [LastName] as FullName from [Employee] where [EmpCode] = @EmpCode"
+            Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
+            cmd.Parameters.AddWithValue("@EmpCode", Keycode)
+            Dim read As SqlDataReader = cmd.ExecuteReader()
             If read.Read() Then
                 res = New SearchDataEmployee() With {.Code = read("[EmpCode]").ToString, .Name = read("[FullName]").ToString()}
             End If

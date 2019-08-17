@@ -4,7 +4,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:i = "http://schemas.microsoft.com/expression/2010/interactivity" 
-    xmlns:OleDb="clr-namespace:System.Data.OleDb;assembly=System.Data"
+    xmlns:OleDb="clr-namespace:System.Data.SqlClient;assembly=System.Data"
     xmlns:local="clr-namespace:Anh.Pmt.Atomy"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"

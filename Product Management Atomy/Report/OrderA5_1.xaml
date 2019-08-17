@@ -1,0 +1,10 @@
+﻿<Window x:Class="OrderA5_1" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:rg="clr-namespace:unvell.ReoGrid;assembly=unvell.ReoGrid"
+    Title="OrderA5_1" Height="1122" Width="793">
+    <Grid>
+        <rg:ReoGridControl x:Name="grid" >
+        </rg:ReoGridControl>
+    </Grid>
+</Window>

@@ -7,7 +7,7 @@
       xmlns:local="clr-namespace:Anh.Pmt.Atomy" x:Class="SearchWarehouse"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
-      Title="Tìm kiếm phiếu nhập/xuất">
+      Title="Tìm kiếm phiếu nhập/xuất" Loaded="Page_Loaded">
     <Page.Resources>
         <bindValidation:DateConverter x:Key="dateConverter"/>
         <Style x:Key="Link" TargetType="{x:Type Button}">
@@ -61,7 +61,7 @@
         <Border x:Name="borderWareTypeIn" Width="84" VerticalAlignment="Top" Grid.Row="1" Margin="83,0,0,0" Height="24" HorizontalAlignment="Left" CornerRadius="3,3,3,3" Grid.Column="2" BorderThickness="1" BorderBrush="Gray"/>
         <RadioButton x:Name="rbWareTypeIn" GroupName="PaymentSelection" Content="Phiếu nhập" Foreground="Blue" HorizontalAlignment="Left" Margin="87,4,0,0" VerticalAlignment="Top" Grid.Column="2" IsChecked="True" Grid.Row="1" Width="76" Height="16"/>
         <Border x:Name="borderWareTypeOut" CornerRadius="3,3,3,3" BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="24" Margin="170,0,0,0" VerticalAlignment="Top" Grid.Column="2" Width="84" Grid.Row="1"/>
-        <RadioButton x:Name="rbWareTypeOut" GroupName="PaymentSelection" Content="Phiếu xuất" Foreground="Orange" HorizontalAlignment="Left" Margin="174,4,0,0" VerticalAlignment="Top" Grid.Column="2" IsChecked="{Binding PaymentType, ConverterParameter={x:Static local:EnumPaymentType.ShipCode}, Converter={StaticResource enumBooleanConverter}}" Grid.Row="1" Width="76" Height="16"/>
+        <RadioButton x:Name="rbWareTypeOut" GroupName="PaymentSelection" Content="Phiếu xuất" Foreground="Orange" HorizontalAlignment="Left" Margin="174,4,0,0" VerticalAlignment="Top" Grid.Column="2" IsChecked="False" Grid.Row="1" Width="76" Height="16"/>
         <Label Content="Tiêu đề:" HorizontalAlignment="Left" Margin="56,28,0,0" VerticalAlignment="Top" Width="54" Height="28" Grid.Row="1" Grid.Column="1"/>
         <TextBox x:Name="txtWareTitle" HorizontalAlignment="Left" Height="23" Margin="0,28,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" MaxLength="80" Width="500" Grid.Column="2" Grid.Row="1"/>
         <Label Content="Ngày nhập/xuất:" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="2,54,0,0" VerticalAlignment="Top" Width="106" Height="28" Grid.Row="1" Grid.Column="1"/>

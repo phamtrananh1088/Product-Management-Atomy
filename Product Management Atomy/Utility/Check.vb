@@ -1,4 +1,4 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 Imports System.Data
 
 Public Class Check
@@ -16,13 +16,13 @@ Public Class Check
         Dim sSQL As String
         Select Case tableName
             Case "Property"
-                sSQL = "select count(*) from [Property] where [PropCode] = ?"
+                sSQL = "select count(*) from [Property] where [PropCode] = @Code"
             Case "Customer"
-                sSQL = "select count(*) from [Customer] where [CusCode] = ?"
+                sSQL = "select count(*) from [Customer] where [CusCode] = @Code"
             Case "Employee"
-                sSQL = "select count(*) from [Employee] where [EmpCode] = ?"
+                sSQL = "select count(*) from [Employee] where [EmpCode] = @Code"
             Case "Warehouse"
-                sSQL = "select count(*) from [WarehouseMaster] where [WareCode] = ?"
+                sSQL = "select count(*) from [WarehouseMaster] where [WareCode] = @Code"
             Case Else
                 sSQL = ""
         End Select
@@ -32,13 +32,13 @@ Public Class Check
         Dim sSQL As String
         Select Case tableName
             Case "Property"
-                sSQL = "select * from [Property] where [PropCode] = ?"
+                sSQL = "select * from [Property] where [PropCode] = @Code"
             Case "Customer"
-                sSQL = "select * from [Customer] where [CusCode] = ?"
+                sSQL = "select * from [Customer] where [CusCode] = @Code"
             Case "Employee"
-                sSQL = "select * from [Employee] where [EmpCode] = ?"
+                sSQL = "select * from [Employee] where [EmpCode] = @Code"
             Case "Warehouse"
-                sSQL = "select * from [Warehouse Master] where [WareCode] = ?"
+                sSQL = "select * from [Warehouse Master] where [WareCode] = @Code"
             Case Else
                 sSQL = ""
         End Select
@@ -56,9 +56,9 @@ Public Class Check
         Dim res As Integer
         Try
             dbConn.Open()
-            Using cmd As New OleDbCommand(sSQL, dbConn.Conn)
-                cmd.Parameters.Add("@1", OleDbType.VarChar).Value = code
-                Dim read As OleDbDataReader = cmd.ExecuteReader()
+            Using cmd As New SqlCommand(sSQL, dbConn.Conn)
+                cmd.Parameters.AddWithValue("@Code", code)
+                Dim read As SqlDataReader = cmd.ExecuteReader()
                 If read.Read() Then
                     res = read.GetInt32(0)
                 Else
@@ -80,11 +80,11 @@ Public Class Check
         Dim res As DataRow = Nothing
         Try
             dbConn.Open()
-            Dim adap As New OleDbDataAdapter(sSQL, dbConn.Conn)
-            adap.SelectCommand.Parameters.Add("@1", OleDbType.VarChar).Value = code
+            Dim adap As New SqlDataAdapter(sSQL, dbConn.Conn)
+            adap.SelectCommand.Parameters.AddWithValue("@Code", code)
             If adap.Fill(ds) > 0 Then
                 res = ds.Tables(0).Rows(0)
-            End If        
+            End If
         Catch ex As Exception
             ErrorLog.SetError("", "Đã sảy ra lỗi khi tìm bản ghi theo mã.", ex)
         Finally

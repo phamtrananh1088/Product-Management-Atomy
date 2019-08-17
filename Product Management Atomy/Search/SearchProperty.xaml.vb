@@ -1,15 +1,15 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 
 Class SearchProperty
     Implements ISearch
 
     Private _search As Search
-    Private _AtomyDataSet As AtomyDataSet
-    Public Property AtomyDataSet As AtomyDataSet
+    Private _AtomyDataSet As PMS_ATOMYDataSet
+    Public Property AtomyDataSet As PMS_ATOMYDataSet
         Get
             Return _AtomyDataSet
         End Get
-        Set(value As AtomyDataSet)
+        Set(value As PMS_ATOMYDataSet)
 
         End Set
     End Property
@@ -22,7 +22,7 @@ Class SearchProperty
 
     End Sub
     Public Sub New(search As Search)
-        _AtomyDataSet = New AtomyDataSet()
+        _AtomyDataSet = New PMS_ATOMYDataSet()
         _search = search
         ' This call is required by the designer.
         InitializeComponent()
@@ -37,33 +37,33 @@ Class SearchProperty
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select * from [Property] where [PropCode] like ?"
-            Dim adapt As New OleDbDataAdapter()
-            adapt.SelectCommand = New OleDbCommand()
+            Dim sSQL As String = "select * from [Property] where [PropCode] like @PropCode"
+            Dim adapt As New SqlDataAdapter()
+            adapt.SelectCommand = New SqlCommand()
             adapt.SelectCommand.Connection = dbConn.Conn
-            adapt.SelectCommand.Parameters.Add("@PropCode", OleDbType.VarChar).Value = PropCd + "%"
+            adapt.SelectCommand.Parameters.AddWithValue("@PropCode", PropCd + "%")
             If txtPropName.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [PropName] like ?"
-                adapt.SelectCommand.Parameters.Add("@PropName", OleDbType.VarChar).Value = "%" + txtPropName.Text.Trim + "%"
+                sSQL = sSQL + " and [PropName] like @PropName"
+                adapt.SelectCommand.Parameters.AddWithValue("@PropName", "%" + txtPropName.Text.Trim + "%")
             End If
             If txtAcquiredDateF.Text.Trim.Length > 0 Then
                 If txtAcquiredDateT.Text.Trim.Length > 0 Then
-                    sSQL = sSQL + " and [Acquired Date] >= ? and [Acquired Date] <= ?"
-                    adapt.SelectCommand.Parameters.Add("@AcquiredDateF", OleDbType.VarChar).Value = txtAcquiredDateF.Text.Trim
-                    adapt.SelectCommand.Parameters.Add("@AcquiredDateT", OleDbType.VarChar).Value = txtAcquiredDateT.Text.Trim
+                    sSQL = sSQL + " and [AcquiredDate] >= @AcquiredDateF and [AcquiredDate] <= @AcquiredDateT"
+                    adapt.SelectCommand.Parameters.AddWithValue("@AcquiredDateF", txtAcquiredDateF.Text.Trim)
+                    adapt.SelectCommand.Parameters.AddWithValue("@AcquiredDateT", txtAcquiredDateT.Text.Trim)
                 Else
-                    sSQL = sSQL + " and [Acquired Date] >= ?"
-                    adapt.SelectCommand.Parameters.Add("@AcquiredDateF", OleDbType.VarChar).Value = txtAcquiredDateF.Text.Trim
+                    sSQL = sSQL + " and [AcquiredDate] >= @AcquiredDateF"
+                    adapt.SelectCommand.Parameters.AddWithValue("@AcquiredDateF", txtAcquiredDateF.Text.Trim)
                 End If
             Else
                 If txtAcquiredDateT.Text.Trim.Length > 0 Then
-                    sSQL = sSQL + " and [Acquired Date] <= ?"
-                    adapt.SelectCommand.Parameters.Add("@AcquiredDateT", OleDbType.VarChar).Value = txtAcquiredDateT.Text.Trim
+                    sSQL = sSQL + " and [AcquiredDate] <= @AcquiredDateT"
+                    adapt.SelectCommand.Parameters.AddWithValue("@AcquiredDateT", txtAcquiredDateT.Text.Trim)
                 End If
             End If
             If txtCategory.Text.Trim.Length > 0 Then
-                sSQL = sSQL + " and [Category] like ?"
-                adapt.SelectCommand.Parameters.Add("@Category", OleDbType.VarChar).Value = "%" + txtCategory.Text.Trim + "%"
+                sSQL = sSQL + " and [Category] like @Category"
+                adapt.SelectCommand.Parameters.AddWithValue("@Category", "%" + txtCategory.Text.Trim + "%")
             End If
 
             sSQL = sSQL + " order by retired desc"
@@ -99,11 +99,11 @@ Class SearchProperty
         Dim res As SearchDataProperty = Nothing
         Try
             dbConn.Open()
-            Dim sSQL As String = "select * from [Property] where [PropCode] = ?"
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
-            cmd.Parameters.Add("@PropCode", OleDbType.VarChar).Value = Keycode
+            Dim sSQL As String = "select * from [Property] where [PropCode] = @PropCode"
+            Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
+            cmd.Parameters.AddWithValue("@PropCode", Keycode)
 
-            Dim read As OleDbDataReader = cmd.ExecuteReader()
+            Dim read As SqlDataReader = cmd.ExecuteReader()
             If read.Read() Then
                 res = New SearchDataProperty() With {.Code = read("PropCode").ToString, .Name = read("PropName").ToString()}
             End If

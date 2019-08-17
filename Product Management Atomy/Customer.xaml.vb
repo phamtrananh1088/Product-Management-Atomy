@@ -1,16 +1,16 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 Imports System.Data
 Imports System.Text
 Public Class Customer
 
 #Region "FIELD"
-    Private AtomyDataSet As AtomyDataSet
+    Private AtomyDataSet As PMS_ATOMYDataSet
     Private Mode As DataRowState
 #End Region
 
 #Region "CONSTRUCTOR"
     Public Sub New()
-        AtomyDataSet = New AtomyDataSet()
+        AtomyDataSet = New PMS_ATOMYDataSet()
         ' This call is required by the designer.
         InitializeComponent()
         InitialValue()
@@ -48,9 +48,9 @@ Public Class Customer
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select * from [Customer] where [CusCode] = ?"
-            Dim adapt As New OleDbDataAdapter(sSQL, dbConn.Conn)
-            adapt.SelectCommand.Parameters.Add("@CusCode", OleDbType.VarChar).Value = CusCode
+            Dim sSQL As String = "select * from [Customer] where [CusCode] = @CusCode"
+            Dim adapt As New SqlDataAdapter(sSQL, dbConn.Conn)
+            adapt.SelectCommand.Parameters.AddWithValue("@CusCode", CusCode)
             AtomyDataSet.Customer.Clear()
 
             If adapt.Fill(AtomyDataSet, "Customer") > 0 Then
@@ -192,7 +192,8 @@ Public Class Customer
     Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
         If ProcessSelection.Mode = DataRowState.Added Then
             AtomyDataSet.Customer.Clear()
-            Dim newRow As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.NewCustomerRow()
+            Dim newRow As PMS_ATOMYDataSet.CustomerRow = AtomyDataSet.Customer.NewCustomerRow()
+            Utility.RowInit.InitCustomerRow(newRow)
             AtomyDataSet.Customer.Rows.Add(newRow)
             Me.DataContext = AtomyDataSet.Customer.Rows(0)
             Mode = DataRowState.Added
@@ -258,12 +259,12 @@ Public Class Customer
             dbConn.Open()
             dbConn.BeginTran()
             Dim sSQL As String = DeleteCustomerSQL()
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
-            cmd.Parameters.Add("@1", OleDbType.Boolean).Value = True
-            cmd.Parameters.Add("@2", OleDbType.VarChar).Value = New Date().ToString("yyyy/MM/dd")
-            cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.CusCode
+            Dim row As PMS_ATOMYDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
+            cmd.Parameters.AddWithValue("@Retired", True)
+            cmd.Parameters.AddWithValue("@RetiredDate", New Date().ToString("yyyy/MM/dd"))
+            cmd.Parameters.AddWithValue("@CusCode", row.CusCode)
 
             res = cmd.ExecuteNonQuery()
             dbConn.CommitTran()
@@ -287,9 +288,9 @@ Public Class Customer
             dbConn.Open()
             dbConn.BeginTran()
             Dim sSQL As String = InsertCustomerSQL()
-            Using cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                 cmd.Transaction = dbConn.Tran
-                Dim row As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
+                Dim row As PMS_ATOMYDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
                 Dim now As Date = Date.Now
                 row.CreateDate = now.ToString("yyyy/MM/dd")
                 row.CreateTime = now.ToString("HH:mm:ss")
@@ -298,32 +299,32 @@ Public Class Customer
                 row.UpdateTime = now.ToString("HH:mm:ss")
                 row.UpdateUser = Utility.LoginUserCode
 
-                cmd.Parameters.Add("@CusCode", OleDbType.VarChar).Value = row.CusCode
-                cmd.Parameters.Add("@Company", OleDbType.VarChar).Value = row.Company
-                cmd.Parameters.Add("@LastName", OleDbType.VarChar).Value = row.LastName
-                cmd.Parameters.Add("@FirstName", OleDbType.VarChar).Value = row.FirstName
-                cmd.Parameters.Add("@EmailAddress", OleDbType.VarChar).Value = row.EmailAddress
-                cmd.Parameters.Add("@JobTitle", OleDbType.VarChar).Value = row.JobTitle
-                cmd.Parameters.Add("@BusinessPhone", OleDbType.VarChar).Value = row.BusinessPhone
-                cmd.Parameters.Add("@HomePhone", OleDbType.VarChar).Value = row.HomePhone
-                cmd.Parameters.Add("@MobilePhone", OleDbType.VarChar).Value = row.MobilePhone
-                cmd.Parameters.Add("@FaxNumber", OleDbType.VarChar).Value = row.FaxNumber
-                cmd.Parameters.Add("@Address", OleDbType.VarChar).Value = row.Address
-                cmd.Parameters.Add("@City", OleDbType.VarChar).Value = row.City
-                cmd.Parameters.Add("@StateProvince", OleDbType.VarChar).Value = row.StateProvince
-                cmd.Parameters.Add("@ZIPPostalCode", OleDbType.VarChar).Value = row.ZIPPostalCode
-                cmd.Parameters.Add("@CountryRegion", OleDbType.VarChar).Value = row.CountryRegion
-                cmd.Parameters.Add("@WebPage", OleDbType.VarChar).Value = row.WebPage
-                cmd.Parameters.Add("@FacebookID", OleDbType.VarChar).Value = row.FacebookID
-                cmd.Parameters.Add("@Notes", OleDbType.VarChar).Value = row.Notes
-                cmd.Parameters.Add("@Retired", OleDbType.Boolean).Value = row.Retired
-                cmd.Parameters.Add("@RetiredDate", OleDbType.VarChar).Value = row.RetiredDate
-                cmd.Parameters.Add("@CreateDate", OleDbType.VarChar).Value = row.CreateDate
-                cmd.Parameters.Add("@CreateTime", OleDbType.VarChar).Value = row.CreateTime
-                cmd.Parameters.Add("@CreateUser", OleDbType.VarChar).Value = row.CreateUser
-                cmd.Parameters.Add("@UpdateDate", OleDbType.VarChar).Value = row.UpdateDate
-                cmd.Parameters.Add("@UpdateTime", OleDbType.VarChar).Value = row.UpdateTime
-                cmd.Parameters.Add("@UpdateUser", OleDbType.VarChar).Value = row.UpdateUser
+                cmd.Parameters.AddWithValue("@CusCode", row.CusCode)
+                cmd.Parameters.AddWithValue("@Company", row.Company)
+                cmd.Parameters.AddWithValue("@LastName", row.LastName)
+                cmd.Parameters.AddWithValue("@FirstName", row.FirstName)
+                cmd.Parameters.AddWithValue("@EmailAddress", row.EmailAddress)
+                cmd.Parameters.AddWithValue("@JobTitle", row.JobTitle)
+                cmd.Parameters.AddWithValue("@BusinessPhone", row.BusinessPhone)
+                cmd.Parameters.AddWithValue("@HomePhone", row.HomePhone)
+                cmd.Parameters.AddWithValue("@MobilePhone", row.MobilePhone)
+                cmd.Parameters.AddWithValue("@FaxNumber", row.FaxNumber)
+                cmd.Parameters.AddWithValue("@Address", row.Address)
+                cmd.Parameters.AddWithValue("@City", row.City)
+                cmd.Parameters.AddWithValue("@StateProvince", row.StateProvince)
+                cmd.Parameters.AddWithValue("@ZIPPostalCode", row.ZIPPostalCode)
+                cmd.Parameters.AddWithValue("@CountryRegion", row.CountryRegion)
+                cmd.Parameters.AddWithValue("@WebPage", row.WebPage)
+                cmd.Parameters.AddWithValue("@FacebookID", row.FacebookID)
+                cmd.Parameters.AddWithValue("@Notes", row.Notes)
+                cmd.Parameters.AddWithValue("@Retired", row.Retired)
+                cmd.Parameters.AddWithValue("@RetiredDate", row.RetiredDate)
+                cmd.Parameters.AddWithValue("@CreateDate", row.CreateDate)
+                cmd.Parameters.AddWithValue("@CreateTime", row.CreateTime)
+                cmd.Parameters.AddWithValue("@CreateUser", row.CreateUser)
+                cmd.Parameters.AddWithValue("@UpdateDate", row.UpdateDate)
+                cmd.Parameters.AddWithValue("@UpdateTime", row.UpdateTime)
+                cmd.Parameters.AddWithValue("@UpdateUser", row.UpdateUser)
 
                 res = cmd.ExecuteNonQuery()
 
@@ -350,9 +351,9 @@ Public Class Customer
             dbConn.Open()
             dbConn.BeginTran()
             Dim sSQL As String = UpdateCustomerSQL()
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
+            Dim row As PMS_ATOMYDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
             Dim now As Date = Date.Now
             row.CreateDate = now.ToString("yyyy/MM/dd")
             row.CreateTime = now.ToString("HH:mm:ss")
@@ -361,29 +362,29 @@ Public Class Customer
             row.UpdateTime = now.ToString("HH:mm:ss")
             row.UpdateUser = Utility.LoginUserCode
 
-            cmd.Parameters.Add("@Company", OleDbType.VarChar).Value = row.Company
-            cmd.Parameters.Add("@LastName", OleDbType.VarChar).Value = row.LastName
-            cmd.Parameters.Add("@FirstName", OleDbType.VarChar).Value = row.FirstName
-            cmd.Parameters.Add("@EmailAddress", OleDbType.VarChar).Value = row.EmailAddress
-            cmd.Parameters.Add("@JobTitle", OleDbType.VarChar).Value = row.JobTitle
-            cmd.Parameters.Add("@BusinessPhone", OleDbType.VarChar).Value = row.BusinessPhone
-            cmd.Parameters.Add("@HomePhone", OleDbType.VarChar).Value = row.HomePhone
-            cmd.Parameters.Add("@MobilePhone", OleDbType.VarChar).Value = row.MobilePhone
-            cmd.Parameters.Add("@FaxNumber", OleDbType.VarChar).Value = row.FaxNumber
-            cmd.Parameters.Add("@Address", OleDbType.VarChar).Value = row.Address
-            cmd.Parameters.Add("@City", OleDbType.VarChar).Value = row.City
-            cmd.Parameters.Add("@StateProvince", OleDbType.VarChar).Value = row.StateProvince
-            cmd.Parameters.Add("@ZIPPostalCode", OleDbType.VarChar).Value = row.ZIPPostalCode
-            cmd.Parameters.Add("@CountryRegion", OleDbType.VarChar).Value = row.CountryRegion
-            cmd.Parameters.Add("@WebPage", OleDbType.VarChar).Value = row.WebPage
-            cmd.Parameters.Add("@FacebookID", OleDbType.VarChar).Value = row.FacebookID
-            cmd.Parameters.Add("@Notes", OleDbType.VarChar).Value = row.Notes
-            cmd.Parameters.Add("@Retired", OleDbType.Boolean).Value = row.Retired
-            cmd.Parameters.Add("@RetiredDate", OleDbType.VarChar).Value = row.RetiredDate
-            cmd.Parameters.Add("@UpdateDate", OleDbType.VarChar).Value = row.UpdateDate
-            cmd.Parameters.Add("@UpdateTime", OleDbType.VarChar).Value = row.UpdateTime
-            cmd.Parameters.Add("@UpdateUser", OleDbType.VarChar).Value = row.UpdateUser
-            cmd.Parameters.Add("@CusCode", OleDbType.VarChar).Value = row.CusCode
+            cmd.Parameters.AddWithValue("@Company", row.Company)
+            cmd.Parameters.AddWithValue("@LastName", row.LastName)
+            cmd.Parameters.AddWithValue("@FirstName", row.FirstName)
+            cmd.Parameters.AddWithValue("@EmailAddress", row.EmailAddress)
+            cmd.Parameters.AddWithValue("@JobTitle", row.JobTitle)
+            cmd.Parameters.AddWithValue("@BusinessPhone", row.BusinessPhone)
+            cmd.Parameters.AddWithValue("@HomePhone", row.HomePhone)
+            cmd.Parameters.AddWithValue("@MobilePhone", row.MobilePhone)
+            cmd.Parameters.AddWithValue("@FaxNumber", row.FaxNumber)
+            cmd.Parameters.AddWithValue("@Address", row.Address)
+            cmd.Parameters.AddWithValue("@City", row.City)
+            cmd.Parameters.AddWithValue("@StateProvince", row.StateProvince)
+            cmd.Parameters.AddWithValue("@ZIPPostalCode", row.ZIPPostalCode)
+            cmd.Parameters.AddWithValue("@CountryRegion", row.CountryRegion)
+            cmd.Parameters.AddWithValue("@WebPage", row.WebPage)
+            cmd.Parameters.AddWithValue("@FacebookID", row.FacebookID)
+            cmd.Parameters.AddWithValue("@Notes", row.Notes)
+            cmd.Parameters.AddWithValue("@Retired", row.Retired)
+            cmd.Parameters.AddWithValue("@RetiredDate", row.RetiredDate)
+            cmd.Parameters.AddWithValue("@UpdateDate", row.UpdateDate)
+            cmd.Parameters.AddWithValue("@UpdateTime", row.UpdateTime)
+            cmd.Parameters.AddWithValue("@UpdateUser", row.UpdateUser)
+            cmd.Parameters.AddWithValue("@CusCode", row.CusCode)
 
             res = cmd.ExecuteNonQuery()
             dbConn.CommitTran()
@@ -439,7 +440,7 @@ Public Class Customer
         Dim sb As New StringBuilder()
         sb.AppendLine("INSERT INTO [Customer]                               ")
         sb.AppendLine("            ( [CusCode],[Company],[LastName],[FirstName], [EmailAddress], [JobTitle], [BusinessPhone], [HomePhone], [MobilePhone], [FaxNumber], [Address], [City], [StateProvince], [ZipPostalCode], [CountryRegion], [WebPage], [FacebookID],[Notes],[Retired],[RetiredDate], [CreateDate], [CreateTime], [CreateUser], [UpdateDate], [UpdateTime], [UpdateUser]) ")
-        sb.AppendLine("     VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)                                          ")
+        sb.AppendLine("     VALUES ( @CusCode,@Company,@LastName,@FirstName,@EmailAddress,@JobTitle,@BusinessPhone,@HomePhone,@MobilePhone,@FaxNumber,@Address,@City,@StateProvince,@ZipPostalCode,@CountryRegion,@WebPage,@FacebookID,@Notes,@Retired,@RetiredDate,@CreateDate,@CreateTime,@CreateUser,@UpdateDate,@UpdateTime,@UpdateUser)                                          ")
         Return sb.ToString()
     End Function
 #End Region
@@ -448,8 +449,8 @@ Public Class Customer
     Private Function UpdateCustomerSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("UPDATE [Customer]                                ")
-        sb.AppendLine("   set [Company] = ?,[LastName] = ?,[FirstName] = ?, [EmailAddress] = ?, [JobTitle] = ?, [BusinessPhone] = ?, [HomePhone] = ?, [MobilePhone] = ?, [FaxNumber] = ?, [Address] = ?, [City] = ?, [StateProvince] = ?, [ZipPostalCode] = ?, [CountryRegion] = ?, [WebPage] = ?, [FacebookID] = ?,[Notes] = ?,[Retired] = ?,[RetiredDate] = ?,[UpdateDate] = ?,[UpdateTime] = ?,[UpdateUser] = ? ")
-        sb.AppendLine(" WHERE [CusCode] = ?                            ")
+        sb.AppendLine("   set [Company] = @Company,[LastName] = @LastName,[FirstName] = @FirstName, [EmailAddress] = @EmailAddress, [JobTitle] = @JobTitle, [BusinessPhone] = @BusinessPhone, [HomePhone] = @HomePhone, [MobilePhone] = @MobilePhone, [FaxNumber] = @FaxNumber, [Address] = @Address, [City] = @City, [StateProvince] = @StateProvince, [ZipPostalCode] = @ZipPostalCode, [CountryRegion] = @CountryRegion, [WebPage] = @WebPage, [FacebookID] = @FacebookID,[Notes] = @Notes,[Retired] = @Retired,[RetiredDate] = @RetiredDate,[UpdateDate] = @UpdateDate,[UpdateTime] = @UpdateTime,[UpdateUser] = @UpdateUser ")
+        sb.AppendLine(" WHERE [CusCode] = @CusCode                            ")
         Return sb.ToString()
     End Function
 #End Region
@@ -458,9 +459,9 @@ Public Class Customer
     Private Function DeleteCustomerSQL() As String
         Dim sb As New StringBuilder()
         sb.AppendLine("UPDATE [Customer]                                ")
-        sb.AppendLine("   SET [Retired] = ?                             ")
-        sb.AppendLine("     , [RetiredDate] = ?                        ")
-        sb.AppendLine(" WHERE [CusCode] = ?                            ")
+        sb.AppendLine("   SET [Retired] = @Retired                             ")
+        sb.AppendLine("     , [RetiredDate] = @RetiredDate                        ")
+        sb.AppendLine(" WHERE [CusCode] = @CusCode                            ")
         Return sb.ToString()
     End Function
 #End Region

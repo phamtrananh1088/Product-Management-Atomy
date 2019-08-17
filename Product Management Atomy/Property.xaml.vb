@@ -1,16 +1,16 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 Imports System.Data
 Imports System.Text
 
 Public Class Property1
 #Region "FIELD"
-    Private AtomyDataSet As AtomyDataSet
+    Private AtomyDataSet As PMS_ATOMYDataSet
     Private Mode As DataRowState
 #End Region
 
 #Region "CONSTRUCTOR"
     Public Sub New()
-        AtomyDataSet = New AtomyDataSet()
+        AtomyDataSet = New PMS_ATOMYDataSet()
         Mode = DataRowState.Added
         ' This call is required by the designer.
         InitializeComponent()
@@ -45,9 +45,9 @@ Public Class Property1
 
         Try
             dbConn.Open()
-            Dim sSQL As String = "select * from [Property] where [PropCode] = ?"
-            Dim adapt As New OleDbDataAdapter(sSQL, dbConn.Conn)
-            adapt.SelectCommand.Parameters.Add("@PropCode", OleDbType.VarChar).Value = PropCode
+            Dim sSQL As String = "select * from [Property] where [PropCode] = @PropCode"
+            Dim adapt As New SqlDataAdapter(sSQL, dbConn.Conn)
+            adapt.SelectCommand.Parameters.AddWithValue("@PropCode", PropCode)
             AtomyDataSet._Property.Clear()
 
             If adapt.Fill(AtomyDataSet, "Property") > 0 Then
@@ -174,7 +174,7 @@ Public Class Property1
     Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
         If ProcessSelection.Mode = DataRowState.Added Then
             AtomyDataSet._Property.Clear()
-            Dim newRow As AtomyDataSet.PropertyRow = AtomyDataSet._Property.NewPropertyRow()
+            Dim newRow As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.NewPropertyRow()
             AtomyDataSet._Property.Rows.Add(newRow)
             Me.DataContext = AtomyDataSet._Property.Rows(0)
             Mode = DataRowState.Added
@@ -244,9 +244,9 @@ Public Class Property1
             dbConn.Open()
             dbConn.BeginTran()
             Dim sSQL As String = InsertSQL()
-            Using cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                 cmd.Transaction = dbConn.Tran
-                Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
+                Dim row As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
                 Dim now As Date = Date.Now
                 row.CreateDate = now.ToString("yyyy/MM/dd")
                 row.CreateTime = now.ToString("HH:mm:ss")
@@ -255,26 +255,26 @@ Public Class Property1
                 row.UpdateTime = now.ToString("HH:mm:ss")
                 row.UpdateUser = Utility.LoginUserCode
 
-                cmd.Parameters.Add("@1", OleDbType.VarChar).Value = row.PropCode
-                cmd.Parameters.Add("@2", OleDbType.VarChar).Value = row.PropName
-                cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.Description
-                cmd.Parameters.Add("@4", OleDbType.VarChar).Value = row.Category
-                cmd.Parameters.Add("@5", OleDbType.VarChar).Value = row.Condition
-                cmd.Parameters.Add("@6", OleDbType.VarChar).Value = row.AcquiredDate
-                cmd.Parameters.Add("@7", OleDbType.VarChar).Value = row.Unit
-                cmd.Parameters.Add("@8", OleDbType.Currency).Value = row.PurchasePrice
-                cmd.Parameters.Add("@9", OleDbType.Currency).Value = row.SalesPrice
-                cmd.Parameters.Add("@10", OleDbType.Currency).Value = row.CurrentValue
-                cmd.Parameters.Add("@11", OleDbType.VarChar).Value = row.Location
-                cmd.Parameters.Add("@12", OleDbType.VarChar).Value = row.Manufacturer
-                cmd.Parameters.Add("@13", OleDbType.VarChar).Value = row.Model
-                cmd.Parameters.Add("@14", OleDbType.VarChar).Value = row.Comments
-                cmd.Parameters.Add("@16", OleDbType.VarChar).Value = row.CreateDate
-                cmd.Parameters.Add("@17", OleDbType.VarChar).Value = row.CreateTime
-                cmd.Parameters.Add("@18", OleDbType.VarChar).Value = row.CreateUser
-                cmd.Parameters.Add("@19", OleDbType.VarChar).Value = row.UpdateDate
-                cmd.Parameters.Add("@20", OleDbType.VarChar).Value = row.UpdateTime
-                cmd.Parameters.Add("@21", OleDbType.VarChar).Value = row.UpdateUser
+                cmd.Parameters.AddWithValue("@PropCode", row.PropCode)
+                cmd.Parameters.AddWithValue("@PropName", row.PropName)
+                cmd.Parameters.AddWithValue("@Description", row.Description)
+                cmd.Parameters.AddWithValue("@Category", row.Category)
+                cmd.Parameters.AddWithValue("@Condition", row.Condition)
+                cmd.Parameters.AddWithValue("@AcquiredDate", row.AcquiredDate)
+                cmd.Parameters.AddWithValue("@Unit", row.Unit)
+                cmd.Parameters.AddWithValue("@PurchasePrice", row.PurchasePrice)
+                cmd.Parameters.AddWithValue("@SalesPrice", row.SalesPrice)
+                cmd.Parameters.AddWithValue("@CurrentValue", row.CurrentValue)
+                cmd.Parameters.AddWithValue("@Location", row.Location)
+                cmd.Parameters.AddWithValue("@Manufacturer", row.Manufacturer)
+                cmd.Parameters.AddWithValue("@Model", row.Model)
+                cmd.Parameters.AddWithValue("@Comments", row.Comments)
+                cmd.Parameters.AddWithValue("@CreateDate", row.CreateDate)
+                cmd.Parameters.AddWithValue("@CreateTime", row.CreateTime)
+                cmd.Parameters.AddWithValue("@CreateUser", row.CreateUser)
+                cmd.Parameters.AddWithValue("@UpdateDate", row.UpdateDate)
+                cmd.Parameters.AddWithValue("@UpdateTime", row.UpdateTime)
+                cmd.Parameters.AddWithValue("@UpdateUser", row.UpdateUser)
 
                 res = cmd.ExecuteNonQuery()
 
@@ -301,9 +301,9 @@ Public Class Property1
             dbConn.Open()
             dbConn.BeginTran()
             Dim sSQL As String = UpdateSQL()
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
+            Dim row As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
             Dim now As Date = Date.Now
             row.CreateDate = now.ToString("yyyy/MM/dd")
             row.CreateTime = now.ToString("HH:mm:ss")
@@ -312,23 +312,23 @@ Public Class Property1
             row.UpdateTime = now.ToString("HH:mm:ss")
             row.UpdateUser = Utility.LoginUserCode
 
-            cmd.Parameters.Add("@PropName", OleDbType.VarChar).Value = row.PropName
-            cmd.Parameters.Add("@Description", OleDbType.VarChar).Value = row.Description
-            cmd.Parameters.Add("@Category", OleDbType.VarChar).Value = row.Category
-            cmd.Parameters.Add("@Condition", OleDbType.VarChar).Value = row.Condition
-            cmd.Parameters.Add("@AcquiredDate", OleDbType.VarChar).Value = row.AcquiredDate
-            cmd.Parameters.Add("@Unit", OleDbType.VarChar).Value = row.Unit
-            cmd.Parameters.Add("@PurchasePrice", OleDbType.Currency).Value = row.PurchasePrice
-            cmd.Parameters.Add("@SalesPrice", OleDbType.Currency).Value = row.SalesPrice
-            cmd.Parameters.Add("@CurrentValue", OleDbType.Currency).Value = row.CurrentValue
-            cmd.Parameters.Add("@Location", OleDbType.VarChar).Value = row.Location
-            cmd.Parameters.Add("@Manufacturer", OleDbType.VarChar).Value = row.Manufacturer
-            cmd.Parameters.Add("@Model", OleDbType.VarChar).Value = row.Model
-            cmd.Parameters.Add("@Comments", OleDbType.VarChar).Value = row.Comments
-            cmd.Parameters.Add("@UpdateDate", OleDbType.VarChar).Value = row.UpdateDate
-            cmd.Parameters.Add("@UpdateTime", OleDbType.VarChar).Value = row.UpdateTime
-            cmd.Parameters.Add("@UpdateUser", OleDbType.VarChar).Value = row.UpdateUser
-            cmd.Parameters.Add("@PropCode", OleDbType.VarChar).Value = row.PropCode
+            cmd.Parameters.AddWithValue("@PropName", row.PropName)
+            cmd.Parameters.AddWithValue("@Description", row.Description)
+            cmd.Parameters.AddWithValue("@Category", row.Category)
+            cmd.Parameters.AddWithValue("@Condition", row.Condition)
+            cmd.Parameters.AddWithValue("@AcquiredDate", row.AcquiredDate)
+            cmd.Parameters.AddWithValue("@Unit", row.Unit)
+            cmd.Parameters.AddWithValue("@PurchasePrice", row.PurchasePrice)
+            cmd.Parameters.AddWithValue("@SalesPrice", row.SalesPrice)
+            cmd.Parameters.AddWithValue("@CurrentValue", row.CurrentValue)
+            cmd.Parameters.AddWithValue("@Location", row.Location)
+            cmd.Parameters.AddWithValue("@Manufacturer", row.Manufacturer)
+            cmd.Parameters.AddWithValue("@Model", row.Model)
+            cmd.Parameters.AddWithValue("@Comments", row.Comments)
+            cmd.Parameters.AddWithValue("@UpdateDate", row.UpdateDate)
+            cmd.Parameters.AddWithValue("@UpdateTime", row.UpdateTime)
+            cmd.Parameters.AddWithValue("@UpdateUser", row.UpdateUser)
+            cmd.Parameters.AddWithValue("@PropCode", row.PropCode)
 
             res = cmd.ExecuteNonQuery()
             dbConn.CommitTran()
@@ -352,12 +352,12 @@ Public Class Property1
             dbConn.Open()
             dbConn.BeginTran()
             Dim sSQL As String = DeleteSQL()
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
-            cmd.Parameters.Add("@1", OleDbType.Boolean).Value = True
-            cmd.Parameters.Add("@2", OleDbType.VarChar).Value = New Date().ToString("yyyy/MM/dd")
-            cmd.Parameters.Add("@3", OleDbType.VarChar).Value = row.PropCode
+            Dim row As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
+            cmd.Parameters.AddWithValue("@Retired", True)
+            cmd.Parameters.AddWithValue("@RetiredDate", New Date().ToString("yyyy/MM/dd"))
+            cmd.Parameters.AddWithValue("@PropCode", row.PropCode)
 
             res = cmd.ExecuteNonQuery()
             dbConn.CommitTran()
@@ -413,7 +413,7 @@ Public Class Property1
         Dim sb As New StringBuilder()
         sb.AppendLine("INSERT INTO [Property]                               ")
         sb.AppendLine("            ( [PropCode], [PropName], [Description], [Category], [Condition], [AcquiredDate], [Unit], [PurchasePrice], [SalesPrice], [CurrentValue], [Location], [Manufacturer], [Model], [Comments], [CreateDate], [CreateTime], [CreateUser], [UpdateDate], [UpdateTime], [UpdateUser]) ")
-        sb.AppendLine("     VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                                          ")
+        sb.AppendLine("     VALUES ( @PropCode, @PropName, @Description, @Category, @Condition, @AcquiredDate, @Unit, @PurchasePrice, @SalesPrice, @CurrentValue, @Location, @Manufacturer, @Model, @Comments, @CreateDate, @CreateTime, @CreateUser, @UpdateDate, @UpdateTime, @UpdateUser) ")
         Return sb.ToString()
     End Function
 #End Region
@@ -421,24 +421,24 @@ Public Class Property1
 #Region "UpdatePropertySQL"
     Private Function UpdateSQL() As String
         Dim sb As New StringBuilder()
-        sb.AppendLine("UPDATE [Property]                                ")
-        sb.AppendLine("   SET [PropName] = ?                            ")
-        sb.AppendLine("     , [Description] = ?                         ")
-        sb.AppendLine("     , [Category] = ?                            ")
-        sb.AppendLine("     , [Condition] = ?                           ")
-        sb.AppendLine("     , [AcquiredDate] = ?                       ")
-        sb.AppendLine("     , [Unit] = ?                                ")
-        sb.AppendLine("     , [PurchasePrice] = ?                      ")
-        sb.AppendLine("     , [SalesPrice] = ?                         ")
-        sb.AppendLine("     , [CurrentValue] = ?                       ")
-        sb.AppendLine("     , [Location] = ?                            ")
-        sb.AppendLine("     , [Manufacturer] = ?                        ")
-        sb.AppendLine("     , [Model] = ?                               ")
-        sb.AppendLine("     , [Comments] = ?                            ")
-        sb.AppendLine("     , [UpdateDate] = ?                         ")
-        sb.AppendLine("     , [UpdateTime] = ?                         ")
-        sb.AppendLine("     , [UpdateUser] = ?                         ")
-        sb.AppendLine(" WHERE [PropCode] = ?                            ")
+        sb.AppendLine("UPDATE [Property]                                            ")
+        sb.AppendLine("   SET [PropName] = @PropName                                ")
+        sb.AppendLine("     , [Description] = @Description                          ")
+        sb.AppendLine("     , [Category] = @Category                                ")
+        sb.AppendLine("     , [Condition] = @Condition                              ")
+        sb.AppendLine("     , [AcquiredDate] = @AcquiredDate                        ")
+        sb.AppendLine("     , [Unit] = @Unit                                        ")
+        sb.AppendLine("     , [PurchasePrice] = @PurchasePrice                      ")
+        sb.AppendLine("     , [SalesPrice] = @SalesPrice                            ")
+        sb.AppendLine("     , [CurrentValue] = @CurrentValue                        ")
+        sb.AppendLine("     , [Location] = @Location                                ")
+        sb.AppendLine("     , [Manufacturer] = @Manufacturer                        ")
+        sb.AppendLine("     , [Model] = @Model                                      ")
+        sb.AppendLine("     , [Comments] = @Comments                                ")
+        sb.AppendLine("     , [UpdateDate] = @UpdateDate                            ")
+        sb.AppendLine("     , [UpdateTime] = @UpdateTime                            ")
+        sb.AppendLine("     , [UpdateUser] = @UpdateUser                            ")
+        sb.AppendLine(" WHERE [PropCode] = @PropCode                                ")
         Return sb.ToString()
     End Function
 #End Region
@@ -446,10 +446,10 @@ Public Class Property1
 #Region "DeletePropertySQL"
     Private Function DeleteSQL() As String
         Dim sb As New StringBuilder()
-        sb.AppendLine("UPDATE [Property]                                ")
-        sb.AppendLine("   SET [Retired] = ?                             ")
-        sb.AppendLine("     , [RetiredDate] = ?                        ")
-        sb.AppendLine(" WHERE [PropCode] = ?                            ")
+        sb.AppendLine("UPDATE [Property]                                            ")
+        sb.AppendLine("   SET [Retired] = @Retired                                  ")
+        sb.AppendLine("     , [RetiredDate] = @RetiredDate                          ")
+        sb.AppendLine(" WHERE [PropCode] = @PropCode                                ")
         Return sb.ToString()
     End Function
 #End Region

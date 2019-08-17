@@ -1,5 +1,5 @@
 ﻿Imports System.Threading.Tasks
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Text
 
 Public Class ErrorLog
@@ -47,53 +47,35 @@ Friend Class DbLogging
 
     Public Function LogError(windowName As String, errorText As String, ex As Exception) As Integer Implements ILogging.LogError
         Dim sb As New StringBuilder()
-        sb.AppendLine("INSERT INTO [ErrorLog]              ")
-        sb.AppendLine("          ( [Title]                  ")
-        sb.AppendLine("          , [Message]                ")
-        sb.AppendLine("          , [Source]                 ")
-        sb.AppendLine("          , [StackTrace]             ")
-        sb.AppendLine("          , [InnerException]         ")
-        sb.AppendLine("          , [Window]                 ")
-        sb.AppendLine("          , [CreateDate]            ")
-        sb.AppendLine("          , [CreateTime]            ")
-        sb.AppendLine("          , [CreateUser]            ")
-        sb.AppendLine("          )                          ")
-        sb.AppendLine("     VALUES                          ")
-        sb.AppendLine("          ( ?                        ")
-        sb.AppendLine("          , ?                        ")
-        sb.AppendLine("          , ?                        ")
-        sb.AppendLine("          , ?                        ")
-        sb.AppendLine("          , ?                        ")
-        sb.AppendLine("          , ?                        ")
-        sb.AppendLine("          , ?                        ")
-        sb.AppendLine("          , ?                        ")
-        sb.AppendLine("          , ?                        ")
-        sb.AppendLine("          )                          ")
-
+        sb.AppendLine("INSERT INTO [ErrorLog]                                                                                                           ")
+        sb.AppendLine("          ( [Title], [Message], [Source], [StackTrace], [InnerException], [Window], [CreateDate], [CreateTime], [CreateUser])    ")
+        sb.AppendLine("     VALUES                                                                                                                      ")
+        sb.AppendLine("          ( @Title, @Message, @Source, @StackTrace, @InnerException, @Window, @CreateDate, @CreateTime, @CreateUser)             ")
+     
         Dim sSQL As String = sb.ToString()
         Dim dbConn As New DbConnect()
         Try
             dbConn.Open()
             dbConn.BeginTran()
-            Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
+            Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            cmd.Parameters.Add("@Title", OleDbType.VarChar).Value = errorText
-            cmd.Parameters.Add("@Message", OleDbType.VarChar).Value = ex.Message
-            cmd.Parameters.Add("@Source", OleDbType.VarChar).Value = ex.Source
-            cmd.Parameters.Add("@StackTrace", OleDbType.VarChar).Value = ex.StackTrace
+            cmd.Parameters.AddWithValue("@Title", errorText)
+            cmd.Parameters.AddWithValue("@Message", ex.Message)
+            cmd.Parameters.AddWithValue("@Source", ex.Source)
+            cmd.Parameters.AddWithValue("@StackTrace", ex.StackTrace)
             If ex.InnerException Is Nothing Then
-                cmd.Parameters.Add("@InnerException", OleDbType.VarChar).Value = ""
+                cmd.Parameters.AddWithValue("@InnerException", "")
             Else
-                cmd.Parameters.Add("@InnerException", OleDbType.VarChar).Value = ex.InnerException.Message
+                cmd.Parameters.AddWithValue("@InnerException", ex.InnerException.Message)
             End If
-            cmd.Parameters.Add("@Window", OleDbType.VarChar).Value = windowName
+            cmd.Parameters.AddWithValue("@Window", windowName)
             Dim d As Date = Date.Now
-            cmd.Parameters.Add("@CreateDate", OleDbType.VarChar).Value = d.ToString("yyyy/MM/dd")
-            cmd.Parameters.Add("@CreateTime", OleDbType.VarChar).Value = d.ToString("HH:mm:ss")
-            cmd.Parameters.Add("@CreateUser", OleDbType.VarChar).Value = Utility.LoginUserCode
+            cmd.Parameters.AddWithValue("@CreateDate", d.ToString("yyyy/MM/dd"))
+            cmd.Parameters.AddWithValue("@CreateTime", d.ToString("HH:mm:ss"))
+            cmd.Parameters.AddWithValue("@CreateUser", Utility.LoginUserCode)
             LogError = cmd.ExecuteNonQuery()
             dbConn.CommitTran()
-        Catch oleDbEx As OleDbException
+        Catch oleDbEx As SqlException
             dbConn.RollbackTran()
             Console.WriteLine(oleDbEx.ToString())
             LogError = -1

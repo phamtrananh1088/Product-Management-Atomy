@@ -76,6 +76,7 @@
                 _callback(res)
             Case EnumSearch.SearchWareHouse, EnumSearch.SearchWareHouseIn
                 Dim page As SearchWarehouse = New SearchWarehouse(caller.Text.Trim())
+                page.WareType = If(searchKind = EnumSearch.SearchWareHouse, 1, 0)
                 Dim res As SearchDataArgs = page.SearchByKey()
                 _callback(res)
         End Select

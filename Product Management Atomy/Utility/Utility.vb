@@ -1,4 +1,4 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 Imports System.Threading.Tasks
 Imports System.Data
 
@@ -39,6 +39,30 @@ Public Class Utility
         End Function
     End Structure
 
+    Public Structure RowInit
+        Shared Sub InitCustomerRow(newRow As PMS_ATOMYDataSet.CustomerRow)
+            newRow.CusCode = ""
+            newRow.Company = ""
+            newRow.LastName = ""
+            newRow.FirstName = ""
+            newRow.EmailAddress = ""
+            newRow.JobTitle = ""
+            newRow.BusinessPhone = ""
+            newRow.HomePhone = ""
+            newRow.MobilePhone = ""
+            newRow.FaxNumber = ""
+            newRow.Address = ""
+            newRow.City = ""
+            newRow.StateProvince = ""
+            newRow.ZIPPostalCode = ""
+            newRow.CountryRegion = ""
+            newRow.WebPage = ""
+            newRow.FacebookID = ""
+            newRow.Notes = ""
+            newRow.Retired = False
+            newRow.RetiredDate = ""
+        End Sub
+    End Structure
 #Region "HelpCreateCode"
     Public Shared Function HelpCreateCode(tableName As String) As String
         Dim i = TaskHelpCreateCode(tableName)
@@ -64,7 +88,7 @@ Public Class Utility
                             Dim dataset As New DataSet
                             Try
                                 dbConn.Open()
-                                Dim adapt As New OleDbDataAdapter(sSQL, dbConn.Conn)
+                                Dim adapt As New SqlDataAdapter(sSQL, dbConn.Conn)
                                 Dim count As Integer = adapt.Fill(dataset)
                                 If count > 0 Then
                                     Dim array(count) As String
@@ -107,11 +131,11 @@ Public Class Utility
 #End Region
 
 #Region "HelpGetLastCode"
-    Public Shared Function HelpGetLastCode(tableName As String) As String
-        Dim i = TaskHelpGetLastCode(tableName)
+    Public Shared Function HelpGetLastCode(tableName As String, Optional type As Integer = 1) As String
+        Dim i = TaskHelpGetLastCode(tableName, type)
         Return Task.WhenAny(i).Result.Result
     End Function
-    Friend Shared Function TaskHelpGetLastCode(tableName As String) As Task(Of String)
+    Friend Shared Function TaskHelpGetLastCode(tableName As String, Optional type As Integer = 1) As Task(Of String)
         Return Task.Run(Function()
                             Dim res As String = ""
                             Dim sSQL As String
@@ -123,7 +147,7 @@ Public Class Utility
                                 Case "Employee"
                                     sSQL = "select TOP 1 [EmpCode] from [Employee] where [Retired] = 0 order by [EmpCode] DESC"
                                 Case "Warehouse"
-                                    sSQL = "select TOP 1 [WareCode] from [WarehouseMaster] where [Retired] = 0 order by [WareCode] DESC"
+                                    sSQL = "select TOP 1 [WareCode] from [WarehouseMaster] where [Retired] = 0 and [Type] = @Type order by [WareCode] DESC"
                                 Case Else
                                     sSQL = ""
                             End Select
@@ -131,8 +155,12 @@ Public Class Utility
                             Dim dataset As New DataSet
                             Try
                                 dbConn.Open()
-                                Dim cmd As New OleDbCommand(sSQL, dbConn.Conn)
-                                Dim read As OleDbDataReader = cmd.ExecuteReader()
+                                Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
+                                If tableName = "Warehouse" Then
+                                    cmd.Parameters.AddWithValue("@WareType", type)
+                                End If
+
+                                Dim read As SqlDataReader = cmd.ExecuteReader()
                                 If read.Read() Then
                                     Return read(0).ToString
                                 Else
