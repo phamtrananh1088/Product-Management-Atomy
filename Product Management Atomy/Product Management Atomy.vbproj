@@ -342,9 +342,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="IconAtomy.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Src\AtomyIcon.ico" />
     <Resource Include="AtomyIcon.ico" />
     <Content Include="Data\Atomy.accdb">

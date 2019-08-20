@@ -62,6 +62,74 @@ Public Class Utility
             newRow.Retired = False
             newRow.RetiredDate = ""
         End Sub
+
+        Shared Sub InitPropertyRow(newRow As PMS_ATOMYDataSet.PropertyRow)
+            newRow.PropCode = ""
+            newRow.PropName = ""
+            newRow.Description = ""
+            newRow.Category = ""
+            newRow.Condition = ""
+            newRow.AcquiredDate = ""
+            newRow.Unit = ""
+            newRow.PurchasePrice = 0
+            newRow.SalesPrice = 0
+            newRow.CurrentValue = 0
+            newRow.Location = ""
+            newRow.Manufacturer = "Atomy.Co.,Ltd (Korea)"
+            newRow.Model = ""
+            newRow.Comments = ""
+            newRow.Retired = False
+            newRow.RetiredDate = ""
+        End Sub
+
+        Shared Sub InitEmployeeRow(newRow As PMS_ATOMYDataSet.EmployeeRow)
+            newRow.EmpCode = ""
+            newRow.LastName = ""
+            newRow.FirstName = ""
+            newRow.Department = ""
+            newRow.Position = ""
+            newRow.EmailAddress = ""
+            newRow.BusinessPhone = ""
+            newRow.HomePhone = ""
+            newRow.MobilePhone = ""
+            newRow.FaxNumber = ""
+            newRow.Address = ""
+            newRow.City = ""
+            newRow.StateProvince = ""
+            newRow.ZIPPostalCode = ""
+            newRow.CountryRegion = ""
+            newRow.FacebookID = ""
+            newRow.Notes = ""
+            newRow.Retired = False
+            newRow.RetiredDate = ""
+        End Sub
+
+        Shared Sub InitWarehouseMasterRow(newRow As PMS_ATOMYDataSet.WarehouseMasterRow)
+            newRow.WareCode = ""
+            newRow.Type = 0
+            newRow.WareDate = ""
+            newRow.EmpCode = ""
+            newRow.EmpName = ""
+            newRow.CusCode = ""
+            newRow.CusName = ""
+            newRow.Status = 0
+            newRow.WareTitle = ""
+            newRow.Description = ""
+            newRow.TotalAmount = 0
+            newRow.Discount = 0
+            newRow.SalesAmount = 0
+            newRow.PaymentType = 0
+            newRow.FinishFlag = 0
+            newRow.PaymentDate = ""
+            newRow.FinishDate = ""
+            newRow.Comments = ""
+            newRow.UpdateCount = 1
+            newRow.Retired = False
+            newRow.RetiredDate = ""
+        End Sub
+
+     
+
     End Structure
 #Region "HelpCreateCode"
     Public Shared Function HelpCreateCode(tableName As String) As String
@@ -157,7 +225,7 @@ Public Class Utility
                                 dbConn.Open()
                                 Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
                                 If tableName = "Warehouse" Then
-                                    cmd.Parameters.AddWithValue("@WareType", type)
+                                    cmd.Parameters.AddWithValue("@Type", type)
                                 End If
 
                                 Dim read As SqlDataReader = cmd.ExecuteReader()

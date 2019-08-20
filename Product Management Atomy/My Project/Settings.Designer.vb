@@ -81,7 +81,7 @@ Partial Friend NotInheritable Class MySettings
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Configuration.SpecialSettingAttribute(Global.System.Configuration.SpecialSetting.ConnectionString),  _
      Global.System.Configuration.DefaultSettingValueAttribute("Data Source=.\SqlExpress;Initial Catalog=PMS_ATOMY;Persist Security Info=True;Use"& _ 
-        "r ID=sa")>  _
+        "r ID=sa;Password=net123aA@;")>  _
     Public ReadOnly Property PMS_ATOMYConnectionString() As String
         Get
             Return CType(Me("PMS_ATOMYConnectionString"),String)

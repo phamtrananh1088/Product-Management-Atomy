@@ -5,18 +5,20 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Anh.Pmt.Atomy"
       mc:Ignorable="d" 
-      d:DesignHeight="768" d:DesignWidth="1024"
+      HorizontalAlignment="Left" VerticalAlignment="Top"
       Title="Quản lý bán hàng Atomy">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="9*"/>
-            <ColumnDefinition Width="1015*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="39"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <local:PageTitle Title="Trang chính" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1024" Grid.ColumnSpan="2" Height="30"/>
-        <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="719" VerticalAlignment="Top" Width="1004" Grid.Column="1" Grid.Row="1" />
-    </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Width="1000" Height="690">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="1015*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="39"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <local:PageTitle Title="Trang chính" HorizontalAlignment="Left" VerticalAlignment="Top" Width="996" Grid.ColumnSpan="2" Height="30" Margin="4,0,0,0"/>
+            <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="651" VerticalAlignment="Top" Width="991" Grid.Column="1" Grid.Row="1" />
+        </Grid>
+    </ScrollViewer>
 </Page>

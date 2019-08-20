@@ -1,6 +1,5 @@
 ﻿<NavigationWindow x:Class="PopupWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="PopupWindow" Height="788" Width="1044" ShowsNavigationUI="False" HorizontalContentAlignment="Left" VerticalContentAlignment="Top"
-                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+    Title="PopupWindow" Height="768" Width="1024" ShowsNavigationUI="False">
 </NavigationWindow>

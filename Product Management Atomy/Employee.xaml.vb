@@ -201,6 +201,7 @@ Public Class Employee
         If ProcessSelection.Mode = DataRowState.Added Then
             AtomyDataSet.Employee.Clear()
             Dim newRow As PMS_ATOMYDataSet.EmployeeRow = AtomyDataSet.Employee.NewEmployeeRow()
+            Utility.RowInit.InitEmployeeRow(newRow)
             AtomyDataSet.Employee.Rows.Add(newRow)
             Me.DataContext = AtomyDataSet.Employee.Rows(0)
             Mode = DataRowState.Added

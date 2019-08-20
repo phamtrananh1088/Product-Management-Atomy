@@ -10,7 +10,7 @@ Public Class NumericValidationRule
         Dim strValue As String = Convert.ToString(value)
 
         If String.IsNullOrEmpty(strValue) Then
-            Return New ValidationResult(False, "Thông tin này là bắt buộc.")
+            Return ValidationResult.ValidResult
         End If
 
         Dim canConvert As Boolean = False

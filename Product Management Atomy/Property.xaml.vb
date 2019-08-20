@@ -82,6 +82,8 @@ Public Class Property1
             txtModel.IsEnabled = True
             txtComments.IsEnabled = True
             txtAccquiredDate.IsEnabled = True
+            lblRetiredDate.Visibility = Windows.Visibility.Hidden
+            txtRetiredDate.Visibility = Windows.Visibility.Hidden
         ElseIf Mode = DataRowState.Modified Then
             txtPropName.IsEnabled = True
             txtDescription.IsEnabled = True
@@ -96,7 +98,8 @@ Public Class Property1
             txtModel.IsEnabled = True
             txtComments.IsEnabled = True
             txtAccquiredDate.IsEnabled = True
-
+            lblRetiredDate.Visibility = Windows.Visibility.Hidden
+            txtRetiredDate.Visibility = Windows.Visibility.Hidden
         ElseIf Me.Mode = DataRowState.Deleted Then
             txtPropName.IsEnabled = False
             txtDescription.IsEnabled = False
@@ -111,12 +114,37 @@ Public Class Property1
             txtModel.IsEnabled = False
             txtComments.IsEnabled = False
             txtAccquiredDate.IsEnabled = False
-
+            lblRetiredDate.Visibility = Windows.Visibility.Visible
+            txtRetiredDate.Visibility = Windows.Visibility.Visible
         End If
 
     End Sub
 #End Region
 
+#Region "ProcessSelection_ValueChange"
+    Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
+        If ProcessSelection.Mode = DataRowState.Added Then
+            AtomyDataSet._Property.Clear()
+            Dim newRow As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.NewPropertyRow()
+            Utility.RowInit.InitPropertyRow(newRow)
+            AtomyDataSet._Property.Rows.Add(newRow)
+            Me.DataContext = AtomyDataSet._Property.Rows(0)
+            Mode = DataRowState.Added
+            CtrEnable()
+            HelpCreatePropCode()
+        ElseIf ProcessSelection.Mode = DataRowState.Modified Then
+            Me.Mode = DataRowState.Modified
+            CtrEnable()
+            HelpGetLastPropCode()
+        ElseIf ProcessSelection.Mode = DataRowState.Deleted Then
+            Me.Mode = DataRowState.Deleted
+            CtrEnable()
+            HelpGetLastPropCode()
+        End If
+    End Sub
+#End Region
+
+#Region "BUSINESS"
 #Region "btnProcess_Click"
     Private Sub btnProcess_Click(sender As Object, e As RoutedEventArgs)
         Try
@@ -125,40 +153,37 @@ Public Class Property1
                     If Not ValidateData(EnumAction.Insert) Then
                         Return
                     End If
-                    If Check.IsExisted("Property", txtPropCode.Text.Trim) Then
-                        MessageBox.Show("Mã mặt hàng đã tồn tại.")
-                        HelpCreateCode()
-                        Return
-                    End If
-
                     If Insert() Then
-                        MessageBox.Show("Đã hoàn thành.")
+                        MessageBox.Show("Thêm mới thành công.")
                         lblPropCodeHint.Content = ""
+                        ProcessSelection.Mode = DataRowState.Modified
                         LoadData(txtPropCode.Text.Trim)
                     Else
-                        MessageBox.Show("Không thành công.")
+                        MessageBox.Show("Thêm mới thất bại.")
                     End If
                 Case DataRowState.Modified
                     If Not ValidateData(EnumAction.Update) Then
                         Return
                     End If
                     If Update() Then
-                        MessageBox.Show("Đã hoàn thành.")
+                        MessageBox.Show("Sửa đổi thành công.")
                         lblPropCodeHint.Content = ""
                         LoadData(txtPropCode.Text.Trim)
                     Else
-                        MessageBox.Show("Không thành công.")
+                        MessageBox.Show("Sửa đổi thất bại.")
                     End If
                 Case DataRowState.Deleted
                     If Not ValidateData(EnumAction.Delete) Then
                         Return
                     End If
-                    Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", "Atomy", MessageBoxButton.YesNo) = MessageBoxResult.OK)
+                    Dim confirm As Boolean = (MessageBox.Show("Bạn có muốn xóa mặt hàng này không?", Me.Title, MessageBoxButton.YesNo) = MessageBoxResult.Yes)
                     If confirm Then
                         If Delete() Then
-                            MessageBox.Show("Đã hoàn thành.")
+                            MessageBox.Show("Xóa  thành công.")
                             lblPropCodeHint.Content = ""
                             ProcessSelection.Mode = DataRowState.Added
+                        Else
+                            MessageBox.Show("Xóa không thành công.", Me.Title, MessageBoxButton.OK)
                         End If
                     End If
             End Select
@@ -170,66 +195,101 @@ Public Class Property1
     End Sub
 #End Region
 
-#Region "ProcessSelection_ValueChange"
-    Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
-        If ProcessSelection.Mode = DataRowState.Added Then
-            AtomyDataSet._Property.Clear()
-            Dim newRow As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.NewPropertyRow()
-            AtomyDataSet._Property.Rows.Add(newRow)
-            Me.DataContext = AtomyDataSet._Property.Rows(0)
-            Mode = DataRowState.Added
-            CtrEnable()
-            HelpCreateCode()
-        ElseIf ProcessSelection.Mode = DataRowState.Modified Then
-            Me.Mode = DataRowState.Modified
-            CtrEnable()
-        ElseIf ProcessSelection.Mode = DataRowState.Deleted Then
-            Me.Mode = DataRowState.Deleted
-            CtrEnable()
-        End If
-    End Sub
-#End Region
-
-#Region "searchSearchResult"
-    Private Sub searchSearchResult(sender As Object, e As SearchDataArgs)
-        LoadData(e.Code)
-    End Sub
-#End Region
-
-#Region "lnkPropCd_Click"
-    Private Sub lnkPropCd_Click(sender As Object, e As RoutedEventArgs)
-        Try
-            Dim search As New Search()
-            AddHandler search.SearchResult, AddressOf searchSearchResult
-            search.Kind = EnumSearch.SearchProperty
-            search.ShowDialog()
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã mặt hàng.", ex)
-        End Try
-    End Sub
-#End Region
-
-#Region "BUSINESS"
 #Region "ValidateData"
     Private Function ValidateData(action As EnumAction) As Boolean
         Dim hasError As Boolean
         Select Case action
-            Case EnumAction.Update
-                hasError = Validation.GetHasError(txtPropCode)
-                hasError = hasError OrElse Validation.GetHasError(txtPropName)
-                hasError = hasError OrElse Validation.GetHasError(txtSalesPrice)
-                hasError = hasError OrElse Validation.GetHasError(txtUnit)
-                hasError = hasError OrElse Validation.GetHasError(txtPurchasePrice)
-                hasError = hasError OrElse Validation.GetHasError(txtCurrentValue)
             Case EnumAction.Insert
-                hasError = Validation.GetHasError(txtPropCode)
-                hasError = hasError OrElse Validation.GetHasError(txtPropName)
-                hasError = hasError OrElse Validation.GetHasError(txtSalesPrice)
-                hasError = hasError OrElse Validation.GetHasError(txtUnit)
-                hasError = hasError OrElse Validation.GetHasError(txtPurchasePrice)
-                hasError = hasError OrElse Validation.GetHasError(txtCurrentValue)
+                If Validation.GetHasError(txtPropCode) Then
+                    MessageBox.Show("Vui lòng nhập mã mặt hàng.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPropCode.Focus()
+                    Return False
+                End If
+                If Check.IsExisted("Property", txtPropCode.Text.Trim) Then
+                    MessageBox.Show("Mã mặt hàng đã tồn tại.")
+                    HelpCreatePropCode()
+                    Return False
+                End If
+                If Validation.GetHasError(txtPropName) Then
+                    MessageBox.Show("Vui lòng nhập tên mặt hàng.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPropName.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtPurchasePrice) Then
+                    MessageBox.Show("Vui lòng nhập giá mua.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPurchasePrice.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtUnit) Then
+                    MessageBox.Show("Vui lòng nhập đơn vị tính.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtUnit.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtSalesPrice) Then
+                    MessageBox.Show("Vui lòng nhập giá bán.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtSalesPrice.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtCurrentValue) Then
+                    MessageBox.Show("Vui lòng nhập giá hiện tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtCurrentValue.Focus()
+                    Return False
+                End If
+            Case EnumAction.Update
+                If Validation.GetHasError(txtPropCode) Then
+                    MessageBox.Show("Vui lòng nhập mã mặt hàng.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPropCode.Focus()
+                    Return False
+                End If
+                If Not Check.IsExisted("Property", txtPropCode.Text.Trim) Then
+                    MessageBox.Show("Mã mặt hàng chưa được đăng ký hoặc đã bị xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPropCode.Focus()
+                    HelpGetLastPropCode()
+                    Return False
+                End If
+                If Validation.GetHasError(txtPropName) Then
+                    MessageBox.Show("Vui lòng nhập tên mặt hàng.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPropName.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtPurchasePrice) Then
+                    MessageBox.Show("Vui lòng nhập giá mua.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPurchasePrice.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtUnit) Then
+                    MessageBox.Show("Vui lòng nhập đơn vị tính.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtUnit.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtSalesPrice) Then
+                    MessageBox.Show("Vui lòng nhập giá bán.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtSalesPrice.Focus()
+                    Return False
+                End If
+                If Validation.GetHasError(txtCurrentValue) Then
+                    MessageBox.Show("Vui lòng nhập giá hiện tại.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtCurrentValue.Focus()
+                    Return False
+                End If
             Case EnumAction.Delete
-                hasError = Validation.GetHasError(txtPropCode)
+                If Validation.GetHasError(txtPropCode) Then
+                    MessageBox.Show("Vui lòng nhập mã mặt hàng.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPropCode.Focus()
+                    Return False
+                End If
+                If Not Check.IsExisted("Property", txtPropCode.Text.Trim) Then
+                    MessageBox.Show("Mã mặt hàng chưa được đăng ký hoặc đã bị xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtPropCode.Focus()
+                    HelpGetLastPropCode()
+                    Return False
+                End If
+                If Validation.GetHasError(txtRetiredDate) Then
+                    MessageBox.Show("Vui lòng nhập ngày xóa.", Me.Title, MessageBoxButton.OK, MessageBoxImage.Warning)
+                    txtRetiredDate.Focus()
+                    Return False
+                End If
+
         End Select
         Return Not hasError
     End Function
@@ -356,7 +416,7 @@ Public Class Property1
             cmd.Transaction = dbConn.Tran
             Dim row As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
             cmd.Parameters.AddWithValue("@Retired", True)
-            cmd.Parameters.AddWithValue("@RetiredDate", New Date().ToString("yyyy/MM/dd"))
+            cmd.Parameters.AddWithValue("@RetiredDate", row.RetiredDate)
             cmd.Parameters.AddWithValue("@PropCode", row.PropCode)
 
             res = cmd.ExecuteNonQuery()
@@ -373,39 +433,19 @@ Public Class Property1
 #End Region
 
 #Region "HelpCreateCode"
-    Private Sub HelpCreateCode()
+    Private Sub HelpCreatePropCode()
         lblPropCodeHint.Content = "Gợi ý: " + Utility.HelpCreateCode("Property")
     End Sub
-
-#End Region
 #End Region
 
-#Region "txtCode_LostFocus"
-    Private Sub txtCode_LostFocus(sender As Object, e As RoutedEventArgs)
-        Try
-            Dim txtCode = DirectCast(sender, TextBox)
-            Dim s = txtCode.Text.Trim()
-            If s.Length = 0 Then
-                Return
-            End If
-            If s.Length < 8 Then
-                Dim lead As String = New String("0", 8 - s.Length)
-                s = lead + s
-                txtCode.Text = s
-            End If
-            If Mode = DataRowState.Added Then
-                If txtCode.Equals(txtPropCode) AndAlso txtPropCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Property", txtPropCode.Text.Trim) Then
-                    MessageBox.Show("Mã mặt hàng đã tồn tại.", Utility.AppCaption)
-                    txtPropCode.Text = ""
-                End If
-            ElseIf Mode = DataRowState.Modified OrElse Mode = DataRowState.Deleted Then
-            LoadData(txtPropCode.Text.Trim)
-            End If
-        Catch ex As Exception
-            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
-        End Try
+#Region "HelpGetLastPropCode"
+    Private Sub HelpGetLastPropCode()
+        lblPropCodeHint.Content = "Mã gần nhất: " + Utility.HelpGetLastCode("Property")
     End Sub
 #End Region
+#End Region
+
+
 
 #Region "☆ SQL"
 #Region "InsertPropertySQL"
@@ -455,4 +495,51 @@ Public Class Property1
 #End Region
 #End Region
 
+#Region "EVENT"
+#Region "searchSearchResult"
+    Private Sub searchSearchResult(sender As Object, e As SearchDataArgs)
+        LoadData(e.Code)
+    End Sub
+#End Region
+
+#Region "lnkPropCd_Click"
+    Private Sub lnkPropCd_Click(sender As Object, e As RoutedEventArgs)
+        Try
+            Dim search As New Search()
+            AddHandler search.SearchResult, AddressOf searchSearchResult
+            search.Kind = EnumSearch.SearchProperty
+            search.ShowDialog()
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi khi nhấn vào link Mã mặt hàng.", ex)
+        End Try
+    End Sub
+#End Region
+
+#Region "txtCode_LostFocus"
+    Private Sub txtCode_LostFocus(sender As Object, e As RoutedEventArgs)
+        Try
+            Dim txtCode = DirectCast(sender, TextBox)
+            Dim s = txtCode.Text.Trim()
+            If s.Length = 0 Then
+                Return
+            End If
+            If s.Length < 8 Then
+                Dim lead As String = New String("0", 8 - s.Length)
+                s = lead + s
+                txtCode.Text = s
+            End If
+            If Mode = DataRowState.Added Then
+                If txtCode.Equals(txtPropCode) AndAlso txtPropCode.Text.Trim.Length > 0 AndAlso Check.IsExisted("Property", txtPropCode.Text.Trim) Then
+                    MessageBox.Show("Mã mặt hàng đã tồn tại.", Utility.AppCaption)
+                    txtPropCode.Text = ""
+                End If
+            ElseIf Mode = DataRowState.Modified OrElse Mode = DataRowState.Deleted Then
+                LoadData(txtPropCode.Text.Trim)
+            End If
+        Catch ex As Exception
+            ErrorLog.SetError(Me, "Đã xảy ra lỗi ở ô mã.", ex)
+        End Try
+    End Sub
+#End Region
+#End Region
 End Class

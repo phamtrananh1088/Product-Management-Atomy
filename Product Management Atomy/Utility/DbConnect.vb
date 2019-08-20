@@ -3,7 +3,6 @@ Imports System.Data
 
 Public Class DbConnect
     Private _connString As String = New MySettings().PMS_ATOMYConnectionString
-    Private _sensitiveData As String = ";Password=net123aA@;"
     Private _Conn As SqlConnection
     Private _Tran As SqlTransaction
     Public Property Conn As SqlConnection
@@ -35,7 +34,7 @@ Public Class DbConnect
 
     Public Sub Open()
         If _Conn Is Nothing Then
-            _Conn = New SqlConnection(_connString + _sensitiveData)
+            _Conn = New SqlConnection(_connString)
         End If
         If State = ConnectionState.Closed Then
             _Conn.Open()

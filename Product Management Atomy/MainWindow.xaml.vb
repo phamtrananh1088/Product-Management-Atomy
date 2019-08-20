@@ -46,17 +46,17 @@ Class MainWindow
                 Dim p As New Employee
                 pop.Content = p
                 pop.Title = p.Title
-                pop.ShowDialog()
+                pop.Show()
             Case "Property1"
                 Dim p As New Property1
                 pop.Content = p
                 pop.Title = p.Title
-                pop.ShowDialog()
+                pop.Show()
             Case "WarehouseIn"
                 Dim p As New Warehouse(0)
                 pop.Content = p
                 pop.Title = p.Title
-                pop.ShowDialog()
+                pop.Show()
             Case "Warehouse"
                 Dim p As New Warehouse(1)
                 pop.Content = p
@@ -66,12 +66,12 @@ Class MainWindow
                 Dim p As New Order
                 pop.Content = p
                 pop.Title = p.Title
-                pop.ShowDialog()
+                pop.Show()
             Case "Customer"
                 Dim p As New Customer
                 pop.Content = p
                 pop.Title = p.Title
-                pop.ShowDialog()
+                pop.Show()
             Case Else
                 Dim p As New Home
                 Main.Content = p

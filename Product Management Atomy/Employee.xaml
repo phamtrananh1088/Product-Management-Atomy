@@ -6,8 +6,8 @@
     xmlns:OleDb="clr-namespace:System.Data.SqlClient;assembly=System.Data"
     xmlns:bindValidation="clr-namespace:BindValidation;assembly=BindValidation"
     xmlns:local="clr-namespace:Anh.Pmt.Atomy" x:Class="Employee"
-    mc:Ignorable="d" 
-    d:DesignHeight="768" d:DesignWidth="1024"
+    mc:Ignorable="d"  
+      VerticalAlignment="Top" HorizontalAlignment="Left"
     Title="Khách hàng">
     <Page.Resources>
         <bindValidation:DateConverter x:Key="dateConverter" />
@@ -28,160 +28,162 @@
             </Style.Triggers>
         </Style>
     </Page.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="39"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="128"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <local:PageTitle Title="Nhân viên" HorizontalAlignment="Left" VerticalAlignment="Top" Width="1024" Grid.ColumnSpan="3" Height="30"/>
-        <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="719" VerticalAlignment="Top" Width="1004" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="1" />
-        <Button x:Name="btnUpdate" HorizontalAlignment="Left" Margin="8,8,0,0" VerticalAlignment="Top" Width="68" Background="#FF23D164" Foreground="White" BorderBrush="Blue" Height="30" Grid.Column="1"
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid  Width="1000" Height="720">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="39"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="128"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <local:PageTitle Title="Nhân viên" HorizontalAlignment="Left" VerticalAlignment="Top" Width="996" Grid.ColumnSpan="3" Height="30" Margin="4,0,0,0"/>
+            <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="681" VerticalAlignment="Top" Width="990" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="1" />
+            <Button x:Name="btnUpdate" HorizontalAlignment="Left" Margin="8,8,0,0" VerticalAlignment="Top" Width="68" Background="#FF23D164" Foreground="White" BorderBrush="Blue" Height="30" Grid.Column="1"
 			Click="btnProcess_Click" Grid.Row="1">
-            <StackPanel Orientation="Horizontal" Width="41">
-                <Image Source=".\icon\1x\outline_save_white_18dp.png" VerticalAlignment="Center" Width="18" Height="18"/>
-                <TextBlock Text="Cất" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </Button>
-        <local:ProcessSelection x:Name="ProcessSelection" Grid.Column="2" HorizontalAlignment="Left" Margin="0,8,0,0" VerticalAlignment="Top" Height="30" Width="244" ValueChange="ProcessSelection_ValueChange" Grid.Row="1"/>
+                <StackPanel Orientation="Horizontal" Width="41">
+                    <Image Source=".\icon\1x\outline_save_white_18dp.png" VerticalAlignment="Center" Width="18" Height="18"/>
+                    <TextBlock Text="Cất" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <local:ProcessSelection x:Name="ProcessSelection" Grid.Column="2" HorizontalAlignment="Left" Margin="0,8,0,0" VerticalAlignment="Top" Height="30" Width="244" ValueChange="ProcessSelection_ValueChange" Grid.Row="1"/>
 
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="30,46,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Row="1" Grid.Column="1"/>
-        <Label x:Name="lblEmpCode" HorizontalAlignment="Left" Margin="44,46,0,0" VerticalAlignment="Top" Height="26" Width="84" Grid.Row="1" Grid.Column="1">
-            <Hyperlink x:Name="lnkEmpCode" Click="lnkEmpCode_Click">
-                <Run Text="Mã nhân viên:"/>
-            </Hyperlink>
-        </Label>
-        <TextBox x:Name="txtEmpCode" HorizontalAlignment="Left" Height="22" Margin="0,46,0,0" VerticalAlignment="Top" Grid.Column="2"
+            <Label Content="(*)" HorizontalAlignment="Left" Margin="30,46,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Row="1" Grid.Column="1"/>
+            <Label x:Name="lblEmpCode" HorizontalAlignment="Left" Margin="44,46,0,0" VerticalAlignment="Top" Height="26" Width="84" Grid.Row="1" Grid.Column="1">
+                <Hyperlink x:Name="lnkEmpCode" Click="lnkEmpCode_Click">
+                    <Run Text="Mã nhân viên:"/>
+                </Hyperlink>
+            </Label>
+            <TextBox x:Name="txtEmpCode" HorizontalAlignment="Left" Height="22" Margin="0,46,0,0" VerticalAlignment="Top" Grid.Column="2"
 			MaxLength="8" Width="68" 
 			LostFocus="txtCode_LostFocus"
 			Style="{StaticResource TextBoxInError}" Grid.Row="1">
-            <Binding Path ="EmpCode" Converter="{StaticResource codeConverter}">
-                <Binding.ValidationRules>
-                    <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
-                    <bindValidation:CodeValidationRule ValidatesOnTargetUpdated="True"/>
-                </Binding.ValidationRules>
-            </Binding>
-        </TextBox>
-        <Label x:Name="lblEmpCodeHint" Content="" HorizontalAlignment="Left" Margin="125,46,0,0" VerticalAlignment="Top" Grid.Column="2" Width="250" Foreground="Gray" Height="26" Grid.Row="1"/>
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="86,72,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Row="1" Grid.Column="1"/>
-        <Label x:Name="lblFirstName" Content="Họ:" HorizontalAlignment="Left" Margin="100,72,0,0" VerticalAlignment="Top" Height="26" Width="28" Grid.Row="1" Grid.Column="1"/>
-        <TextBox x:Name="txtFirstName" HorizontalAlignment="Left" Height="22" Margin="0,74,0,0" VerticalAlignment="Top" Grid.Column="2"
-			MaxLength="20" Width="140"  
-			Style="{StaticResource TextBoxInError}" Grid.Row="1">
-            <Binding Path ="FirstName" Converter="{StaticResource capitalizedNameConverter}">
-                <Binding.ValidationRules>
-                    <bindValidation:RequireRule  ValidatesOnTargetUpdated="True"/>
-                </Binding.ValidationRules>
-            </Binding>
-        </TextBox>
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="139,72,0,0" VerticalAlignment="Top" Foreground="Red" Grid.Column="2" Height="26" Width="22" Grid.Row="1"/>
-        <Label x:Name="lblLastName" Content="Tên:" HorizontalAlignment="Left" Margin="151,72,0,0" VerticalAlignment="Top" Grid.Column="2" Height="26" Width="32" Grid.Row="1"/>
-        <TextBox x:Name="txtLastName" HorizontalAlignment="Left" Height="22" Margin="188,72,0,0" VerticalAlignment="Top" Grid.Column="2"
-			MaxLength="20" Width="140"  
-			Style="{StaticResource TextBoxInError}" Grid.Row="1">
-            <Binding Path ="LastName" Converter="{StaticResource capitalizedNameConverter}">
-                <Binding.ValidationRules>
-                    <bindValidation:RequireRule  ValidatesOnTargetUpdated="True"/>
-                </Binding.ValidationRules>
-            </Binding>
-        </TextBox>
-        <Label Content="(*)" HorizontalAlignment="Left" Margin="31,100,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Row="1" Grid.Column="1"/>
-        <Label x:Name="lblMobilePhone" Content="Số điện thoại:" HorizontalAlignment="Left" Margin="46,100,0,0" VerticalAlignment="Top" Height="26" Width="83" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtMobilePhone" HorizontalAlignment="Left" Height="24" Margin="0,100,0,0" VerticalAlignment="Top" Grid.Column="2"
-			bindValidation:SelectAllAttacher.SelectAllTextOnFocus="True" MaxLength="15" Width="110"  
-			Style="{StaticResource TextBoxInError}" Grid.Row="1" >
-            <Binding Path ="MobilePhone">
-                <Binding.ValidationRules>
-                    <bindValidation:RequireRule  ValidatesOnTargetUpdated="True"/>
-                    <bindValidation:PhoneValidationRule  ValidatesOnTargetUpdated="True"/>
-                </Binding.ValidationRules>
-            </Binding>
-        </TextBox>
-        <Label x:Name="lblFacebookID" Content="Facebook ID:" HorizontalAlignment="Left" Margin="126,100,0,0" VerticalAlignment="Top" Height="26" Width="80" Grid.Column="2" Grid.Row="1"/>
-        <TextBox x:Name="txtFacebookID" HorizontalAlignment="Left" Height="24" Margin="206,100,0,0" Text="{Binding FacebookID}" VerticalAlignment="Top" Grid.Column="2"
-			MaxLength="30" Width="200" Grid.Row="1"/>
-        <Label x:Name="lblDepartment" Content="Phòng ban:" HorizontalAlignment="Left" Margin="50,128,0,0" VerticalAlignment="Top" Height="26" Width="80" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtDepartment" HorizontalAlignment="Left" Height="24" Margin="0,128,0,0" Text="{Binding FacebookID}" VerticalAlignment="Top" Grid.Column="2"
-			MaxLength="30" Width="200" Grid.Row="1"/>
-        <Label x:Name="lblPosition" Content="Chức vụ:" HorizontalAlignment="Left" Margin="207,128,0,0" VerticalAlignment="Top" Height="26" Width="80" Grid.Column="2" Grid.Row="1"/>
-        <TextBox x:Name="txtPosition" HorizontalAlignment="Left" Height="24" Margin="264,128,0,0" Text="{Binding FacebookID}" VerticalAlignment="Top" Grid.Column="2"
-			MaxLength="30" Width="200" Grid.Row="1"/>
-        <Label x:Name="lblEmailAddress" Content="E-mail:" HorizontalAlignment="Left" Margin="82,156,0,0" VerticalAlignment="Top" Height="26" Width="46" Grid.Row="1" Grid.Column="1"/>
-        <TextBox x:Name="txtEmailAddress" HorizontalAlignment="Left" Height="24" Margin="0,158,0,0" VerticalAlignment="Top" Grid.Column="2"
-			MaxLength="30" Width="200"
-			Style="{StaticResource TextBoxInError}" Grid.Row="1">
-            <Binding Path ="EmailAddress">
-                <Binding.ValidationRules>
-                    <bindValidation:EmailValidationRule  ValidatesOnTargetUpdated="True"/>
-                </Binding.ValidationRules>
-            </Binding>
-        </TextBox>
-        <Label x:Name="lblAddress" Content="Địa chỉ:" HorizontalAlignment="Left" Margin="80,186,0,0" VerticalAlignment="Top" Height="26" Width="49" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txtAddress" HorizontalAlignment="Left" Height="24" Margin="0,186,0,0" Text="{Binding Address}" VerticalAlignment="Top" MaxLength="100" Width="620" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblBusinessPhone" Content="Điện thoại công ty:" HorizontalAlignment="Left" Margin="18,270,0,0" VerticalAlignment="Top" Height="26" Width="110" Grid.Row="1" Grid.Column="1"/>
-        <TextBox x:Name="txtBusinessPhone" HorizontalAlignment="Left" Height="24" Margin="0,270,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
-			Style="{StaticResource TextBoxInError}" Grid.Row="1" >
-            <Binding Path ="BusinessPhone">
-                <Binding.ValidationRules>
-                    <bindValidation:PhoneValidationRule  ValidatesOnTargetUpdated="True"/>
-                </Binding.ValidationRules>
-            </Binding>
-        </TextBox>
-        <Label x:Name="lblHomePhone" Content="Điện thoại nhà riêng:" HorizontalAlignment="Left" Margin="7,298,0,0" VerticalAlignment="Top" Height="26" Width="121" Grid.Row="1" Grid.Column="1"/>
-        <TextBox x:Name="txtHomePhone" HorizontalAlignment="Left" Height="24" Margin="0,298,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
-			Style="{StaticResource TextBoxInError}" Grid.Row="1" >
-            <Binding Path ="HomePhone">
-                <Binding.ValidationRules>
-                    <bindValidation:PhoneValidationRule  ValidatesOnTargetUpdated="True"/>
-                </Binding.ValidationRules>
-            </Binding>
-        </TextBox>
-        <Label x:Name="lblFaxNumber" Content="Số Fax:" HorizontalAlignment="Left" Margin="81,326,0,0" VerticalAlignment="Top" Height="26" Width="47" Grid.Row="1" Grid.Column="1"/>
-        <TextBox x:Name="txtFaxNumber" HorizontalAlignment="Left" Height="24" Margin="0,326,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
-			Style="{StaticResource TextBoxInError}" Grid.Row="1" >
-            <Binding Path ="FaxNumber">
-                <Binding.ValidationRules>
-                    <bindValidation:FaxValidationRule  ValidatesOnTargetUpdated="True"/>
-                </Binding.ValidationRules>
-            </Binding>
-        </TextBox>
-        <Label x:Name="lblCity" Content="Thành phố:" HorizontalAlignment="Left" Margin="57,214,0,0" VerticalAlignment="Top" Height="26" Width="70" Grid.Row="1" Grid.Column="1"/>
-        <TextBox x:Name="txtCity" HorizontalAlignment="Left" Height="24" Margin="0,214,0,0" Text="{Binding City}" VerticalAlignment="Top" MaxLength="30" Width="200" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblProvince" Content="Tỉnh:" HorizontalAlignment="Left" Margin="92,242,0,0" VerticalAlignment="Top" Height="26" Width="35" Grid.Row="1" Grid.Column="1"/>
-        <ComboBox x:Name="cboProvince" IsEditable="True" Grid.Column="2" HorizontalAlignment="Left" Margin="0,242,0,0" VerticalAlignment="Top" Width="200" Grid.Row="1" Height="22">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Province}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-        <Label x:Name="lblZip" Content="Mã bưu chính:" HorizontalAlignment="Left" Margin="42,354,0,0" VerticalAlignment="Top" Height="26" Width="86" Grid.Row="1" Grid.Column="1"/>
-        <TextBox x:Name="txtZip" HorizontalAlignment="Left" Height="24" Margin="0,354,0,0" Text="{Binding ZIPPostalCode}" VerticalAlignment="Top" MaxLength="10" Width="80" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblCountry" Content="Quốc gia:" HorizontalAlignment="Left" Margin="68,382,0,0" VerticalAlignment="Top" Height="26" Width="60" Grid.Row="1" Grid.Column="1"/>
-        <TextBox x:Name="txtCountry" HorizontalAlignment="Left" Height="24" Margin="0,382,0,0" Text="{Binding CountryRegion}" VerticalAlignment="Top" MaxLength="20" Width="140" Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblNotes" Content="Chú thích:" HorizontalAlignment="Left" Margin="65,410,0,0" VerticalAlignment="Top" Height="26" Width="63" Grid.Row="1" Grid.Column="1"/>
-        <TextBox x:Name="txtNotes" HorizontalAlignment="Left" Height="52" Margin="0,410,0,0" Text="{Binding Notes}" VerticalAlignment="Top" MaxLength="1000" Width="620" 
-			ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True"  
-			Grid.Column="2" Grid.Row="1"/>
-        <Label x:Name="lblRetiredDate" Content="Ngày nghỉ việc:" HorizontalAlignment="Left" Margin="36,470,0,0" VerticalAlignment="Top" Height="26" Width="92" Grid.Row="1" Grid.Column="1" RenderTransformOrigin="0.2,1.957"/>
-        <TextBox x:Name="txtRetiredDate" HorizontalAlignment="Right" Height="23" Margin="0,470,806,0" VerticalAlignment="Top" MaxLength="10" Width="80"
-                 Style="{StaticResource TextBoxInError}" Grid.Column="2" Grid.Row="1">
-            <TextBox.Text>
-                <Binding Path ="RetiredDate" Converter="{StaticResource dateConverter}">
+                <Binding Path ="EmpCode" Converter="{StaticResource codeConverter}">
                     <Binding.ValidationRules>
                         <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
+                        <bindValidation:CodeValidationRule ValidatesOnTargetUpdated="True"/>
                     </Binding.ValidationRules>
                 </Binding>
-            </TextBox.Text>
-        </TextBox>
+            </TextBox>
+            <Label x:Name="lblEmpCodeHint" Content="" HorizontalAlignment="Left" Margin="125,46,0,0" VerticalAlignment="Top" Grid.Column="2" Width="250" Foreground="Gray" Height="26" Grid.Row="1"/>
+            <Label Content="(*)" HorizontalAlignment="Left" Margin="86,72,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Row="1" Grid.Column="1"/>
+            <Label x:Name="lblFirstName" Content="Họ:" HorizontalAlignment="Left" Margin="100,72,0,0" VerticalAlignment="Top" Height="26" Width="28" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="txtFirstName" HorizontalAlignment="Left" Height="22" Margin="0,74,0,0" VerticalAlignment="Top" Grid.Column="2"
+			MaxLength="20" Width="140"  
+			Style="{StaticResource TextBoxInError}" Grid.Row="1">
+                <Binding Path ="FirstName" Converter="{StaticResource capitalizedNameConverter}">
+                    <Binding.ValidationRules>
+                        <bindValidation:RequireRule  ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox>
+            <Label Content="(*)" HorizontalAlignment="Left" Margin="139,72,0,0" VerticalAlignment="Top" Foreground="Red" Grid.Column="2" Height="26" Width="22" Grid.Row="1"/>
+            <Label x:Name="lblLastName" Content="Tên:" HorizontalAlignment="Left" Margin="151,72,0,0" VerticalAlignment="Top" Grid.Column="2" Height="26" Width="32" Grid.Row="1"/>
+            <TextBox x:Name="txtLastName" HorizontalAlignment="Left" Height="22" Margin="188,72,0,0" VerticalAlignment="Top" Grid.Column="2"
+			MaxLength="20" Width="140"  
+			Style="{StaticResource TextBoxInError}" Grid.Row="1">
+                <Binding Path ="LastName" Converter="{StaticResource capitalizedNameConverter}">
+                    <Binding.ValidationRules>
+                        <bindValidation:RequireRule  ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox>
+            <Label Content="(*)" HorizontalAlignment="Left" Margin="31,100,0,0" VerticalAlignment="Top" Foreground="Red" Height="26" Width="22" Grid.Row="1" Grid.Column="1"/>
+            <Label x:Name="lblMobilePhone" Content="Số điện thoại:" HorizontalAlignment="Left" Margin="46,100,0,0" VerticalAlignment="Top" Height="26" Width="83" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="txtMobilePhone" HorizontalAlignment="Left" Height="24" Margin="0,100,0,0" VerticalAlignment="Top" Grid.Column="2"
+			bindValidation:SelectAllAttacher.SelectAllTextOnFocus="True" MaxLength="15" Width="110"  
+			Style="{StaticResource TextBoxInError}" Grid.Row="1" >
+                <Binding Path ="MobilePhone">
+                    <Binding.ValidationRules>
+                        <bindValidation:RequireRule  ValidatesOnTargetUpdated="True"/>
+                        <bindValidation:PhoneValidationRule  ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox>
+            <Label x:Name="lblFacebookID" Content="Facebook ID:" HorizontalAlignment="Left" Margin="126,100,0,0" VerticalAlignment="Top" Height="26" Width="80" Grid.Column="2" Grid.Row="1"/>
+            <TextBox x:Name="txtFacebookID" HorizontalAlignment="Left" Height="24" Margin="206,100,0,0" Text="{Binding FacebookID}" VerticalAlignment="Top" Grid.Column="2"
+			MaxLength="30" Width="200" Grid.Row="1"/>
+            <Label x:Name="lblDepartment" Content="Phòng ban:" HorizontalAlignment="Left" Margin="50,128,0,0" VerticalAlignment="Top" Height="26" Width="80" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="txtDepartment" HorizontalAlignment="Left" Height="24" Margin="0,128,0,0" Text="{Binding FacebookID}" VerticalAlignment="Top" Grid.Column="2"
+			MaxLength="30" Width="200" Grid.Row="1"/>
+            <Label x:Name="lblPosition" Content="Chức vụ:" HorizontalAlignment="Left" Margin="207,128,0,0" VerticalAlignment="Top" Height="26" Width="80" Grid.Column="2" Grid.Row="1"/>
+            <TextBox x:Name="txtPosition" HorizontalAlignment="Left" Height="24" Margin="264,128,0,0" Text="{Binding FacebookID}" VerticalAlignment="Top" Grid.Column="2"
+			MaxLength="30" Width="200" Grid.Row="1"/>
+            <Label x:Name="lblEmailAddress" Content="E-mail:" HorizontalAlignment="Left" Margin="82,156,0,0" VerticalAlignment="Top" Height="26" Width="46" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="txtEmailAddress" HorizontalAlignment="Left" Height="24" Margin="0,158,0,0" VerticalAlignment="Top" Grid.Column="2"
+			MaxLength="30" Width="200"
+			Style="{StaticResource TextBoxInError}" Grid.Row="1">
+                <Binding Path ="EmailAddress">
+                    <Binding.ValidationRules>
+                        <bindValidation:EmailValidationRule  ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox>
+            <Label x:Name="lblAddress" Content="Địa chỉ:" HorizontalAlignment="Left" Margin="80,186,0,0" VerticalAlignment="Top" Height="26" Width="49" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="txtAddress" HorizontalAlignment="Left" Height="24" Margin="0,186,0,0" Text="{Binding Address}" VerticalAlignment="Top" MaxLength="100" Width="620" Grid.Column="2" Grid.Row="1"/>
+            <Label x:Name="lblBusinessPhone" Content="Điện thoại công ty:" HorizontalAlignment="Left" Margin="18,270,0,0" VerticalAlignment="Top" Height="26" Width="110" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="txtBusinessPhone" HorizontalAlignment="Left" Height="24" Margin="0,270,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
+			Style="{StaticResource TextBoxInError}" Grid.Row="1" >
+                <Binding Path ="BusinessPhone">
+                    <Binding.ValidationRules>
+                        <bindValidation:PhoneValidationRule  ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox>
+            <Label x:Name="lblHomePhone" Content="Điện thoại nhà riêng:" HorizontalAlignment="Left" Margin="7,298,0,0" VerticalAlignment="Top" Height="26" Width="121" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="txtHomePhone" HorizontalAlignment="Left" Height="24" Margin="0,298,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
+			Style="{StaticResource TextBoxInError}" Grid.Row="1" >
+                <Binding Path ="HomePhone">
+                    <Binding.ValidationRules>
+                        <bindValidation:PhoneValidationRule  ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox>
+            <Label x:Name="lblFaxNumber" Content="Số Fax:" HorizontalAlignment="Left" Margin="81,326,0,0" VerticalAlignment="Top" Height="26" Width="47" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="txtFaxNumber" HorizontalAlignment="Left" Height="24" Margin="0,326,0,0" VerticalAlignment="Top" MaxLength="15" Width="110" Grid.Column="2"
+			Style="{StaticResource TextBoxInError}" Grid.Row="1" >
+                <Binding Path ="FaxNumber">
+                    <Binding.ValidationRules>
+                        <bindValidation:FaxValidationRule  ValidatesOnTargetUpdated="True"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox>
+            <Label x:Name="lblCity" Content="Thành phố:" HorizontalAlignment="Left" Margin="57,214,0,0" VerticalAlignment="Top" Height="26" Width="70" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="txtCity" HorizontalAlignment="Left" Height="24" Margin="0,214,0,0" Text="{Binding City}" VerticalAlignment="Top" MaxLength="30" Width="200" Grid.Column="2" Grid.Row="1"/>
+            <Label x:Name="lblProvince" Content="Tỉnh:" HorizontalAlignment="Left" Margin="92,242,0,0" VerticalAlignment="Top" Height="26" Width="35" Grid.Row="1" Grid.Column="1"/>
+            <ComboBox x:Name="cboProvince" IsEditable="True" Grid.Column="2" HorizontalAlignment="Left" Margin="0,242,0,0" VerticalAlignment="Top" Width="200" Grid.Row="1" Height="22">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Province}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Label x:Name="lblZip" Content="Mã bưu chính:" HorizontalAlignment="Left" Margin="42,354,0,0" VerticalAlignment="Top" Height="26" Width="86" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="txtZip" HorizontalAlignment="Left" Height="24" Margin="0,354,0,0" Text="{Binding ZIPPostalCode}" VerticalAlignment="Top" MaxLength="10" Width="80" Grid.Column="2" Grid.Row="1"/>
+            <Label x:Name="lblCountry" Content="Quốc gia:" HorizontalAlignment="Left" Margin="68,382,0,0" VerticalAlignment="Top" Height="26" Width="60" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="txtCountry" HorizontalAlignment="Left" Height="24" Margin="0,382,0,0" Text="{Binding CountryRegion}" VerticalAlignment="Top" MaxLength="20" Width="140" Grid.Column="2" Grid.Row="1"/>
+            <Label x:Name="lblNotes" Content="Chú thích:" HorizontalAlignment="Left" Margin="65,410,0,0" VerticalAlignment="Top" Height="26" Width="63" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="txtNotes" HorizontalAlignment="Left" Height="52" Margin="0,410,0,0" Text="{Binding Notes}" VerticalAlignment="Top" MaxLength="1000" Width="620" 
+			ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True"  
+			Grid.Column="2" Grid.Row="1"/>
+            <Label x:Name="lblRetiredDate" Content="Ngày nghỉ việc:" HorizontalAlignment="Left" Margin="35,467,0,0" VerticalAlignment="Top" Height="26" Width="92" Grid.Row="1" Grid.Column="1" />
+            <TextBox x:Name="txtRetiredDate" HorizontalAlignment="Left" Height="23" Margin="0,467,0,0" VerticalAlignment="Top" MaxLength="10" Width="80"
+                 Style="{StaticResource TextBoxInError}" Grid.Column="2" Grid.Row="1">
+                <TextBox.Text>
+                    <Binding Path ="RetiredDate" Converter="{StaticResource dateConverter}">
+                        <Binding.ValidationRules>
+                            <bindValidation:RequireRule ValidatesOnTargetUpdated="True"/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
 
 
 
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </Page>
