@@ -4,13 +4,13 @@ Imports System.Text
 Public Class Customer
 
 #Region "FIELD"
-    Private AtomyDataSet As PMS_ATOMYDataSet
+    Private AtomyDataSet As AtomyDataSet
     Private Mode As DataRowState
 #End Region
 
 #Region "CONSTRUCTOR"
     Public Sub New()
-        AtomyDataSet = New PMS_ATOMYDataSet()
+        AtomyDataSet = New AtomyDataSet()
         ' This call is required by the designer.
         InitializeComponent()
         InitialValue()
@@ -192,7 +192,7 @@ Public Class Customer
     Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
         If ProcessSelection.Mode = DataRowState.Added Then
             AtomyDataSet.Customer.Clear()
-            Dim newRow As PMS_ATOMYDataSet.CustomerRow = AtomyDataSet.Customer.NewCustomerRow()
+            Dim newRow As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.NewCustomerRow()
             Utility.RowInit.InitCustomerRow(newRow)
             AtomyDataSet.Customer.Rows.Add(newRow)
             Me.DataContext = AtomyDataSet.Customer.Rows(0)
@@ -261,7 +261,7 @@ Public Class Customer
             Dim sSQL As String = DeleteCustomerSQL()
             Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As PMS_ATOMYDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
+            Dim row As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
             cmd.Parameters.AddWithValue("@Retired", True)
             cmd.Parameters.AddWithValue("@RetiredDate", New Date().ToString("yyyy/MM/dd"))
             cmd.Parameters.AddWithValue("@CusCode", row.CusCode)
@@ -290,7 +290,7 @@ Public Class Customer
             Dim sSQL As String = InsertCustomerSQL()
             Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                 cmd.Transaction = dbConn.Tran
-                Dim row As PMS_ATOMYDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
+                Dim row As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
                 Dim now As Date = Date.Now
                 row.CreateDate = now.ToString("yyyy/MM/dd")
                 row.CreateTime = now.ToString("HH:mm:ss")
@@ -353,7 +353,7 @@ Public Class Customer
             Dim sSQL As String = UpdateCustomerSQL()
             Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As PMS_ATOMYDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
+            Dim row As AtomyDataSet.CustomerRow = AtomyDataSet.Customer.Rows(0)
             Dim now As Date = Date.Now
             row.CreateDate = now.ToString("yyyy/MM/dd")
             row.CreateTime = now.ToString("HH:mm:ss")

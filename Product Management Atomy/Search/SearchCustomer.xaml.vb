@@ -4,12 +4,12 @@ Class SearchCustomer
     Implements ISearch
 
     Private _search As Search
-    Private _AtomyDataSet As PMS_ATOMYDataSet
-    Public Property AtomyDataSet As PMS_ATOMYDataSet
+    Private _AtomyDataSet As AtomyDataSet
+    Public Property AtomyDataSet As AtomyDataSet
         Get
             Return _AtomyDataSet
         End Get
-        Set(value As PMS_ATOMYDataSet)
+        Set(value As AtomyDataSet)
 
         End Set
     End Property
@@ -24,7 +24,7 @@ Class SearchCustomer
     End Sub
 
     Public Sub New(search As Search)
-        _AtomyDataSet = New PMS_ATOMYDataSet()
+        _AtomyDataSet = New AtomyDataSet()
         _search = search
         ' This call is required by the designer.
         InitializeComponent()

@@ -109,6 +109,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AtomyDataSet.Designer.vb">
+      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="AtomyDataSet.vb">
+      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Customer.xaml.vb">
       <DependentUpon>Customer.xaml</DependentUpon>
     </Compile>
@@ -118,11 +126,6 @@
     <Compile Include="Extensions\DataGridExtensions.vb" />
     <Compile Include="Home.xaml.vb">
       <DependentUpon>Home.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PMS_ATOMYDataSet.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PMS_ATOMYDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="PrintWarehouseExcel.vb" />
     <Compile Include="Report\OrderA5_1.xaml.vb">
@@ -289,6 +292,17 @@
     <Content Include="Excel\Template\OrderA5_1.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="AtomyDataSet.xsc">
+      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="AtomyDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AtomyDataSet.Designer.vb</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="AtomyDataSet.xss">
+      <DependentUpon>AtomyDataSet.xsd</DependentUpon>
+    </None>
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -296,17 +310,6 @@
     </None>
     <AppDesigner Include="My Project\" />
     <None Include="packages.config" />
-    <None Include="PMS_ATOMYDataSet.xsc">
-      <DependentUpon>PMS_ATOMYDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="PMS_ATOMYDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>PMS_ATOMYDataSet.Designer.vb</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="PMS_ATOMYDataSet.xss">
-      <DependentUpon>PMS_ATOMYDataSet.xsd</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">

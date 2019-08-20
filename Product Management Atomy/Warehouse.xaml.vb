@@ -7,14 +7,14 @@ Imports System.IO
 
 Public Class Warehouse
 #Region "FIELD"
-    Private AtomyDataSet As PMS_ATOMYDataSet
+    Private AtomyDataSet As AtomyDataSet
     Private Mode As DataRowState
     Private WareType As Int16 = 0
 #End Region
 
 #Region "CONSTRUCTOR"
     Public Sub New(wareType As Int16)
-        AtomyDataSet = New PMS_ATOMYDataSet()
+        AtomyDataSet = New AtomyDataSet()
         Me.WareType = wareType
         ' This call is required by the designer.
         InitializeComponent()
@@ -177,7 +177,7 @@ Public Class Warehouse
             grdWareHouse.ItemsSource = Nothing
             AtomyDataSet.WarehouseMaster.Clear()
             AtomyDataSet.Warehouse.Clear()
-            Dim newRow As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.NewWarehouseMasterRow()
+            Dim newRow As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.NewWarehouseMasterRow()
             Utility.RowInit.InitWarehouseMasterRow(newRow)
             AtomyDataSet.WarehouseMaster.Rows.Add(newRow)
             Me.DataContext = AtomyDataSet.WarehouseMaster.Rows(0)
@@ -387,7 +387,7 @@ Public Class Warehouse
             Dim sSQL As String = InsertSQL()
             Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                 cmd.Transaction = dbConn.Tran
-                Dim row As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
+                Dim row As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
                 row.Type = Me.WareType '0:mua hàng, 1: bán hàng
                 Dim now As Date = Date.Now
                 row.CreateDate = now.ToString("yyyy/MM/dd")
@@ -433,8 +433,8 @@ Public Class Warehouse
             For index = 0 To AtomyDataSet.Warehouse.Rows.Count - 1
                 Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                     cmd.Transaction = dbConn.Tran
-                    Dim rowM As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
-                    Dim row As PMS_ATOMYDataSet.WarehouseRow = AtomyDataSet.Warehouse.Rows(index)
+                    Dim rowM As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
+                    Dim row As AtomyDataSet.WarehouseRow = AtomyDataSet.Warehouse.Rows(index)
                     row.Type = rowM.Type
                     row.WareCode = rowM.WareCode
                     row.WareDate = rowM.WareDate
@@ -501,7 +501,7 @@ Public Class Warehouse
             Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                 Dim tu = CalculateTotal()
                 cmd.Transaction = dbConn.Tran
-                Dim row As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
+                Dim row As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
                 row.TotalAmount = tu.Item2
                 Dim now As Date = Date.Now
                 row.UpdateDate = now.ToString("yyyy/MM/dd")
@@ -539,8 +539,8 @@ Public Class Warehouse
             Dim sSQLU = UpdateDetailSQL()
             Dim sSQLD = DeleteDetailSQL()
             For index = 0 To AtomyDataSet.Warehouse.Rows.Count - 1
-                Dim rowM As PMS_ATOMYDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
-                Dim row As PMS_ATOMYDataSet.WarehouseRow = AtomyDataSet.Warehouse.Rows(index)
+                Dim rowM As AtomyDataSet.WarehouseMasterRow = AtomyDataSet.WarehouseMaster.Rows(0)
+                Dim row As AtomyDataSet.WarehouseRow = AtomyDataSet.Warehouse.Rows(index)
                 If row.RowState = DataRowState.Added Then
                     Using cmd As New SqlCommand(sSQLI, dbConn.Conn)
                         cmd.Transaction = dbConn.Tran
@@ -654,7 +654,7 @@ Public Class Warehouse
             Dim sSQL As String = DeleteSQL()
             Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
+            Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
             cmd.Parameters.AddWithValue("@Retired", True)
             cmd.Parameters.AddWithValue("@RetiredDate", New Date().ToString("yyyy/MM/dd"))
             cmd.Parameters.AddWithValue("@PropCode", row.PropCode)

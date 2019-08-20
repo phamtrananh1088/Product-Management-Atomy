@@ -5,7 +5,7 @@ Class SearchWarehouse
     Implements ISearch
     Public WareType As Int16 = 0
     Private _search As Search
-    Private AtomyDataSet As PMS_ATOMYDataSet
+    Private AtomyDataSet As AtomyDataSet
     Protected Sub New()
 
         ' This call is required by the designer.
@@ -14,7 +14,7 @@ Class SearchWarehouse
 
     End Sub
     Public Sub New(search As Search)
-        AtomyDataSet = New PMS_ATOMYDataSet()
+        AtomyDataSet = New AtomyDataSet()
         _search = search
         ' This call is required by the designer.
         InitializeComponent()

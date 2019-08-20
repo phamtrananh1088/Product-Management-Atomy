@@ -4,13 +4,13 @@ Imports System.Text
 
 Public Class Property1
 #Region "FIELD"
-    Private AtomyDataSet As PMS_ATOMYDataSet
+    Private AtomyDataSet As AtomyDataSet
     Private Mode As DataRowState
 #End Region
 
 #Region "CONSTRUCTOR"
     Public Sub New()
-        AtomyDataSet = New PMS_ATOMYDataSet()
+        AtomyDataSet = New AtomyDataSet()
         Mode = DataRowState.Added
         ' This call is required by the designer.
         InitializeComponent()
@@ -125,7 +125,7 @@ Public Class Property1
     Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
         If ProcessSelection.Mode = DataRowState.Added Then
             AtomyDataSet._Property.Clear()
-            Dim newRow As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.NewPropertyRow()
+            Dim newRow As AtomyDataSet.PropertyRow = AtomyDataSet._Property.NewPropertyRow()
             Utility.RowInit.InitPropertyRow(newRow)
             AtomyDataSet._Property.Rows.Add(newRow)
             Me.DataContext = AtomyDataSet._Property.Rows(0)
@@ -306,7 +306,7 @@ Public Class Property1
             Dim sSQL As String = InsertSQL()
             Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                 cmd.Transaction = dbConn.Tran
-                Dim row As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
+                Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
                 Dim now As Date = Date.Now
                 row.CreateDate = now.ToString("yyyy/MM/dd")
                 row.CreateTime = now.ToString("HH:mm:ss")
@@ -363,7 +363,7 @@ Public Class Property1
             Dim sSQL As String = UpdateSQL()
             Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
+            Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
             Dim now As Date = Date.Now
             row.CreateDate = now.ToString("yyyy/MM/dd")
             row.CreateTime = now.ToString("HH:mm:ss")
@@ -414,7 +414,7 @@ Public Class Property1
             Dim sSQL As String = DeleteSQL()
             Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As PMS_ATOMYDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
+            Dim row As AtomyDataSet.PropertyRow = AtomyDataSet._Property.Rows(0)
             cmd.Parameters.AddWithValue("@Retired", True)
             cmd.Parameters.AddWithValue("@RetiredDate", row.RetiredDate)
             cmd.Parameters.AddWithValue("@PropCode", row.PropCode)

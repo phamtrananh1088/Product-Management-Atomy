@@ -216,8 +216,7 @@
             <Label Content="Đơn vị tính: đồng Việt Nam (VNĐ)" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="159,188,0,0" VerticalAlignment="Top" Height="26" Width="198" Grid.Column="3" Grid.Row="1" />
             <DataGrid x:Name="grdWareHouse" HorizontalAlignment="Left" Height="280" Margin="8,214,0,0" VerticalAlignment="Top" Width="936" Grid.ColumnSpan="3" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1"
         		CanUserAddRows="True" CanUserDeleteRows="True" CanUserReorderColumns="True" CanUserResizeColumns="False"
-        		PreparingCellForEdit="grdWareHouse_PreparingCellForEdit" CellEditEnding="grdWareHouse_CellEditEnding"
-                      >
+        		PreparingCellForEdit="grdWareHouse_PreparingCellForEdit" CellEditEnding="grdWareHouse_CellEditEnding">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Mã mặt hàng" Width="90" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                         <DataGridTemplateColumn.CellTemplate>
@@ -244,16 +243,16 @@
                     <DataGridTemplateColumn Header="Tên mặt hàng" Width="320" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock x:Name="lblPropName" Text="{Binding PropName}" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                <!--<Label x:Name="lblPropName" Content="{Binding PropName}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="26"/>-->
+                                <!--<TextBlock x:Name="lblPropName" Text="{Binding PropName}" HorizontalAlignment="Left" VerticalAlignment="Center" />-->
+                                <Label x:Name="lblPropName" Content="{Binding PropName}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="26"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Đơn vị tính" Width="100" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock x:Name="lblUnit" Text="{Binding Unit}" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                <!--<Label x:Name="lblUnit" Content="{Binding Unit}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="26"/>-->
+                                <!--<TextBlock x:Name="lblUnit" Text="{Binding Unit}" HorizontalAlignment="Left" VerticalAlignment="Center" />-->
+                                <Label x:Name="lblUnit" Content="{Binding Unit}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="26"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
@@ -266,21 +265,21 @@
                     <DataGridTemplateColumn Header="Giá ĐL" Width="100" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock x:Name="lblUnitPrice" Text="{Binding UnitPrice, StringFormat=\{0:N0\}}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                                <!--<Label x:Name="lblUnitPrice" Content="{Binding UnitPrice, StringFormat={}{0:#\,#0}}" HorizontalAlignment="Right" VerticalAlignment="Top" Height="26" HorizontalContentAlignment="Right"/>-->
+                                <!--<TextBlock x:Name="lblUnitPrice" Text="{Binding UnitPrice, StringFormat=\{0:N0\}}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
+                                <Label x:Name="lblUnitPrice" Content="{Binding UnitPrice, StringFormat={}{0:#\,#0}}" HorizontalAlignment="Right" VerticalAlignment="Top" Height="26" HorizontalContentAlignment="Right"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Giá bán" Width="100" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock x:Name="lblCurrentPrice" Text="{Binding CurrentPrice, StringFormat=\{0:N0\}}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                                <!--<Label x:Name="lblCurrentPrice" HorizontalAlignment="Right" VerticalAlignment="Top" Height="26" HorizontalContentAlignment="Right">
-                                <Label.Content>
-                                    <Binding Path ="CurrentPrice">
-                                    </Binding>
-                                </Label.Content>
-                            </Label>-->
+                                <!--<TextBlock x:Name="lblCurrentPrice" Text="{Binding CurrentPrice, StringFormat=\{0:N0\}}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
+                                <Label x:Name="lblCurrentPrice" HorizontalAlignment="Right" VerticalAlignment="Top" Height="26" HorizontalContentAlignment="Right">
+                                    <Label.Content>
+                                        <Binding Path ="CurrentPrice">
+                                        </Binding>
+                                    </Label.Content>
+                                </Label>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
@@ -302,13 +301,13 @@
                     <DataGridTemplateColumn Header="Số lượng" Width="80" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock x:Name="lblQuantity" Text="{Binding Quantity, StringFormat=\{0:N0\}}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                                <!--<Label x:Name="lblQuantity" HorizontalAlignment="Right" VerticalAlignment="Top" Height="26" HorizontalContentAlignment="Right">
-                                <Label.Content>
-                                    <Binding Path ="Quantity">
-                                    </Binding>
-                                </Label.Content>
-                            </Label>-->
+                                <!--<TextBlock x:Name="lblQuantity" Text="{Binding Quantity, StringFormat=\{0:N0\}}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
+                                <Label x:Name="lblQuantity" HorizontalAlignment="Right" VerticalAlignment="Top" Height="26" HorizontalContentAlignment="Right">
+                                    <Label.Content>
+                                        <Binding Path ="Quantity">
+                                        </Binding>
+                                    </Label.Content>
+                                </Label>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
@@ -328,13 +327,13 @@
                     <DataGridTemplateColumn Header="Thành tiền" Width="120" HeaderStyle="{StaticResource ResourceKey=chCenter}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock x:Name="lblAmount" Text="{Binding Amount, StringFormat=\{0:N0\}}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                                <!--<Label x:Name="lblAmount" HorizontalAlignment="Right" VerticalAlignment="Top" Height="26" HorizontalContentAlignment="Right">
-                                <Label.Content>
-                                    <Binding Path ="Amount" StringFormat="{}{0:N0}"> 
-                                    </Binding>
-                                </Label.Content>
-                            </Label>-->
+                                <!--<TextBlock x:Name="lblAmount" Text="{Binding Amount, StringFormat=\{0:N0\}}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
+                                <Label x:Name="lblAmount" HorizontalAlignment="Right" VerticalAlignment="Top" Height="26" HorizontalContentAlignment="Right">
+                                    <Label.Content>
+                                        <Binding Path ="Amount" StringFormat="{}{0:N0}"> 
+                                        </Binding>
+                                    </Label.Content>
+                                </Label>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>

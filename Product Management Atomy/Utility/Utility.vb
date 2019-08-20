@@ -40,7 +40,7 @@ Public Class Utility
     End Structure
 
     Public Structure RowInit
-        Shared Sub InitCustomerRow(newRow As PMS_ATOMYDataSet.CustomerRow)
+        Shared Sub InitCustomerRow(newRow As AtomyDataSet.CustomerRow)
             newRow.CusCode = ""
             newRow.Company = ""
             newRow.LastName = ""
@@ -63,7 +63,7 @@ Public Class Utility
             newRow.RetiredDate = ""
         End Sub
 
-        Shared Sub InitPropertyRow(newRow As PMS_ATOMYDataSet.PropertyRow)
+        Shared Sub InitPropertyRow(newRow As AtomyDataSet.PropertyRow)
             newRow.PropCode = ""
             newRow.PropName = ""
             newRow.Description = ""
@@ -82,7 +82,7 @@ Public Class Utility
             newRow.RetiredDate = ""
         End Sub
 
-        Shared Sub InitEmployeeRow(newRow As PMS_ATOMYDataSet.EmployeeRow)
+        Shared Sub InitEmployeeRow(newRow As AtomyDataSet.EmployeeRow)
             newRow.EmpCode = ""
             newRow.LastName = ""
             newRow.FirstName = ""
@@ -104,7 +104,7 @@ Public Class Utility
             newRow.RetiredDate = ""
         End Sub
 
-        Shared Sub InitWarehouseMasterRow(newRow As PMS_ATOMYDataSet.WarehouseMasterRow)
+        Shared Sub InitWarehouseMasterRow(newRow As AtomyDataSet.WarehouseMasterRow)
             newRow.WareCode = ""
             newRow.Type = 0
             newRow.WareDate = ""

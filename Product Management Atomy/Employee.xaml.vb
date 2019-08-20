@@ -5,13 +5,13 @@ Imports System.Text
 Public Class Employee
 
 #Region "FIELD"
-    Private AtomyDataSet As PMS_ATOMYDataSet
+    Private AtomyDataSet As AtomyDataSet
     Private Mode As DataRowState
 #End Region
 
 #Region "CONSTRUCTOR"
     Public Sub New()
-        AtomyDataSet = New PMS_ATOMYDataSet()
+        AtomyDataSet = New AtomyDataSet()
         ' This call is required by the designer.
         InitializeComponent()
         cboProvince.ItemsSource = Province.GetAllProvinces()
@@ -200,7 +200,7 @@ Public Class Employee
     Private Sub ProcessSelection_ValueChange(sender As Object, e As EventArgs)
         If ProcessSelection.Mode = DataRowState.Added Then
             AtomyDataSet.Employee.Clear()
-            Dim newRow As PMS_ATOMYDataSet.EmployeeRow = AtomyDataSet.Employee.NewEmployeeRow()
+            Dim newRow As AtomyDataSet.EmployeeRow = AtomyDataSet.Employee.NewEmployeeRow()
             Utility.RowInit.InitEmployeeRow(newRow)
             AtomyDataSet.Employee.Rows.Add(newRow)
             Me.DataContext = AtomyDataSet.Employee.Rows(0)
@@ -270,7 +270,7 @@ Public Class Employee
             Dim sSQL As String = DeleteEmployeeSQL()
             Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As PMS_ATOMYDataSet.EmployeeRow = AtomyDataSet.Employee.Rows(0)
+            Dim row As AtomyDataSet.EmployeeRow = AtomyDataSet.Employee.Rows(0)
             cmd.Parameters.AddWithValue("@Retired", True)
             cmd.Parameters.AddWithValue("@RetiredDate", New Date().ToString("yyyy/MM/dd"))
             cmd.Parameters.AddWithValue("@EmpCode", row.EmpCode)
@@ -297,7 +297,7 @@ Public Class Employee
             Dim sSQL As String = InsertEmployeeSQL()
             Using cmd As New SqlCommand(sSQL, dbConn.Conn)
                 cmd.Transaction = dbConn.Tran
-                Dim row As PMS_ATOMYDataSet.EmployeeRow = AtomyDataSet.Employee.Rows(0)
+                Dim row As AtomyDataSet.EmployeeRow = AtomyDataSet.Employee.Rows(0)
                 Dim now As Date = Date.Now
                 row.CreateDate = now.ToString("yyyy/MM/dd")
                 row.CreateTime = now.ToString("HH:mm:ss")
@@ -357,7 +357,7 @@ Public Class Employee
             Dim sSQL As String = UpdateEmployeeSQL()
             Dim cmd As New SqlCommand(sSQL, dbConn.Conn)
             cmd.Transaction = dbConn.Tran
-            Dim row As PMS_ATOMYDataSet.EmployeeRow = AtomyDataSet.Employee.Rows(0)
+            Dim row As AtomyDataSet.EmployeeRow = AtomyDataSet.Employee.Rows(0)
             Dim now As Date = Date.Now
             row.CreateDate = now.ToString("yyyy/MM/dd")
             row.CreateTime = now.ToString("HH:mm:ss")
